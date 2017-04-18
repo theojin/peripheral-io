@@ -283,17 +283,9 @@ struct _peripheral_i2c_s {
 };
 typedef struct _peripheral_i2c_s *peripheral_i2c_context_h;
 
-typedef enum {
-	PERIPHERAL_I2C_STD = 0,
-	PERIPHERAL_I2C_FAST = 1,
-	PERIPHERAL_I2C_HIGH = 2
-} peripheral_i2c_mode_e;
-
 peripheral_i2c_context_h peripheral_i2c_init(int bus);
 
 int peripheral_i2c_stop(peripheral_i2c_context_h hnd);
-
-int peripheral_i2c_set_frequency(peripheral_i2c_context_h hnd, peripheral_i2c_mode_e mode);
 
 int peripheral_i2c_set_address(peripheral_i2c_context_h hnd, int address);
 

@@ -74,12 +74,6 @@ int peripheral_i2c_stop(peripheral_i2c_context_h dev)
 	return ret;
 }
 
-int peripheral_i2c_set_frequency(peripheral_i2c_context_h dev, peripheral_i2c_mode_e mode)
-{
-	/* Set the clocking for the selected frequency */
-	return peripheral_dbus_i2c(dev, I2C_NAME, "SET_FREQ", mode, 0, I2C_Addr);
-}
-
 int peripheral_i2c_set_address(peripheral_i2c_context_h dev, int address)
 {
 	/* Set the i2c slave address */
