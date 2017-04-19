@@ -78,7 +78,7 @@ int i2c_test(void)
 	int cnt = 0;
 	int bus_num;
 	unsigned char buf[10];
-	peripheral_i2c_context_h dev;
+	peripheral_i2c_h dev;
 
 	printf(">> I2C bus number : ");
 	if (scanf("%d", &bus_num) < 0)

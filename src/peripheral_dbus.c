@@ -101,7 +101,7 @@ int peripheral_dbus_gpio(peripheral_gpio_h gpio, char * sensorid, char *funcname
 
 }
 
-int peripheral_dbus_i2c(peripheral_i2c_context_h dev, char * sensorid, char *funcname, int value, unsigned char * data, int addr)
+int peripheral_dbus_i2c(peripheral_i2c_h i2c, char * sensorid, char *funcname, int value, unsigned char * data, int addr)
 {
 	GError *error = NULL;
 	GVariant *ret_value = NULL;
@@ -126,7 +126,7 @@ int peripheral_dbus_i2c(peripheral_i2c_context_h dev, char * sensorid, char *fun
 										PERIPHERAL_DBUS_PATH,
 										PERIPHERAL_DBUS_INTERFACE,
 										sensorid,
-										g_variant_new("(siiayi)", funcname, value, dev->fd, builder, addr),
+										g_variant_new("(siiayi)", funcname, value, i2c->fd, builder, addr),
 										G_VARIANT_TYPE("(iayi)"),
 										G_DBUS_CALL_FLAGS_NONE,
 										-1,
@@ -141,7 +141,7 @@ int peripheral_dbus_i2c(peripheral_i2c_context_h dev, char * sensorid, char *fun
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
 
-	g_variant_get(ret_value, "(iayi)", &(dev->fd), &ret_data, &ret);
+	g_variant_get(ret_value, "(iayi)", &(i2c->fd), &ret_data, &ret);
 	g_variant_unref(ret_value);
 
 	if (data != NULL) {

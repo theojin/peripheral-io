@@ -286,23 +286,17 @@ int peripheral_gpio_get_pin(peripheral_gpio_h gpio, int *gpio_pin);
  * @{
  */
 
-/**
- * @brief Struct for peripheral_gpio_s
- */
-struct _peripheral_i2c_s {
-	int fd;
-};
-typedef struct _peripheral_i2c_s *peripheral_i2c_context_h;
+typedef struct _peripheral_i2c_s *peripheral_i2c_h;
 
-peripheral_i2c_context_h peripheral_i2c_init(int bus);
+peripheral_i2c_h peripheral_i2c_init(int bus);
 
-int peripheral_i2c_stop(peripheral_i2c_context_h hnd);
+int peripheral_i2c_stop(peripheral_i2c_h i2c);
 
-int peripheral_i2c_set_address(peripheral_i2c_context_h hnd, int address);
+int peripheral_i2c_set_address(peripheral_i2c_h i2c, int address);
 
-int peripheral_i2c_read(peripheral_i2c_context_h hnd, uint8_t *data, int length);
+int peripheral_i2c_read(peripheral_i2c_h i2c, uint8_t *data, int length);
 
-int peripheral_i2c_write(peripheral_i2c_context_h hnd, uint8_t *data, int length);
+int peripheral_i2c_write(peripheral_i2c_h i2c, uint8_t *data, int length);
 
 
 /**

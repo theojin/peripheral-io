@@ -34,7 +34,7 @@ GDBusConnection *get_dbus_connection(void);
 
 
 int peripheral_dbus_gpio(peripheral_gpio_h gpio, char * sensorid, char *funcname, int write_value, int *read_value);
-int peripheral_dbus_i2c(peripheral_i2c_context_h dev, char * sensorid, char *funcname, int value, unsigned char *data, int addr);
+int peripheral_dbus_i2c(peripheral_i2c_h i2c, char * sensorid, char *funcname, int value, unsigned char *data, int addr);
 int peripheral_dbus_pwm(peripheral_pwm_context_h dev, char * sensorid, char *funcname);
 
 #endif /* __PERIPHERAL_DBUS_H_ */

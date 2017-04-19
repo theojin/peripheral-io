@@ -18,12 +18,19 @@
 #define __PERIPHERAL_INTERNAL_H__
 
 /**
- * @brief Internal struct for keep gpio context information
+ * @brief Internal struct for gpio context
  */
 struct _peripheral_gpio_s {
 	int pin;
 	peripheral_gpio_direction_e direction;
 	peripheral_gpio_edge_e edge;
+};
+
+/**
+ * @brief Internal struct for i2c context
+ */
+struct _peripheral_i2c_s {
+	int fd;
 };
 
 #endif /* __PERIPHERAL_INTERNAL_H__ */
