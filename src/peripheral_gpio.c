@@ -24,12 +24,8 @@
 #include "peripheral_common.h"
 #include "peripheral_internal.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /**
- * @brief Initializes gpio_context, based on Gpio pin.
+ * @brief Initializes(export) gpio pin and creates gpio handle.
  */
 
 #define GPIO_NAME	"gpio"
@@ -71,6 +67,7 @@ exit:
 
 /**
  * @brief Closes the gpio_context.
+ * @brief Releases the gpio handle and finalize(unexport) the gpio pin.
  */
 int peripheral_gpio_close(peripheral_gpio_h gpio)
 {
@@ -92,7 +89,27 @@ int peripheral_gpio_close(peripheral_gpio_h gpio)
 }
 
 /**
- * @brief Sets Gpio direction.
+ * @brief Gets direction of the gpio.
+ */
+int peripheral_gpio_get_direction(peripheral_gpio_h gpio, peripheral_gpio_direction_e *direction)
+{
+	int ret = PERIPHERAL_ERROR_NONE;
+
+	/* check validation of gpio context handle */
+	if (gpio == NULL)
+		return PERIPHERAL_ERROR_INVALID_PARAMETER;
+
+	ret = peripheral_dbus_gpio(gpio, GPIO_NAME, "GET_DIR", 0 , 0);
+
+	if (ret == PERIPHERAL_ERROR_NONE)
+		(*direction) = gpio->direction;
+
+	return ret;
+}
+
+
+/**
+ * @brief Sets direction of the gpio pin.
  */
 int peripheral_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_direction_e direction)
 {
@@ -116,7 +133,65 @@ int peripheral_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_direct
 }
 
 /**
- * @brief Sets the edge mode on the Gpio.
+ * @brief Reads value of the gpio.
+ */
+int peripheral_gpio_read(peripheral_gpio_h gpio, int *val)
+{
+	int value = 0;
+	int ret = PERIPHERAL_ERROR_NONE;
+
+	/* check validation of gpio context handle */
+	if (gpio == NULL)
+		return PERIPHERAL_ERROR_INVALID_PARAMETER;
+
+	/* call gpio_read */
+	ret = peripheral_dbus_gpio(gpio, GPIO_NAME, "READ", 0, &value);
+	*val = value;
+
+	return ret;
+}
+
+/**
+ * @brief Writes value to the gpio.
+ */
+int peripheral_gpio_write(peripheral_gpio_h gpio, int value)
+{
+	int ret = PERIPHERAL_ERROR_NONE;
+
+	/* check validation of gpio context handle */
+	if (gpio == NULL)
+		return PERIPHERAL_ERROR_INVALID_PARAMETER;
+
+	ret = peripheral_dbus_gpio(gpio, GPIO_NAME, "WRITE", value , 0);
+	/* call gpio_write */
+
+	if (ret != PERIPHERAL_ERROR_NONE)
+		return ret;
+
+	return ret;
+}
+
+/**
+ * @brief Gets the edge mode of the gpio.
+ */
+int peripheral_gpio_get_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e *edge)
+{
+	int ret = PERIPHERAL_ERROR_NONE;
+
+	/* check validation of gpio context handle */
+	if (gpio == NULL)
+		return PERIPHERAL_ERROR_INVALID_PARAMETER;
+
+	ret = peripheral_dbus_gpio(gpio, GPIO_NAME, "GET_EDGE", 0 , 0);
+
+	if (ret == PERIPHERAL_ERROR_NONE)
+		(*edge) = gpio->edge;
+
+	return ret;
+}
+
+/**
+ * @brief Sets the edge mode of the gpio pin.
  */
 int peripheral_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e edge)
 {
@@ -140,7 +215,7 @@ int peripheral_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e
 }
 
 /**
- * @brief Registers event handler callback for interrupt.
+ * @brief Registers a callback function to be invoked when the gpio interrupt is triggered.
  */
 int peripheral_gpio_register_cb(peripheral_gpio_h gpio, gpio_isr_cb callback, void *user_data)
 {
@@ -153,7 +228,7 @@ int peripheral_gpio_register_cb(peripheral_gpio_h gpio, gpio_isr_cb callback, vo
 }
 
 /**
- * @brief Unregisters event handler callback for interrupt.
+ * @brief Unregisters the callback function for the gpio handler.
  */
 int peripheral_gpio_unregister_cb(peripheral_gpio_h gpio)
 {
@@ -165,65 +240,7 @@ int peripheral_gpio_unregister_cb(peripheral_gpio_h gpio)
 }
 
 /**
- * @brief Reads the gpio value.
- */
-int peripheral_gpio_read(peripheral_gpio_h gpio, int *val)
-{
-	int value = 0;
-	int ret = PERIPHERAL_ERROR_NONE;
-
-	/* check validation of gpio context handle */
-	if (gpio == NULL)
-		return PERIPHERAL_ERROR_INVALID_PARAMETER;
-
-	/* call gpio_read */
-	ret = peripheral_dbus_gpio(gpio, GPIO_NAME, "READ", 0, &value);
-	*val = value;
-
-	return ret;
-}
-
-/**
- * @brief Writes to the gpio value.
- */
-int peripheral_gpio_write(peripheral_gpio_h gpio, int value)
-{
-	int ret = PERIPHERAL_ERROR_NONE;
-
-	/* check validation of gpio context handle */
-	if (gpio == NULL)
-		return PERIPHERAL_ERROR_INVALID_PARAMETER;
-
-	ret = peripheral_dbus_gpio(gpio, GPIO_NAME, "WRITE", value , 0);
-	/* call gpio_write */
-
-	if (ret != PERIPHERAL_ERROR_NONE)
-		return ret;
-
-	return ret;
-}
-
-/**
- * @brief Gets a direction of the Gpio.
- */
-int peripheral_gpio_get_direction(peripheral_gpio_h gpio, peripheral_gpio_direction_e *direction)
-{
-	int ret = PERIPHERAL_ERROR_NONE;
-
-	/* check validation of gpio context handle */
-	if (gpio == NULL)
-		return PERIPHERAL_ERROR_INVALID_PARAMETER;
-
-	ret = peripheral_dbus_gpio(gpio, GPIO_NAME, "GET_DIR", 0 , 0);
-
-	if (ret == PERIPHERAL_ERROR_NONE)
-		(*direction) = gpio->direction;
-
-	return ret;
-}
-
-/**
- * @brief Gets a pin number of the Gpio.
+ * @brief Gets pin number of the gpio handle.
  */
 int peripheral_gpio_get_pin(peripheral_gpio_h gpio, int *gpio_pin)
 {
@@ -235,26 +252,3 @@ int peripheral_gpio_get_pin(peripheral_gpio_h gpio, int *gpio_pin)
 
 	return PERIPHERAL_ERROR_NONE;
 }
-
-/**
- * @brief Gets a edge mode of the Gpio.
- */
-int peripheral_gpio_get_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e *edge)
-{
-	int ret = PERIPHERAL_ERROR_NONE;
-
-	/* check validation of gpio context handle */
-	if (gpio == NULL)
-		return PERIPHERAL_ERROR_INVALID_PARAMETER;
-
-	ret = peripheral_dbus_gpio(gpio, GPIO_NAME, "GET_EDGE", 0 , 0);
-
-	if (ret == PERIPHERAL_ERROR_NONE)
-		(*edge) = gpio->edge;
-
-	return ret;
-}
-
-#ifdef __cplusplus
-}
-#endif

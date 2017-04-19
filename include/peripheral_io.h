@@ -58,8 +58,9 @@ typedef enum {
  */
 typedef enum {
 	PERIPHERAL_GPIO_DIRECTION_IN = 0,    /**< Input Mode */
-	PERIPHERAL_GPIO_DIRECTION_OUT,       /**< Output mode and this implies "low" output value */
-	PERIPHERAL_GPIO_DIRECTION_OUT_HIGH,  /**< Output mode and value also be written as "high" */
+	PERIPHERAL_GPIO_DIRECTION_OUT,       /**< Output mode with low value */
+	PERIPHERAL_GPIO_DIRECTION_OUT_LOW = PERIPHERAL_GPIO_DIRECTION_OUT, /**< Same as above */
+	PERIPHERAL_GPIO_DIRECTION_OUT_HIGH,  /**< Output mode with high value */
 } peripheral_gpio_direction_e;
 
 /**
@@ -79,21 +80,10 @@ typedef enum {
 typedef struct _peripheral_gpio_s* peripheral_gpio_h;
 
 /**
- * @brief Called when the gpio interrupt is triggered.
+ * @brief Initializes(export) gpio pin and creates gpio handle.
  * @since_tizen 4.0
  *
- * @param[in] user_data The user data passed from the callback registration function
- *
- * @see peripheral_gpio_register_cb()
- * @see peripheral_gpio_unregister_cb()
- */
-typedef void(*gpio_isr_cb)(void *user_data);
-
-/**
- * @brief Initilizes(export) gpio pin and creates gpio handle.
- * @since_tizen 4.0
- *
- * @param[in] gpio_pin The gpio pin number what you want to use
+ * @param[in] gpio_pin The gpio pin number
  * @param[out] gpio The gpio handle is created on success
  *
  * @return 0 on success, otherwise a negative error value
@@ -109,7 +99,7 @@ typedef void(*gpio_isr_cb)(void *user_data);
 int peripheral_gpio_open(int gpio_pin, peripheral_gpio_h *gpio);
 
 /**
- * @brief Release the gpio handle and finalize(unexport) the gpio pin.
+ * @brief Releases the gpio handle and finalize(unexport) the gpio pin.
  * @since_tizen 4.0
  *
  * @param[in] gpio The handle to the gpio pin to release
@@ -126,11 +116,29 @@ int peripheral_gpio_open(int gpio_pin, peripheral_gpio_h *gpio);
 int peripheral_gpio_close(peripheral_gpio_h gpio);
 
 /**
+ * @brief Gets direction of the gpio.
+ * @since_tizen 4.0
+ *
+ * @param[in] gpio The handle to the gpio pin
+ * @param[out] value The direction(value) type of the gpio
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
+ *
+ * @see peripheral_gpio_set_direction()
+ */
+int peripheral_gpio_get_direction(peripheral_gpio_h gpio, peripheral_gpio_direction_e *direction);
+
+/**
  * @brief Sets direction of the gpio pin.
  * @since_tizen 4.0
  *
  * @param[in] gpio The handle to the gpio pin to set
- * @param[in] direction The direction type of the gpio pin
+ * @param[in] direction Direction(value) type of the gpio pin
  *
  * @return 0 on success, otherwise a negative error value
  * @retval #PERIPHERAL_ERROR_NONE Successful
@@ -142,11 +150,11 @@ int peripheral_gpio_close(peripheral_gpio_h gpio);
 int peripheral_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_direction_e direction);
 
 /**
- * @brief Sets the edge mode of the gpio pin.
+ * @brief Reads value of the gpio.
  * @since_tizen 4.0
  *
- * @param[in] gpio The handle to the gpio pin to set
- * @param[in] edge The edge type of the gpio pin
+ * @param[in] gpio The handle to the gpio pin
+ * @param[out] value The value of the gpio (zero or non-zero)
  *
  * @return 0 on success, otherwise a negative error value
  * @retval #PERIPHERAL_ERROR_NONE Successful
@@ -154,8 +162,75 @@ int peripheral_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_direct
  * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
  * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
  * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
+ *
+ * @see peripheral_gpio_write()
+ */
+int peripheral_gpio_read(peripheral_gpio_h gpio, int *value);
+
+/**
+ * @brief Writes value to the gpio.
+ * @since_tizen 4.0
+ *
+ * @param[in] gpio The handle to the gpio pin
+ * @param[in] value Value to be written to the gpio (muse be zero or non-zero)
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
+ *
+ * @see peripheral_gpio_read()
+ */
+int peripheral_gpio_write(peripheral_gpio_h gpio, int value);
+
+/**
+ * @brief Gets the edge mode of the gpio.
+ * @since_tizen 4.0
+ *
+ * @param[in] gpio The handle to the gpio pin
+ * @param[out] gpio_pin The edge mode of the gpio
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
+ *
+ * @see peripheral_gpio_set_edge_mode()
+ */
+int peripheral_gpio_get_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e *edge);
+
+/**
+ * @brief Sets the edge mode of the gpio pin.
+ * @since_tizen 4.0
+ *
+ * @param[in] gpio The handle to the gpio pin to set
+ * @param[in] edge The edge mode of the gpio pin
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
+ *
+ * @see peripheral_gpio_get_edge_mode()
  */
 int peripheral_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e edge);
+
+/**
+ * @brief Called when the gpio interrupt is triggered.
+ * @since_tizen 4.0
+ *
+ * @param[in] user_data The user data passed from the callback registration function
+ *
+ * @see peripheral_gpio_register_cb()
+ * @see peripheral_gpio_unregister_cb()
+ */
+typedef void(*gpio_isr_cb)(void *user_data);
 
 /**
  * @brief Registers a callback function to be invoked when the gpio interrupt is triggered.
@@ -167,8 +242,8 @@ int peripheral_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e
  * @param[in] user_data The user data to be passed to the callback function
  *
  * @return 0 on success, otherwise a negative error value
- * @retval #PERIPHERAL_ERROR_NONE Successfu
- * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parametera
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
  *
  * @see peripheral_gpio_set_edge_mode()
  * @see peripheral_gpio_unregister_cb()
@@ -190,81 +265,17 @@ int peripheral_gpio_register_cb(peripheral_gpio_h gpio, gpio_isr_cb callback, vo
 int peripheral_gpio_unregister_cb(peripheral_gpio_h gpio);
 
 /**
- * @brief Reads the gpio value.
+ * @brief Gets pin number of the gpio handle.
  * @since_tizen 4.0
  *
  * @param[in] gpio The handle to the gpio pin
- * @param[out] value The result of the gpio
- *
- * @return 0 on success, otherwise a negative error value
- * @retval #PERIPHERAL_ERROR_NONE Successful
- * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
- * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
- * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
- * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
- */
-int peripheral_gpio_read(peripheral_gpio_h gpio, int *value);
-
-/**
- * @brief Writes the gpio value.
- * @since_tizen 4.0
- *
- * @param[in] gpio The handle to the gpio pin
- * @param[in] value The value to be written to the gpio
- *
- * @return 0 on success, otherwise a negative error value
- * @retval #PERIPHERAL_ERROR_NONE Successful
- * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
- * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
- * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
- * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
- */
-int peripheral_gpio_write(peripheral_gpio_h gpio, int value);
-
-/**
- * @brief Gets direction of the gpio.
- * @since_tizen 4.0
- *
- * @param[in] gpio The handle to the gpio pin
- * @param[out] value The value to be written to the gpio
- *
- * @return 0 on success, otherwise a negative error value
- * @retval #PERIPHERAL_ERROR_NONE Successful
- * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
- * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
- * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
- * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
- */
-int peripheral_gpio_get_direction(peripheral_gpio_h gpio, peripheral_gpio_direction_e *direction);
-
-/**
- * @brief Gets pin number of the gpio.
- * @since_tizen 4.0
- *
- * @param[in] gpio The handle to the gpio pin
- * @param[out] gpio_pin The number of the gpio
+ * @param[out] gpio_pin The pin number of the gpio
  *
  * @return 0 on success, otherwise a negative error value
  * @retval #PERIPHERAL_ERROR_NONE Successful
  * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
  */
 int peripheral_gpio_get_pin(peripheral_gpio_h gpio, int *gpio_pin);
-
-/**
- * @brief Gets edge mode of the gpio.
- * @since_tizen 4.0
- *
- * @param[in] gpio The handle to the gpio pin
- * @param[out] gpio_pin The number of the gpio
- *
- * @return 0 on success, otherwise a negative error value
- * @retval #PERIPHERAL_ERROR_NONE Successful
- * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
- * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
- * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
- * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
- */
-int peripheral_gpio_get_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e *edge);
 
 /**
 * @}
