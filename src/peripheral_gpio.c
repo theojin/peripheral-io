@@ -201,7 +201,7 @@ int peripheral_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e
 	if (gpio == NULL)
 		return PERIPHERAL_ERROR_INVALID_PARAMETER;
 
-	if (edge > PERIPHERAL_GPIO_EDGE_FALLING) {
+	if (edge > PERIPHERAL_GPIO_EDGE_BOTH) {
 		ret = PERIPHERAL_ERROR_INVALID_PARAMETER;
 	} else {
 		if (gpio->edge != edge) {
