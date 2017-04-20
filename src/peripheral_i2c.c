@@ -31,33 +31,39 @@ extern "C" {
 #define I2C_NAME	"i2c"
 int I2C_Addr = 0;
 
-peripheral_i2c_h peripheral_i2c_init(int bus)
+int peripheral_i2c_init(int bus, peripheral_i2c_h *i2c)
 {
-	peripheral_i2c_h i2c;
+	peripheral_i2c_h handle;
 	int ret = PERIPHERAL_ERROR_NONE;
 
-	assert(bus >= 0);
+	if (bus < 0)
+		return PERIPHERAL_ERROR_INVALID_PARAMETER;
 
 	/* Initialize peripheral_i2c_h */
-	i2c = (peripheral_i2c_h)malloc(sizeof(struct _peripheral_i2c_s));
+	handle = (peripheral_i2c_h)malloc(sizeof(struct _peripheral_i2c_s));
 
-	if (i2c == NULL) {
+	if (handle == NULL) {
 		_E("Failed to allocate peripheral_i2c_h");
-		return NULL;
+		return PERIPHERAL_ERROR_OUT_OF_MEMORY;
 	}
 
-	if (!get_dbus_connection())
-		set_dbus_connection();
+	if (!get_dbus_connection()) {
+		ret = set_dbus_connection();
+		if (ret != PERIPHERAL_ERROR_NONE)
+			goto exit;
+	}
 
-	ret = peripheral_dbus_i2c(i2c, I2C_NAME, "INIT", bus, 0, I2C_Addr);
+	ret = peripheral_dbus_i2c(handle, I2C_NAME, "INIT", bus, 0, I2C_Addr);
 
+exit:
 	if (ret != PERIPHERAL_ERROR_NONE) {
-		free(i2c);
 		_E("[PERIPHERAL] I2C init error\n");
-		i2c = NULL;
+		free(handle);
+		handle = NULL;
 	}
+	*i2c = handle;
 
-	return i2c;
+	return ret;
 }
 
 int peripheral_i2c_stop(peripheral_i2c_h i2c)

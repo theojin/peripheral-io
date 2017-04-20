@@ -78,24 +78,24 @@ int i2c_test(void)
 	int cnt = 0;
 	int bus_num;
 	unsigned char buf[10];
-	peripheral_i2c_h dev;
+	peripheral_i2c_h i2c;
 
 	printf(">> I2C bus number : ");
 	if (scanf("%d", &bus_num) < 0)
 		return 0;
 
-	if ((dev = peripheral_i2c_init(bus_num)) == NULL) {
+	if ((peripheral_i2c_init(bus_num, &i2c)) != 0) {
 		printf("Failed to initialize I2C device\n");
 		return 0;
 	}
 
-	if (peripheral_i2c_set_address(dev, GY30_ADDR) != 0) {
+	if (peripheral_i2c_set_address(i2c, GY30_ADDR) != 0) {
 		printf("Failed to set address\n");
 		goto error;
 	}
 
 	buf[0] = GY30_CONT_HIGH_RES_MODE;
-	if (peripheral_i2c_write(dev, buf, 1) != 0) {
+	if (peripheral_i2c_write(i2c, buf, 1) != 0) {
 		printf("Failed to write\n");
 		goto error;
 	}
@@ -103,16 +103,16 @@ int i2c_test(void)
 	while (cnt++ < 15) {
 		int result;
 		sleep(1);
-		peripheral_i2c_read(dev, buf, 2);
+		peripheral_i2c_read(i2c, buf, 2);
 		result = GY30_READ_INTENSITY(buf);
 		printf("Result [%d]\n", result);
 	}
 
-	peripheral_i2c_stop(dev);
+	peripheral_i2c_stop(i2c);
 	return 1;
 
 error:
-	peripheral_i2c_stop(dev);
+	peripheral_i2c_stop(i2c);
 	return 0;
 }
 

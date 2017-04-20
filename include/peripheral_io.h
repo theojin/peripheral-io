@@ -288,7 +288,7 @@ int peripheral_gpio_get_pin(peripheral_gpio_h gpio, int *gpio_pin);
 
 typedef struct _peripheral_i2c_s *peripheral_i2c_h;
 
-peripheral_i2c_h peripheral_i2c_init(int bus);
+int peripheral_i2c_init(int bus, peripheral_i2c_h *i2c);
 
 int peripheral_i2c_stop(peripheral_i2c_h i2c);
 
