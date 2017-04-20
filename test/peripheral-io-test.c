@@ -19,10 +19,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <gio/gio.h>
 
 extern int gpio_test();
 extern int i2c_test();
 extern int adc_test();
+
+GMainLoop *loop;
 
 int gpio_test(void)
 {
@@ -64,6 +67,79 @@ error:
 	return 0;
 }
 
+void gpio_irq_test_isr(void *user_data)
+{
+	int pin;
+	peripheral_gpio_h gpio = user_data;
+
+	peripheral_gpio_get_pin(gpio, &pin);
+
+	printf("gpio_irq_test_isr: GPIO %d interrupt occurs.\n", pin);
+}
+
+void *gpio_irq_test_thread(void *data)
+{
+	peripheral_gpio_h gpio = data;
+	int num;
+
+	printf(">> Press any key to exit GPIO IRQ Test : \n");
+	if (scanf("%d", &num) < 0)
+		return 0;
+
+	peripheral_gpio_unregister_cb(gpio);
+	peripheral_gpio_close(gpio);
+
+	g_main_loop_quit(loop);
+	return 0;
+}
+
+int gpio_irq_test(void)
+{
+	GThread *test_thread;
+	int num;
+	peripheral_gpio_h gpio = NULL;
+	peripheral_gpio_edge_e edge = PERIPHERAL_GPIO_EDGE_NONE;
+
+	printf("artik710 : 27 \n");
+	printf(">> PIN NUMBER : ");
+
+	if (scanf("%d", &num) < 0)
+		return 0;
+
+	if (peripheral_gpio_open(num, &gpio) != PERIPHERAL_ERROR_NONE) {
+		printf("test dev is null\n");
+		return 0;
+	}
+
+	if (peripheral_gpio_set_direction(gpio, PERIPHERAL_GPIO_DIRECTION_IN) != 0) {
+		printf("test set direction error!!!");
+		goto error;
+	}
+
+	printf(">> Select Edge Mode (0 = None, 1 = Falling, 2 = Rising, 3 = Both) : ");
+	if (scanf("%d", &num) < 0)
+		return 0;
+
+	if (num >= 0 && num <= 3)
+		edge = num;
+
+	peripheral_gpio_set_edge_mode( gpio, edge);
+	peripheral_gpio_register_cb(gpio, gpio_irq_test_isr, gpio);
+
+	test_thread = g_thread_new("key input thread", &gpio_irq_test_thread, gpio);
+	loop = g_main_loop_new(NULL, FALSE);
+	g_main_loop_run(loop);
+
+	g_thread_join(test_thread);
+	if (loop != NULL)
+		g_main_loop_unref(loop);
+
+	return 0;
+
+error:
+	peripheral_gpio_close(gpio);
+	return 0;
+}
 
 /* Address of GY30 light sensor */
 #define GY30_ADDR 0x23
@@ -233,7 +309,7 @@ int main(int argc, char **argv)
 	printf(" 3. pwm led test\n");
 	printf(" 4. pwm motor test\n");
 
-	printf(" 11. H/W IF GPIO Test\n");
+	printf(" 11. GPIO Interrupt Test\n");
 	printf(" 12. H/W IF I2C Test\n");
 	printf(" 13. H/W IF PWM Test\n");
 	printf(" 14. H/W IF SPI Test\n");
@@ -255,7 +331,7 @@ int main(int argc, char **argv)
 		ret = pwm_test_motor();
 		break;
 	case 11:
-		ret = gpio_test();
+		ret = gpio_irq_test();
 		break;
 	case 12:
 		ret = i2c_test();

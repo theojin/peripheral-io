@@ -47,6 +47,8 @@ int peripheral_dbus_gpio_read(peripheral_gpio_h gpio, int *value);
 int peripheral_dbus_gpio_write(peripheral_gpio_h gpio, int value);
 int peripheral_dbus_gpio_get_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e *edge);
 int peripheral_dbus_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e edge);
+int peripheral_dbus_gpio_register_cb(peripheral_gpio_h gpio, gpio_isr_cb callback, void *user_data);
+int peripheral_dbus_gpio_unregister_cb(peripheral_gpio_h gpio);
 
 int peripheral_dbus_i2c_open(peripheral_i2c_h i2c, int bus, int address);
 int peripheral_dbus_i2c_close(peripheral_i2c_h i2c);

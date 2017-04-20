@@ -25,6 +25,88 @@
 #include "peripheral_internal.h"
 #include "peripheral_io_gdbus.h"
 
+typedef struct {
+	int pin;
+	gpio_isr_cb callback;
+	void *user_data;
+} gpio_isr_data_s;
+
+static GList *gpio_isr_list = NULL;
+
+int peripheral_gpio_isr_callback(int pin)
+{
+	GList *link;
+	gpio_isr_data_s *isr_data;
+
+	link = gpio_isr_list;
+	while (link) {
+		isr_data = (gpio_isr_data_s*)link->data;
+
+		if (isr_data->pin == pin) {
+			if (isr_data->callback)
+				isr_data->callback(isr_data->user_data);
+			return PERIPHERAL_ERROR_NONE;
+		}
+		link = g_list_next(link);
+	}
+
+	return PERIPHERAL_ERROR_NONE;
+}
+
+int peripheral_gpio_isr_set(int pin, gpio_isr_cb callback, void *user_data)
+{
+	GList *link;
+	gpio_isr_data_s *isr_data = NULL;
+
+	link = gpio_isr_list;
+	while (link) {
+		gpio_isr_data_s *tmp;
+		tmp = (gpio_isr_data_s*)link->data;
+		if (tmp->pin == pin) {
+			isr_data = tmp;
+			break;
+		}
+		link = g_list_next(link);
+	}
+
+	if (isr_data == NULL) {
+		isr_data = (gpio_isr_data_s*)calloc(1, sizeof(gpio_isr_data_s));
+		if (isr_data == NULL) {
+			_E("failed to allocate gpio_isr_data_s");
+			return PERIPHERAL_ERROR_OUT_OF_MEMORY;
+		}
+
+		gpio_isr_list = g_list_append(gpio_isr_list, isr_data);
+	}
+
+	isr_data->pin = pin;
+	isr_data->callback = callback;
+	isr_data->user_data = user_data;
+
+	return PERIPHERAL_ERROR_NONE;
+}
+
+int peripheral_gpio_isr_unset(int pin)
+{
+	GList *link;
+	gpio_isr_data_s *isr_data;
+
+	link = gpio_isr_list;
+	while (link) {
+		isr_data = (gpio_isr_data_s*)link->data;
+
+		if (isr_data->pin == pin) {
+			gpio_isr_list = g_list_remove_link(gpio_isr_list, link);
+			free(link->data);
+			g_list_free(link);
+			break;
+		}
+		link = g_list_next(link);
+	}
+
+	return PERIPHERAL_ERROR_NONE;
+}
+
 /**
  * @brief Initializes(export) gpio pin and creates gpio handle.
  */
@@ -202,12 +284,20 @@ int peripheral_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e
  */
 int peripheral_gpio_register_cb(peripheral_gpio_h gpio, gpio_isr_cb callback, void *user_data)
 {
+	int ret = PERIPHERAL_ERROR_NONE;
+
 	/* check validation of gpio context handle */
 	if (gpio == NULL)
 		return PERIPHERAL_ERROR_INVALID_PARAMETER;
 
-	//TODO
-	return PERIPHERAL_ERROR_INVALID_OPERATION;
+	ret = peripheral_dbus_gpio_register_cb(gpio, callback, user_data);
+	if (ret != PERIPHERAL_ERROR_NONE)
+		return ret;
+
+	/* set isr */
+	ret = peripheral_gpio_isr_set(gpio->pin, callback, user_data);
+
+	return ret;
 }
 
 /**
@@ -215,11 +305,20 @@ int peripheral_gpio_register_cb(peripheral_gpio_h gpio, gpio_isr_cb callback, vo
  */
 int peripheral_gpio_unregister_cb(peripheral_gpio_h gpio)
 {
+	int ret = PERIPHERAL_ERROR_NONE;
+
 	/* check validation of gpio context handle */
 	if (gpio == NULL)
 		return PERIPHERAL_ERROR_INVALID_PARAMETER;
-	//TODO
-	return PERIPHERAL_ERROR_INVALID_OPERATION;
+
+	ret = peripheral_dbus_gpio_unregister_cb(gpio);
+	if (ret != PERIPHERAL_ERROR_NONE)
+		return ret;
+
+	/* clean up isr */
+	ret = peripheral_gpio_isr_unset(gpio->pin);
+
+	return ret;
 }
 
 /**
