@@ -9,12 +9,21 @@ SET(fw_name "${project_prefix}-${service}-${submodule}")
 
 PROJECT(${fw_name})
 
-SET(dependents "dlog glib-2.0 gio-2.0 capi-base-common")
+SET(dependents "dlog glib-2.0 gio-2.0 gio-unix-2.0 capi-base-common")
 SET(pc_dependents "capi-base-common")
 
 SET(CMAKE_INSTALL_PREFIX ${prefix})
 SET(PREFIX $(CMAKE_INSTALL_PREFIX))
 SET(VERSION ${version})
+
+FIND_PROGRAM(GDBUS_CODEGEN NAMES gdbus-codegen)
+EXEC_PROGRAM(${GDBUS_CODEGEN} ARGS
+                " \\
+                --generate-c-code ${CMAKE_SOURCE_DIR}/src/peripheral_io_gdbus \\
+                --c-namespace PeripheralIoGdbus \\
+                --interface-prefix org.tizen.system.peripheral_io. \\
+                ${CMAKE_SOURCE_DIR}/src/peripheral_io.xml \\
+                ")
 
 SET(INC_DIR include)
 INCLUDE_DIRECTORIES(${INC_DIR})
@@ -38,6 +47,7 @@ SET(SOURCES src/peripheral_adc.c
 			src/peripheral_pwm.c
 			src/peripheral_uart.c
 			src/peripheral_dbus.c
+			src/peripheral_io_gdbus.c
 			src/peripheral_i2c.c
 			src/peripheral_spi.c)
 

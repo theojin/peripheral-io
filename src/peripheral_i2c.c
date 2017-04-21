@@ -24,13 +24,6 @@
 #include "peripheral_common.h"
 #include "peripheral_internal.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#define I2C_NAME	"i2c"
-int I2C_Addr = 0;
-
 int peripheral_i2c_init(int bus, peripheral_i2c_h *i2c)
 {
 	peripheral_i2c_h handle;
@@ -47,15 +40,10 @@ int peripheral_i2c_init(int bus, peripheral_i2c_h *i2c)
 		return PERIPHERAL_ERROR_OUT_OF_MEMORY;
 	}
 
-	if (!get_dbus_connection()) {
-		ret = set_dbus_connection();
-		if (ret != PERIPHERAL_ERROR_NONE)
-			goto exit;
-	}
+	i2c_proxy_init();
 
-	ret = peripheral_dbus_i2c(handle, I2C_NAME, "INIT", bus, 0, I2C_Addr);
+	ret = peripheral_dbus_i2c_init(handle, bus);
 
-exit:
 	if (ret != PERIPHERAL_ERROR_NONE) {
 		_E("[PERIPHERAL] I2C init error\n");
 		free(handle);
@@ -69,38 +57,43 @@ exit:
 int peripheral_i2c_stop(peripheral_i2c_h i2c)
 {
 	int ret = PERIPHERAL_ERROR_NONE;
-	/* Free peripheral_i2c_h */
 
-	if (i2c != NULL) {
-		ret = peripheral_dbus_i2c(i2c, I2C_NAME, "STOP", 0, 0, I2C_Addr);
+	if (i2c == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
 
-		free(i2c);
-		i2c = NULL;
-	}
+	ret = peripheral_dbus_i2c_stop(i2c);
+	gpio_proxy_deinit();
+
+	free(i2c);
+	i2c = NULL;
 
 	return ret;
 }
 
 int peripheral_i2c_set_address(peripheral_i2c_h i2c, int address)
 {
-	/* Set the i2c slave address */
+	if (i2c == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
 
-	//I2C_Addr = address;
-	return peripheral_dbus_i2c(i2c, I2C_NAME, "SET_ADDR", address, 0, I2C_Addr);
+	return peripheral_dbus_i2c_set_address(i2c, address);
 }
 
 int peripheral_i2c_read(peripheral_i2c_h i2c, uint8_t *data, int length)
 {
-	/* Read i2c data */
-	return peripheral_dbus_i2c(i2c, I2C_NAME, "READ", length, data, I2C_Addr);
+	int ret = PERIPHERAL_ERROR_NONE;
+
+	if (i2c == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
+
+	ret = peripheral_dbus_i2c_read(i2c, data, length);
+	/*
+	_D("I2C read data : ");
+	for (int i = 0 ; i < length ; i++)
+		_D("[%02x]", data[i]);
+	*/
+	return ret;
 }
 
 int peripheral_i2c_write(peripheral_i2c_h i2c, uint8_t *data, int length)
 {
-	/* Write i2c data */
-	return peripheral_dbus_i2c(i2c, I2C_NAME, "WRITE", length, data, I2C_Addr);
-}
+	if (i2c == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
 
-#ifdef __cplusplus
+	return peripheral_dbus_i2c_write(i2c, data, length);
 }
-#endif
