@@ -18,12 +18,12 @@
 
 #include <gio/gio.h>
 
-#define PERIPHERAL_DBUS_INTERFACE	"org.tizen.system.peripheral_io"
-#define PERIPHERAL_DBUS_PATH		"/Org/Tizen/System/Peripheral_io"
-#define PERIPHERAL_DBUS_GPIO_PATH	"/Org/Tizen/System/Peripheral_io/Gpio"
-#define PERIPHERAL_DBUS_I2C_PATH	"/Org/Tizen/System/Peripheral_io/I2c"
-#define PERIPHERAL_DBUS_PWM_PATH	"/Org/Tizen/System/Peripheral_io/Pwm"
-#define PERIPHERAL_DBUS_NAME		"org.tizen.system.peripheral_io"
+#define PERIPHERAL_DBUS_INTERFACE	"org.tizen.peripheral_io"
+#define PERIPHERAL_DBUS_PATH		"/Org/Tizen/Peripheral_io"
+#define PERIPHERAL_DBUS_GPIO_PATH	"/Org/Tizen/Peripheral_io/Gpio"
+#define PERIPHERAL_DBUS_I2C_PATH	"/Org/Tizen/Peripheral_io/I2c"
+#define PERIPHERAL_DBUS_PWM_PATH	"/Org/Tizen/Peripheral_io/Pwm"
+#define PERIPHERAL_DBUS_NAME		"org.tizen.peripheral_io"
 
 #define PERIPHERAL_METHOD_GPIO	"gpio"
 #define PERIPHERAL_METHOD_I2C	"i2c"
