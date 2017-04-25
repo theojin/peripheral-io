@@ -37,7 +37,7 @@ typedef enum {
 	PERIPHERAL_ERROR_NONE                = TIZEN_ERROR_NONE,                /**< Successful */
 	PERIPHERAL_ERROR_IO_ERROR            = TIZEN_ERROR_IO_ERROR,            /**< I/O error */
 	PERIPHERAL_ERROR_OUT_OF_MEMORY       = TIZEN_ERROR_OUT_OF_MEMORY,       /**< Out of memory */
-	PERIPHERAL_ERROR_PERMISSON_DENIED    = TIZEN_ERROR_PERMISSION_DENIED,   /**< Permission denied */
+	PERIPHERAL_ERROR_PERMISSION_DENIED   = TIZEN_ERROR_PERMISSION_DENIED,   /**< Permission denied */
 	PERIPHERAL_ERROR_RESOURCE_BUSY       = TIZEN_ERROR_RESOURCE_BUSY,       /**< Device or resource busy */
 	PERIPHERAL_ERROR_INVALID_PARAMETER   = TIZEN_ERROR_INVALID_PARAMETER,   /**< Invalid parameter */
 	PERIPHERAL_ERROR_NO_DATA             = TIZEN_ERROR_NO_DATA,             /**< No data available */
@@ -49,7 +49,7 @@ typedef enum {
 } peripheral_error_e;
 
 /**
- * @addtogroup CAPI_SYSTEM_PERPHERAL_GPIO_MODULE
+ * @addtogroup CAPI_SYSTEM_PERIPHERAL_GPIO_MODULE
  * @{
  */
 
@@ -90,7 +90,7 @@ typedef struct _peripheral_gpio_s* peripheral_gpio_h;
  * @retval #PERIPHERAL_ERROR_NONE Successful
  * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
  * @retval #PERIPHERAL_ERROR_OUT_OF_MEMORY Memory allocation failed
- * @retval #PERIPHERAL_ERROR_PERMISSON_DENIED Permission denied
+ * @retval #PERIPHERAL_ERROR_PERMISSION_DENIED Permission denied
  * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
  * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
  *
@@ -282,20 +282,81 @@ int peripheral_gpio_get_pin(peripheral_gpio_h gpio, int *gpio_pin);
 */
 
 /**
- * @addtogroup CAPI_SYSTEM_PERPHERAL_I2C_MODULE
+ * @addtogroup CAPI_SYSTEM_PERIPHERAL_I2C_MODULE
  * @{
  */
 
+/**
+ * @brief The handle to the i2c device
+ * @since_tizen 4.0
+ */
 typedef struct _peripheral_i2c_s *peripheral_i2c_h;
 
-int peripheral_i2c_init(int bus, peripheral_i2c_h *i2c);
+/**
+ * @brief Initializes i2c communication and creates i2c handle.
+ * @since_tizen 4.0
+ *
+ * @param[in] bus The i2c bus number that the slave device is connected
+ * @param[in] address The address of the slave device
+ * @param[out] i2c The i2c handle is created on success
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_OUT_OF_MEMORY Memory allocation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
+ *
+ * @see peripheral_i2c_close()
+ */
+int peripheral_i2c_open(int bus, int address, peripheral_i2c_h *i2c);
 
-int peripheral_i2c_stop(peripheral_i2c_h i2c);
+/**
+ * @brief Destory the i2c handle and release the communication.
+ * @since_tizen 4.0
+ *
+ * @param[in] i2c The i2c handle
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ *
+ * @see peripheral_i2c_open()
+ */
+int peripheral_i2c_close(peripheral_i2c_h i2c);
 
-int peripheral_i2c_set_address(peripheral_i2c_h i2c, int address);
-
+/**
+ * @brief Reads data from the i2c device.
+ * @since_tizen 4.0
+ *
+ * @param[in] i2c The handle to the i2c device
+ * @param[in, out] data The address of read buffer
+ * @param[in] length The size of data buffer (in bytes)
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ */
 int peripheral_i2c_read(peripheral_i2c_h i2c, uint8_t *data, int length);
 
+/**
+ * @brief Write data to the i2c device.
+ * @since_tizen 4.0
+ *
+ * @param[in] i2c The handle to the i2c device
+ * @param[in, out] data The address of buffer to write
+ * @param[in] length The size of data buffer (in bytes)
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ */
 int peripheral_i2c_write(peripheral_i2c_h i2c, uint8_t *data, int length);
 
 
@@ -304,7 +365,7 @@ int peripheral_i2c_write(peripheral_i2c_h i2c, uint8_t *data, int length);
 */
 
 /**
- * @addtogroup CAPI_SYSTEM_PERPHERAL_PWM_MODULE
+ * @addtogroup CAPI_SYSTEM_PERIPHERAL_PWM_MODULE
  * @{
  */
 
@@ -344,7 +405,7 @@ int peripheral_pwm_get_period(peripheral_pwm_context_h pwm, int *period);
 */
 
 /**
- * @addtogroup CAPI_SYSTEM_PERPHERAL_ADC_MODULE
+ * @addtogroup CAPI_SYSTEM_PERIPHERAL_ADC_MODULE
  * @{
  */
 
@@ -375,7 +436,7 @@ int peripheral_adc_close(peripheral_adc_context_h dev);
 */
 
 /**
- * @addtogroup CAPI_SYSTEM_PERPHERAL_UART_MODULE
+ * @addtogroup CAPI_SYSTEM_PERIPHERAL_UART_MODULE
  * @{
  */
 struct _peripheral_uart_s {
@@ -412,7 +473,7 @@ int peripheral_uart_write(peripheral_uart_context_h hnd, const char *buf, unsign
 */
 
 /**
- * @addtogroup CAPI_SYSTEM_PERPHERAL_SPI_MODULE
+ * @addtogroup CAPI_SYSTEM_PERIPHERAL_SPI_MODULE
  * @{
  */
 

@@ -271,16 +271,17 @@ int peripheral_dbus_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_e
 	return ret;
 }
 
-int peripheral_dbus_i2c_init(peripheral_i2c_h i2c, int bus)
+int peripheral_dbus_i2c_open(peripheral_i2c_h i2c, int bus, int address)
 {
 	GError *error = NULL;
 	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
 
 	if (i2c_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
 
-	if (peripheral_io_gdbus_i2c_call_init_sync(
+	if (peripheral_io_gdbus_i2c_call_open_sync(
 			i2c_proxy,
 			bus,
+			address,
 			&i2c->fd,
 			&ret,
 			NULL,
@@ -293,14 +294,14 @@ int peripheral_dbus_i2c_init(peripheral_i2c_h i2c, int bus)
 	return ret;
 }
 
-int peripheral_dbus_i2c_stop(peripheral_i2c_h i2c)
+int peripheral_dbus_i2c_close(peripheral_i2c_h i2c)
 {
 	GError *error = NULL;
 	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
 
 	if (i2c_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
 
-	if (peripheral_io_gdbus_i2c_call_stop_sync(
+	if (peripheral_io_gdbus_i2c_call_close_sync(
 			i2c_proxy,
 			i2c->fd,
 			&ret,
@@ -310,31 +311,6 @@ int peripheral_dbus_i2c_stop(peripheral_i2c_h i2c)
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
-
-	return ret;
-}
-
-int peripheral_dbus_i2c_set_address(peripheral_i2c_h i2c, int address)
-{
-	GError *error = NULL;
-	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
-
-	if (i2c_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
-
-	if (peripheral_io_gdbus_i2c_call_set_address_sync(
-			i2c_proxy,
-			i2c->fd,
-			address,
-			&ret,
-			NULL,
-			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
-		g_error_free(error);
-		return PERIPHERAL_ERROR_UNKNOWN;
-	}
-
-	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("%s failed, ret = %d", __func__, ret);
 
 	return ret;
 }

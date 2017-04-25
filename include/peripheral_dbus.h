@@ -39,7 +39,6 @@ void gpio_proxy_deinit();
 void i2c_proxy_deinit();
 void pwm_proxy_deinit();
 
-int peripheral_dbus_gpio(peripheral_gpio_h gpio, char * sensorid, char *funcname, int write_value, int *read_value);
 int peripheral_dbus_gpio_open(peripheral_gpio_h gpio);
 int peripheral_dbus_gpio_close(peripheral_gpio_h gpio);
 int peripheral_dbus_gpio_get_direction(peripheral_gpio_h gpio, peripheral_gpio_direction_e *direction);
@@ -49,9 +48,8 @@ int peripheral_dbus_gpio_write(peripheral_gpio_h gpio, int value);
 int peripheral_dbus_gpio_get_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e *edge);
 int peripheral_dbus_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e edge);
 
-int peripheral_dbus_i2c_init(peripheral_i2c_h i2c, int bus);
-int peripheral_dbus_i2c_stop(peripheral_i2c_h i2c);
-int peripheral_dbus_i2c_set_address(peripheral_i2c_h i2c, int address);
+int peripheral_dbus_i2c_open(peripheral_i2c_h i2c, int bus, int address);
+int peripheral_dbus_i2c_close(peripheral_i2c_h i2c);
 int peripheral_dbus_i2c_read(peripheral_i2c_h i2c, uint8_t *data, int length);
 int peripheral_dbus_i2c_write(peripheral_i2c_h i2c, uint8_t *data, int length);
 

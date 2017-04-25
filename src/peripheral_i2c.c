@@ -24,7 +24,7 @@
 #include "peripheral_common.h"
 #include "peripheral_internal.h"
 
-int peripheral_i2c_init(int bus, peripheral_i2c_h *i2c)
+int peripheral_i2c_open(int bus, int address, peripheral_i2c_h *i2c)
 {
 	peripheral_i2c_h handle;
 	int ret = PERIPHERAL_ERROR_NONE;
@@ -32,7 +32,6 @@ int peripheral_i2c_init(int bus, peripheral_i2c_h *i2c)
 	if (bus < 0)
 		return PERIPHERAL_ERROR_INVALID_PARAMETER;
 
-	/* Initialize peripheral_i2c_h */
 	handle = (peripheral_i2c_h)malloc(sizeof(struct _peripheral_i2c_s));
 
 	if (handle == NULL) {
@@ -42,7 +41,7 @@ int peripheral_i2c_init(int bus, peripheral_i2c_h *i2c)
 
 	i2c_proxy_init();
 
-	ret = peripheral_dbus_i2c_init(handle, bus);
+	ret = peripheral_dbus_i2c_open(handle, bus, address);
 
 	if (ret != PERIPHERAL_ERROR_NONE) {
 		_E("[PERIPHERAL] I2C init error\n");
@@ -54,26 +53,19 @@ int peripheral_i2c_init(int bus, peripheral_i2c_h *i2c)
 	return ret;
 }
 
-int peripheral_i2c_stop(peripheral_i2c_h i2c)
+int peripheral_i2c_close(peripheral_i2c_h i2c)
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
 	if (i2c == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
 
-	ret = peripheral_dbus_i2c_stop(i2c);
+	ret = peripheral_dbus_i2c_close(i2c);
 	gpio_proxy_deinit();
 
 	free(i2c);
 	i2c = NULL;
 
 	return ret;
-}
-
-int peripheral_i2c_set_address(peripheral_i2c_h i2c, int address)
-{
-	if (i2c == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
-
-	return peripheral_dbus_i2c_set_address(i2c, address);
 }
 
 int peripheral_i2c_read(peripheral_i2c_h i2c, uint8_t *data, int length)

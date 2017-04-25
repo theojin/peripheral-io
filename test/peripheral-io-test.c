@@ -84,14 +84,9 @@ int i2c_test(void)
 	if (scanf("%d", &bus_num) < 0)
 		return 0;
 
-	if ((peripheral_i2c_init(bus_num, &i2c)) != 0) {
-		printf("Failed to initialize I2C device\n");
+	if ((peripheral_i2c_open(bus_num, GY30_ADDR, &i2c)) != 0) {
+		printf("Failed to open I2C communication\n");
 		return 0;
-	}
-
-	if (peripheral_i2c_set_address(i2c, GY30_ADDR) != 0) {
-		printf("Failed to set address\n");
-		goto error;
 	}
 
 	buf[0] = GY30_CONT_HIGH_RES_MODE;
@@ -108,11 +103,11 @@ int i2c_test(void)
 		printf("Result [%d]\n", result);
 	}
 
-	peripheral_i2c_stop(i2c);
+	peripheral_i2c_close(i2c);
 	return 1;
 
 error:
-	peripheral_i2c_stop(i2c);
+	peripheral_i2c_close(i2c);
 	return 0;
 }
 
