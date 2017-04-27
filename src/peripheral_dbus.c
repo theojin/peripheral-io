@@ -78,17 +78,26 @@ void pwm_proxy_init(void)
 
 void gpio_proxy_deinit()
 {
-	gpio_proxy = NULL;
+	if (gpio_proxy) {
+		g_object_unref(gpio_proxy);
+		gpio_proxy = NULL;
+	}
 }
 
 void i2c_proxy_deinit()
 {
-	i2c_proxy = NULL;
+	if (i2c_proxy) {
+		g_object_unref(i2c_proxy);
+		i2c_proxy = NULL;
+	}
 }
 
 void pwm_proxy_deinit()
 {
-	pwm_proxy = NULL;
+	if (pwm_proxy) {
+		g_object_unref(pwm_proxy);
+		pwm_proxy = NULL;
+	}
 }
 
 int peripheral_dbus_gpio_open(peripheral_gpio_h gpio)
