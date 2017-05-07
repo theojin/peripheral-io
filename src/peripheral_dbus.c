@@ -122,7 +122,7 @@ void handle_gpio_changed(
 	if (!gpio)
 		return;
 
-	_D("gpio=%d state=%d",pin, state);
+	_D("gpio=%d state=%d", pin, state);
 
 	peripheral_gpio_isr_callback(pin);
 }
@@ -360,7 +360,7 @@ int peripheral_dbus_i2c_open(peripheral_i2c_h i2c, int bus, int address)
 			i2c_proxy,
 			bus,
 			address,
-			&i2c->fd,
+			&i2c->handle,
 			&ret,
 			NULL,
 			&error) == FALSE) {
@@ -381,7 +381,7 @@ int peripheral_dbus_i2c_close(peripheral_i2c_h i2c)
 
 	if (peripheral_io_gdbus_i2c_call_close_sync(
 			i2c_proxy,
-			i2c->fd,
+			i2c->handle,
 			&ret,
 			NULL,
 			&error) == FALSE) {
@@ -406,7 +406,7 @@ int peripheral_dbus_i2c_read(peripheral_i2c_h i2c, uint8_t *data, int length)
 
 	if (peripheral_io_gdbus_i2c_call_read_sync(
 			i2c_proxy,
-			i2c->fd,
+			i2c->handle,
 			length,
 			&data_array,
 			&ret,
@@ -448,7 +448,7 @@ int peripheral_dbus_i2c_write(peripheral_i2c_h i2c, uint8_t *data, int length)
 
 	if (peripheral_io_gdbus_i2c_call_write_sync(
 			i2c_proxy,
-			i2c->fd,
+			i2c->handle,
 			length,
 			g_data,
 			&ret,

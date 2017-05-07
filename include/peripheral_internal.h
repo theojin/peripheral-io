@@ -30,7 +30,7 @@ struct _peripheral_gpio_s {
  * @brief Internal struct for i2c context
  */
 struct _peripheral_i2c_s {
-	int fd;
+	uint handle;
 };
 
 #endif /* __PERIPHERAL_INTERNAL_H__ */
