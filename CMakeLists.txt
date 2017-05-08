@@ -42,13 +42,15 @@ SET(CMAKE_C_FLAGS_DEBUG "-O0 -g")
 
 SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--as-needed -Wl,--rpath=%{_libdir}")
 
-SET(SOURCES src/peripheral_adc.c
-			src/peripheral_gpio.c
-			src/peripheral_pwm.c
-			src/peripheral_uart.c
-			src/peripheral_dbus.c
-			src/peripheral_io_gdbus.c
+SET(SOURCES src/peripheral_gpio.c
 			src/peripheral_i2c.c
+			src/peripheral_pwm.c
+			src/peripheral_adc.c
+			src/peripheral_uart.c
+			src/peripheral_gdbus_gpio.c
+			src/peripheral_gdbus_i2c.c
+			src/peripheral_gdbus_pwm.c
+			src/peripheral_io_gdbus.c
 			src/peripheral_spi.c)
 
 ADD_LIBRARY(${fw_name} SHARED ${SOURCES})

@@ -20,7 +20,7 @@
 #include <assert.h>
 
 #include "peripheral_io.h"
-#include "peripheral_dbus.h"
+#include "peripheral_gdbus_pwm.h"
 #include "peripheral_common.h"
 
 #define PWM_ENABLE	1
@@ -47,7 +47,7 @@ peripheral_pwm_context_h peripheral_pwm_open(int device, int channel)
 	dev->device = device;
 	dev->channel = channel;
 
-	ret = peripheral_dbus_pwm_open(dev, device, channel);
+	ret = peripheral_gdbus_pwm_open(dev, device, channel);
 
 	if (ret != PERIPHERAL_ERROR_NONE) {
 		free(dev);
@@ -61,7 +61,7 @@ int peripheral_pwm_close(peripheral_pwm_context_h pwm)
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
-	ret = peripheral_dbus_pwm_close(pwm);
+	ret = peripheral_gdbus_pwm_close(pwm);
 	pwm_proxy_deinit();
 
 	if (ret == PERIPHERAL_ERROR_NONE) {
@@ -77,7 +77,7 @@ int	peripheral_pwm_set_duty_cycle(peripheral_pwm_context_h pwm, int duty_cycle)
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
-	ret = peripheral_dbus_pwm_set_duty_cycle(pwm, duty_cycle);
+	ret = peripheral_gdbus_pwm_set_duty_cycle(pwm, duty_cycle);
 
 	if (ret != PERIPHERAL_ERROR_NONE)
 		pwm->duty_cycle = duty_cycle;
@@ -89,7 +89,7 @@ int peripheral_pwm_set_period(peripheral_pwm_context_h pwm, int period)
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
-	ret = peripheral_dbus_pwm_set_period(pwm, period);
+	ret = peripheral_gdbus_pwm_set_period(pwm, period);
 
 	if (ret != PERIPHERAL_ERROR_NONE)
 		pwm->period = period;
@@ -101,7 +101,7 @@ int	peripheral_pwm_set_enabled(peripheral_pwm_context_h pwm, peripheral_pwm_stat
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
-	ret = peripheral_dbus_pwm_set_enable(pwm, enable);
+	ret = peripheral_gdbus_pwm_set_enable(pwm, enable);
 
 	if (ret != PERIPHERAL_ERROR_NONE)
 		pwm->enabled = enable;
@@ -121,7 +121,7 @@ int peripheral_pwm_get_duty_cycle(peripheral_pwm_context_h pwm, int *duty_cycle)
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
-	ret = peripheral_dbus_pwm_get_duty_cycle(pwm, duty_cycle);
+	ret = peripheral_gdbus_pwm_get_duty_cycle(pwm, duty_cycle);
 
 	if (ret != PERIPHERAL_ERROR_NONE)
 		pwm->duty_cycle = *duty_cycle;
@@ -133,7 +133,7 @@ int peripheral_pwm_get_period(peripheral_pwm_context_h pwm, int *period)
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
-	ret = peripheral_dbus_pwm_get_period(pwm, period);
+	ret = peripheral_gdbus_pwm_get_period(pwm, period);
 
 	if (ret != PERIPHERAL_ERROR_NONE)
 		pwm->period = *period;

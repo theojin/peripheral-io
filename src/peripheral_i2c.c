@@ -20,7 +20,7 @@
 #include <assert.h>
 
 #include "peripheral_io.h"
-#include "peripheral_dbus.h"
+#include "peripheral_gdbus_i2c.h"
 #include "peripheral_common.h"
 #include "peripheral_internal.h"
 
@@ -41,7 +41,7 @@ int peripheral_i2c_open(int bus, int address, peripheral_i2c_h *i2c)
 
 	i2c_proxy_init();
 
-	ret = peripheral_dbus_i2c_open(handle, bus, address);
+	ret = peripheral_gdbus_i2c_open(handle, bus, address);
 
 	if (ret != PERIPHERAL_ERROR_NONE) {
 		_E("[PERIPHERAL] I2C init error\n");
@@ -59,7 +59,7 @@ int peripheral_i2c_close(peripheral_i2c_h i2c)
 
 	if (i2c == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
 
-	ret = peripheral_dbus_i2c_close(i2c);
+	ret = peripheral_gdbus_i2c_close(i2c);
 	i2c_proxy_deinit();
 
 	free(i2c);
@@ -74,7 +74,7 @@ int peripheral_i2c_read(peripheral_i2c_h i2c, uint8_t *data, int length)
 
 	if (i2c == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
 
-	ret = peripheral_dbus_i2c_read(i2c, data, length);
+	ret = peripheral_gdbus_i2c_read(i2c, data, length);
 	/*
 	_D("I2C read data : ");
 	for (int i = 0 ; i < length ; i++)
@@ -87,5 +87,5 @@ int peripheral_i2c_write(peripheral_i2c_h i2c, uint8_t *data, int length)
 {
 	if (i2c == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
 
-	return peripheral_dbus_i2c_write(i2c, data, length);
+	return peripheral_gdbus_i2c_write(i2c, data, length);
 }

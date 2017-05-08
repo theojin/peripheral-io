@@ -31,28 +31,28 @@
 		if (expr) { \
 			_E("(%s)", #expr); \
 			return; \
-		}\
-	} while(0)
+		} \
+	} while (0)
 #define RETV_IF(expr, val) \
 	do {\
 		if (expr) { \
 			_E("(%s)", #expr); \
 			return (val); \
 		} \
-	} while(0)
+	} while (0)
 #define RETM_IF(expr, fmt, arg...) \
 	do {\
 		if (expr) { \
 			_E(fmt, ##arg); \
 			return; \
-		}\
-	} while(0)
+		} \
+	} while (0)
 #define RETVM_IF(expr, val, fmt, arg...) \
 	do {\
 		if (expr) { \
 			_E(fmt, ##arg); \
 			return (val); \
 		} \
-	} while(0)
+	} while (0)
 
 #endif /* __PERIPHERAL_COMMON_H__ */

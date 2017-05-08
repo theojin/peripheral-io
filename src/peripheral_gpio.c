@@ -20,7 +20,7 @@
 #include <assert.h>
 
 #include "peripheral_io.h"
-#include "peripheral_dbus.h"
+#include "peripheral_gdbus_gpio.h"
 #include "peripheral_common.h"
 #include "peripheral_internal.h"
 #include "peripheral_io_gdbus.h"
@@ -128,7 +128,7 @@ int peripheral_gpio_open(int gpio_pin, peripheral_gpio_h *gpio)
 
 	gpio_proxy_init();
 
-	ret = peripheral_dbus_gpio_open(handle);
+	ret = peripheral_gdbus_gpio_open(handle);
 
 	if (ret != PERIPHERAL_ERROR_NONE) {
 		free(handle);
@@ -153,7 +153,7 @@ int peripheral_gpio_close(peripheral_gpio_h gpio)
 		return PERIPHERAL_ERROR_INVALID_PARAMETER;
 
 	/* call gpio_close */
-	ret = peripheral_dbus_gpio_close(gpio);
+	ret = peripheral_gdbus_gpio_close(gpio);
 	if (ret)
 		ret = TIZEN_ERROR_IO_ERROR;
 	gpio_proxy_deinit();
@@ -175,7 +175,7 @@ int peripheral_gpio_get_direction(peripheral_gpio_h gpio, peripheral_gpio_direct
 	if (gpio == NULL)
 		return PERIPHERAL_ERROR_INVALID_PARAMETER;
 
-	ret = peripheral_dbus_gpio_get_direction(gpio, direction);
+	ret = peripheral_gdbus_gpio_get_direction(gpio, direction);
 	if (ret == PERIPHERAL_ERROR_NONE)
 		gpio->direction = (*direction);
 
@@ -198,7 +198,7 @@ int peripheral_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_direct
 		return PERIPHERAL_ERROR_INVALID_PARAMETER;
 
 	/* call gpio_set_direction */
-	ret = peripheral_dbus_gpio_set_direction(gpio, direction);
+	ret = peripheral_gdbus_gpio_set_direction(gpio, direction);
 	if (ret == PERIPHERAL_ERROR_NONE)
 		gpio->direction = direction;
 
@@ -217,7 +217,7 @@ int peripheral_gpio_read(peripheral_gpio_h gpio, int *value)
 		return PERIPHERAL_ERROR_INVALID_PARAMETER;
 
 	/* call gpio_read */
-	ret = peripheral_dbus_gpio_read(gpio, value);
+	ret = peripheral_gdbus_gpio_read(gpio, value);
 
 	return ret;
 }
@@ -234,7 +234,7 @@ int peripheral_gpio_write(peripheral_gpio_h gpio, int value)
 		return PERIPHERAL_ERROR_INVALID_PARAMETER;
 
 	/* call gpio_write */
-	ret = peripheral_dbus_gpio_write(gpio, value);
+	ret = peripheral_gdbus_gpio_write(gpio, value);
 
 	return ret;
 }
@@ -250,7 +250,7 @@ int peripheral_gpio_get_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e
 	if (gpio == NULL)
 		return PERIPHERAL_ERROR_INVALID_PARAMETER;
 
-	ret = peripheral_dbus_gpio_get_edge_mode(gpio, edge);
+	ret = peripheral_gdbus_gpio_get_edge_mode(gpio, edge);
 	if (ret == PERIPHERAL_ERROR_NONE)
 		gpio->edge = (*edge);
 
@@ -272,7 +272,7 @@ int peripheral_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e
 		return PERIPHERAL_ERROR_INVALID_PARAMETER;
 
 	/* call gpio_set_edge_mode */
-	ret = peripheral_dbus_gpio_set_edge_mode(gpio, edge);
+	ret = peripheral_gdbus_gpio_set_edge_mode(gpio, edge);
 	if (ret == PERIPHERAL_ERROR_NONE)
 		gpio->edge = edge;
 
@@ -290,7 +290,7 @@ int peripheral_gpio_register_cb(peripheral_gpio_h gpio, gpio_isr_cb callback, vo
 	if (gpio == NULL)
 		return PERIPHERAL_ERROR_INVALID_PARAMETER;
 
-	ret = peripheral_dbus_gpio_register_cb(gpio, callback, user_data);
+	ret = peripheral_gdbus_gpio_register_cb(gpio, callback, user_data);
 	if (ret != PERIPHERAL_ERROR_NONE)
 		return ret;
 
@@ -311,7 +311,7 @@ int peripheral_gpio_unregister_cb(peripheral_gpio_h gpio)
 	if (gpio == NULL)
 		return PERIPHERAL_ERROR_INVALID_PARAMETER;
 
-	ret = peripheral_dbus_gpio_unregister_cb(gpio);
+	ret = peripheral_gdbus_gpio_unregister_cb(gpio);
 	if (ret != PERIPHERAL_ERROR_NONE)
 		return ret;
 
