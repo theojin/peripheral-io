@@ -60,7 +60,7 @@ int peripheral_i2c_close(peripheral_i2c_h i2c)
 	if (i2c == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
 
 	ret = peripheral_dbus_i2c_close(i2c);
-	gpio_proxy_deinit();
+	i2c_proxy_deinit();
 
 	free(i2c);
 	i2c = NULL;
