@@ -296,6 +296,65 @@ int pwm_test_motor(void)
 	return 0;
 }
 
+
+int uart_test_accelerometer(void)
+{
+	peripheral_uart_h uart;
+	int ret;
+	int port;
+	int loop = 100;
+	unsigned char buf[1024];
+
+	printf("<<< uart_test_accelerometer >>>\n");
+	printf("artik710 : 4 \n");
+	printf(">> PORT NUMBER : ");
+
+	if (scanf("%d", &port) < 0)
+		return 0;
+
+	ret = peripheral_uart_open(port, &uart);
+	if (ret < 0)
+		goto err_open;
+	ret = peripheral_uart_set_baudrate(uart, PERIPHERAL_UART_BAUDRATE_4800);
+	if (ret < 0)
+		goto out;
+	ret = peripheral_uart_set_mode(uart,
+			PERIPHERAL_UART_BYTESIZE_8BIT,
+			PERIPHERAL_UART_PARITY_NONE,
+			PERIPHERAL_UART_STOPBITS_1BIT);
+	if (ret < 0)
+		goto out;
+	ret = peripheral_uart_set_flowcontrol(uart, true, false);
+	if (ret < 0)
+		goto out;
+
+	sleep(1);
+	ret = peripheral_uart_flush(uart);
+	if (ret < 0)
+		goto out;
+
+	while (loop--) {
+		ret = peripheral_uart_read(uart, buf, 13);
+		if (ret < 0) {
+			if (ret == PERIPHERAL_ERROR_NO_DATA)
+				printf("No data to read (%d)\n", ret);
+			else
+				printf("Failed to read (%d)\n", ret);
+			continue;
+		}
+		buf[ret] = 0;
+		printf("%s", buf);
+		usleep(100000);
+	}
+
+out:
+	peripheral_uart_close(uart);
+
+err_open:
+	printf(">> ret = %d\n", ret);
+	return 0;
+}
+
 int main(int argc, char **argv)
 {
 	int num = 1;
@@ -308,6 +367,7 @@ int main(int argc, char **argv)
 	printf(" 2. I2C Test\n");
 	printf(" 3. pwm led test\n");
 	printf(" 4. pwm motor test\n");
+	printf(" 5. uart accelerometer test\n");
 
 	printf(" 11. GPIO Interrupt Test\n");
 	printf(" 12. H/W IF I2C Test\n");
@@ -329,6 +389,9 @@ int main(int argc, char **argv)
 		break;
 	case 4:
 		ret = pwm_test_motor();
+		break;
+	case 5:
+		ret = uart_test_accelerometer();
 		break;
 	case 11:
 		ret = gpio_irq_test();
