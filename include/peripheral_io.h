@@ -611,7 +611,7 @@ int peripheral_uart_set_flowcontrol(peripheral_uart_h uart, bool xonxoff, bool r
  * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
  * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
  */
-int peripheral_uart_read(peripheral_uart_h uart, char *data, int length);
+int peripheral_uart_read(peripheral_uart_h uart, uint8_t *data, int length);
 
 /**
  * @brief Write data to the uart device.
@@ -627,7 +627,7 @@ int peripheral_uart_read(peripheral_uart_h uart, char *data, int length);
  * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
  * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
  */
-int peripheral_uart_write(peripheral_uart_h uart, const char *data, int length);
+int peripheral_uart_write(peripheral_uart_h uart, uint8_t *data, int length);
 
 /**
 * @}
