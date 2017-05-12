@@ -439,34 +439,195 @@ int peripheral_adc_close(peripheral_adc_context_h dev);
  * @addtogroup CAPI_SYSTEM_PERIPHERAL_UART_MODULE
  * @{
  */
-struct _peripheral_uart_s {
-	int fd;
-};
 
+/**
+ * @brief The handle to the uart device
+ * @since_tizen 4.0
+ */
+typedef struct _peripheral_uart_s *peripheral_uart_h;
 
-typedef struct _peripheral_uart_s* peripheral_uart_context_h;
+/**
+ * @brief Enumeration for Baud Rate.
+ */
+typedef enum {
+	PERIPHERAL_UART_BAUDRATE_0 = 0,
+	PERIPHERAL_UART_BAUDRATE_50,
+	PERIPHERAL_UART_BAUDRATE_75,
+	PERIPHERAL_UART_BAUDRATE_110,
+	PERIPHERAL_UART_BAUDRATE_134,
+	PERIPHERAL_UART_BAUDRATE_150,
+	PERIPHERAL_UART_BAUDRATE_200,
+	PERIPHERAL_UART_BAUDRATE_300,
+	PERIPHERAL_UART_BAUDRATE_600,
+	PERIPHERAL_UART_BAUDRATE_1200,
+	PERIPHERAL_UART_BAUDRATE_1800,
+	PERIPHERAL_UART_BAUDRATE_2400,
+	PERIPHERAL_UART_BAUDRATE_4800,
+	PERIPHERAL_UART_BAUDRATE_9600,
+	PERIPHERAL_UART_BAUDRATE_19200,
+	PERIPHERAL_UART_BAUDRATE_38400,
+	PERIPHERAL_UART_BAUDRATE_57600,
+	PERIPHERAL_UART_BAUDRATE_115200,
+	PERIPHERAL_UART_BAUDRATE_230400
+} peripheral_uart_baudrate_e;
 
+/**
+ * @brief Enumeration for Byte Size.
+ */
+typedef enum {
+	PERIPHERAL_UART_BYTESIZE_5BIT = 0,
+	PERIPHERAL_UART_BYTESIZE_6BIT,
+	PERIPHERAL_UART_BYTESIZE_7BIT,
+	PERIPHERAL_UART_BYTESIZE_8BIT
+} peripheral_uart_bytesize_e;
+
+/**
+ * @brief Enumeration for Parity Bit.
+ */
 typedef enum {
 	PERIPHERAL_UART_PARITY_NONE = 0,
 	PERIPHERAL_UART_PARITY_EVEN,
-	PERIPHERAL_UART_PARITY_ODD,
+	PERIPHERAL_UART_PARITY_ODD
 } peripheral_uart_parity_e;
 
-peripheral_uart_context_h peripheral_uart_init(const char *path);
+/**
+ * @brief Enumeration for Stop Bits.
+ */
+typedef enum {
+	PERIPHERAL_UART_STOPBITS_1BIT = 0,
+	PERIPHERAL_UART_STOPBITS_2BIT
+} peripheral_uart_stopbits_e;
 
-int peripheral_uart_stop(peripheral_uart_context_h hnd);
+/**
+ * @brief Initializes uart communication and creates uart handle.
+ * @since_tizen 4.0
+ *
+ * @param[in] port The uart port number that the slave device is connected
+ * @param[out] uart The uart handle is created on success
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_OUT_OF_MEMORY Memory allocation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
+ *
+ * @see peripheral_uart_close()
+ */
+int peripheral_uart_open(int port, peripheral_uart_h *uart);
 
-int peripheral_uart_flush(peripheral_uart_context_h hnd);
+/**
+ * @brief Destory the uart handle and release the communication.
+ * @since_tizen 4.0
+ *
+ * @param[in] uart The handle to the uart device
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ *
+ * @see peripheral_uart_open()
+ */
+int peripheral_uart_close(peripheral_uart_h uart);
 
-int peripheral_uart_set_baudrate(peripheral_uart_context_h hnd, unsigned int baud);
+/**
+ * @brief Flush all input that has received but not yet been read by the uart
+ *        device, or all output written but not transmitted to the uart device.
+ * @since_tizen 4.0
+ *
+ * @param[in] uart The uart handle
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ */
+int peripheral_uart_flush(peripheral_uart_h uart);
 
-int peripheral_uart_set_mode(peripheral_uart_context_h hnd, int bytesize, peripheral_uart_parity_e parity, int stopbits);
+/**
+ * @brief Sets baudrate of the uart device.
+ * @since_tizen 4.0
+ *
+ * @param[in] uart The handle to the uart device to set
+ * @param[in] baud Baudrate of the uart device
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
+ */
+int peripheral_uart_set_baudrate(peripheral_uart_h uart, peripheral_uart_baudrate_e baud);
 
-int peripheral_uart_set_flowcontrol(peripheral_uart_context_h hnd, int xonxoff, int rtscts);
+/**
+ * @brief Sets mode of the uart device.
+ * @since_tizen 4.0
+ *
+ * @param[in] uart The handle to the uart device to set
+ * @param[in] bytesize Byte size of the uart device
+ * @param[in] parity Parity bits of the uart device
+ * @param[in] stopbits Stop bits of the uart device
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
+ */
+int peripheral_uart_set_mode(peripheral_uart_h uart, peripheral_uart_bytesize_e bytesize, peripheral_uart_parity_e parity, peripheral_uart_stopbits_e stopbits);
 
-int peripheral_uart_read(peripheral_uart_context_h hnd, char *buf, unsigned int length);
+/**
+ * @brief Sets flow control of the uart device.
+ * @since_tizen 4.0
+ *
+ * @param[in] uart The handle to the uart device to set
+ * @param[in] xonxoff Turns a transmitter on or off
+ * @param[in] rtscts Turns "Request to Send/Clear to Send" on or off
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
+ */
+int peripheral_uart_set_flowcontrol(peripheral_uart_h uart, bool xonxoff, bool rtscts);
 
-int peripheral_uart_write(peripheral_uart_context_h hnd, const char *buf, unsigned int length);
+/**
+ * @brief Reads data from the uart device.
+ * @since_tizen 4.0
+ *
+ * @param[in] uart The handle to the uart device
+ * @param[out] data The address of read buffer
+ * @param[out] length The size of data buffer (in bytes)
+ *
+ * @return the number of bytes read on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ */
+int peripheral_uart_read(peripheral_uart_h uart, char *data, int length);
+
+/**
+ * @brief Write data to the uart device.
+ * @since_tizen 4.0
+ *
+ * @param[in] uart The handle to the uart device
+ * @param[in] data The address of buffer to write
+ * @param[in] length The size of data (in bytes)
+ *
+ * @return the number of bytes write on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ */
+int peripheral_uart_write(peripheral_uart_h uart, const char *data, int length);
 
 /**
 * @}

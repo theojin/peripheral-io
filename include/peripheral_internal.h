@@ -33,4 +33,11 @@ struct _peripheral_i2c_s {
 	uint handle;
 };
 
+/**
+ * @brief Internal struct for uart context
+ */
+struct _peripheral_uart_s {
+	uint handle;
+};
+
 #endif /* __PERIPHERAL_INTERNAL_H__ */
