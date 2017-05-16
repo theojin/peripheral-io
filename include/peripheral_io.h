@@ -369,14 +369,6 @@ int peripheral_i2c_write(peripheral_i2c_h i2c, uint8_t *data, int length);
  * @{
  */
 
-struct _peripheral_pwm_s {
-	int device;
-	int channel;
-	int period;
-	int duty_cycle;
-	int enabled;
-};
-
 /**
  * @brief The handle to the pwm device
  * @since_tizen 4.0
@@ -401,9 +393,9 @@ int peripheral_pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle);
 
 int peripheral_pwm_get_duty_cycle(peripheral_pwm_h pwm, int *duty_cycle);
 
-int peripheral_pwm_set_enabled(peripheral_pwm_h pwm, peripheral_pwm_state_e enable);
+int peripheral_pwm_set_enable(peripheral_pwm_h pwm, peripheral_pwm_state_e enable);
 
-int peripheral_pwm_is_enabled(peripheral_pwm_h pwm);
+int peripheral_pwm_get_enable(peripheral_pwm_h pwm, peripheral_pwm_state_e *enable);
 
 /**
 * @}

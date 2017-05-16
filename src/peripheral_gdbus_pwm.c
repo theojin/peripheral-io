@@ -61,6 +61,7 @@ int peripheral_gdbus_pwm_open(peripheral_pwm_h pwm, int device, int channel)
 			pwm_proxy,
 			device,
 			channel,
+			&pwm->handle,
 			&ret,
 			NULL,
 			&error) == FALSE) {
@@ -82,8 +83,7 @@ int peripheral_gdbus_pwm_close(peripheral_pwm_h pwm)
 	/* TODO: Need to reorganize arguments */
 	if (peripheral_io_gdbus_pwm_call_close_sync(
 			pwm_proxy,
-			pwm->device,
-			pwm->channel,
+			pwm->handle,
 			&ret,
 			NULL,
 			&error) == FALSE) {
@@ -105,8 +105,7 @@ int peripheral_gdbus_pwm_set_period(peripheral_pwm_h pwm, int period)
 	/* TODO: Need to reorganize arguments */
 	if (peripheral_io_gdbus_pwm_call_set_period_sync(
 			pwm_proxy,
-			pwm->device,
-			pwm->channel,
+			pwm->handle,
 			period,
 			&ret,
 			NULL,
@@ -129,9 +128,8 @@ int peripheral_gdbus_pwm_get_period(peripheral_pwm_h pwm, int *period)
 	/* TODO: Need to reorganize arguments */
 	if (peripheral_io_gdbus_pwm_call_get_period_sync(
 			pwm_proxy,
-			pwm->device,
-			pwm->channel,
-			period,
+			pwm->handle,
+			(gint*)period,
 			&ret,
 			NULL,
 			&error) == FALSE) {
@@ -153,8 +151,7 @@ int peripheral_gdbus_pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle)
 	/* TODO: Need to reorganize arguments */
 	if (peripheral_io_gdbus_pwm_call_set_duty_cycle_sync(
 			pwm_proxy,
-			pwm->device,
-			pwm->channel,
+			pwm->handle,
 			duty_cycle,
 			&ret,
 			NULL,
@@ -177,9 +174,8 @@ int peripheral_gdbus_pwm_get_duty_cycle(peripheral_pwm_h pwm, int *duty_cycle)
 	/* TODO: Need to reorganize arguments */
 	if (peripheral_io_gdbus_pwm_call_get_duty_cycle_sync(
 			pwm_proxy,
-			pwm->device,
-			pwm->channel,
-			duty_cycle,
+			pwm->handle,
+			(gint*)duty_cycle,
 			&ret,
 			NULL,
 			&error) == FALSE) {
@@ -201,8 +197,7 @@ int peripheral_gdbus_pwm_set_enable(peripheral_pwm_h pwm, peripheral_pwm_state_e
 	/* TODO: Need to reorganize arguments */
 	if (peripheral_io_gdbus_pwm_call_set_enable_sync(
 			pwm_proxy,
-			pwm->device,
-			pwm->channel,
+			pwm->handle,
 			enable,
 			&ret,
 			NULL,
@@ -214,3 +209,26 @@ int peripheral_gdbus_pwm_set_enable(peripheral_pwm_h pwm, peripheral_pwm_state_e
 
 	return ret;
 }
+
+int peripheral_gdbus_pwm_get_enable(peripheral_pwm_h pwm, bool *enable)
+{
+	GError *error = NULL;
+	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
+
+	if (pwm_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
+
+	if (peripheral_io_gdbus_pwm_call_get_enable_sync(
+			pwm_proxy,
+			pwm->handle,
+			(gint*)enable,
+			&ret,
+			NULL,
+			&error) == FALSE) {
+		_E("%s", error->message);
+		g_error_free(error);
+		return PERIPHERAL_ERROR_UNKNOWN;
+	}
+
+	return ret;
+}
+

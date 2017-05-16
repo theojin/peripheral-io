@@ -34,6 +34,13 @@ struct _peripheral_i2c_s {
 };
 
 /**
+ * @brief Internal struct for pwm context
+ */
+struct _peripheral_pwm_s {
+	uint handle;
+};
+
+/**
  * @brief Internal struct for uart context
  */
 struct _peripheral_uart_s {

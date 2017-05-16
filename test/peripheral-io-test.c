@@ -227,7 +227,7 @@ int pwm_test_led(void)
 	peripheral_pwm_open(device, channel, &dev);
 	peripheral_pwm_set_period(dev, period);	/* period: nanosecond */
 	peripheral_pwm_set_duty_cycle(dev, duty_cycle);	/* duty_cycle: nanosecond */
-	peripheral_pwm_set_enabled(dev, 1);	/* 0: disable, 1: enable */
+	peripheral_pwm_set_enable(dev, 1);	/* 0: disable, 1: enable */
 
 	while (cnt < 5) {
 		for (set_duty_cycle = period; set_duty_cycle > 0; set_duty_cycle -= 50) {
@@ -248,7 +248,7 @@ int pwm_test_led(void)
 		}
 		cnt++;
 	}
-	peripheral_pwm_set_enabled(dev, 0);	/* 0: disable, 1: enable */
+	peripheral_pwm_set_enable(dev, 0);	/* 0: disable, 1: enable */
 	peripheral_pwm_close(dev);
 
 	return 0;
@@ -285,12 +285,12 @@ int pwm_test_motor(void)
 			printf("set degree: %d\n", degree[idx]);
 			peripheral_pwm_set_period(dev, period);
 			peripheral_pwm_set_duty_cycle(dev, duty_cycle);
-			peripheral_pwm_set_enabled(dev, 1);		/* 0: disable, 1: enable */
+			peripheral_pwm_set_enable(dev, 1);		/* 0: disable, 1: enable */
 			usleep(500000);
 		}
 	}
 
-	peripheral_pwm_set_enabled(dev, 0);	/* 0: disable, 1: enable */
+	peripheral_pwm_set_enable(dev, 0);	/* 0: disable, 1: enable */
 	peripheral_pwm_close(dev);
 
 	return 0;
