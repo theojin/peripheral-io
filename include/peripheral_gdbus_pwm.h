@@ -20,12 +20,12 @@
 void pwm_proxy_init(void);
 void pwm_proxy_deinit(void);
 
-int peripheral_gdbus_pwm_open(peripheral_pwm_context_h dev, int device, int channel);
-int peripheral_gdbus_pwm_close(peripheral_pwm_context_h dev);
-int peripheral_gdbus_pwm_get_duty_cycle(peripheral_pwm_context_h dev, int *duty_cycle);
-int peripheral_gdbus_pwm_set_duty_cycle(peripheral_pwm_context_h dev, int duty_cycle);
-int peripheral_gdbus_pwm_get_period(peripheral_pwm_context_h dev, int *period);
-int peripheral_gdbus_pwm_set_period(peripheral_pwm_context_h dev, int period);
-int peripheral_gdbus_pwm_set_enable(peripheral_pwm_context_h dev, peripheral_pwm_state_e enable);
+int peripheral_gdbus_pwm_open(peripheral_pwm_h dev, int device, int channel);
+int peripheral_gdbus_pwm_close(peripheral_pwm_h dev);
+int peripheral_gdbus_pwm_get_duty_cycle(peripheral_pwm_h dev, int *duty_cycle);
+int peripheral_gdbus_pwm_set_duty_cycle(peripheral_pwm_h dev, int duty_cycle);
+int peripheral_gdbus_pwm_get_period(peripheral_pwm_h dev, int *period);
+int peripheral_gdbus_pwm_set_period(peripheral_pwm_h dev, int period);
+int peripheral_gdbus_pwm_set_enable(peripheral_pwm_h dev, peripheral_pwm_state_e enable);
 
 #endif /* __PERIPHERAL_GDBUS_PWM_H__ */

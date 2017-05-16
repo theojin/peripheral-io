@@ -49,7 +49,7 @@ void pwm_proxy_deinit()
 	}
 }
 
-int peripheral_gdbus_pwm_open(peripheral_pwm_context_h dev, int device, int channel)
+int peripheral_gdbus_pwm_open(peripheral_pwm_h dev, int device, int channel)
 {
 	GError *error = NULL;
 	gint32 ret = PERIPHERAL_ERROR_NONE;
@@ -72,7 +72,7 @@ int peripheral_gdbus_pwm_open(peripheral_pwm_context_h dev, int device, int chan
 	return ret;
 }
 
-int peripheral_gdbus_pwm_close(peripheral_pwm_context_h dev)
+int peripheral_gdbus_pwm_close(peripheral_pwm_h dev)
 {
 	GError *error = NULL;
 	gint32 ret = PERIPHERAL_ERROR_NONE;
@@ -95,7 +95,7 @@ int peripheral_gdbus_pwm_close(peripheral_pwm_context_h dev)
 	return ret;
 }
 
-int peripheral_gdbus_pwm_get_duty_cycle(peripheral_pwm_context_h dev, int *duty_cycle)
+int peripheral_gdbus_pwm_get_duty_cycle(peripheral_pwm_h dev, int *duty_cycle)
 {
 	GError *error = NULL;
 	gint32 ret = PERIPHERAL_ERROR_NONE;
@@ -118,7 +118,7 @@ int peripheral_gdbus_pwm_get_duty_cycle(peripheral_pwm_context_h dev, int *duty_
 
 	return ret;
 }
-int peripheral_gdbus_pwm_set_duty_cycle(peripheral_pwm_context_h dev, int duty_cycle)
+int peripheral_gdbus_pwm_set_duty_cycle(peripheral_pwm_h dev, int duty_cycle)
 {
 	GError *error = NULL;
 	gint32 ret = PERIPHERAL_ERROR_NONE;
@@ -142,7 +142,7 @@ int peripheral_gdbus_pwm_set_duty_cycle(peripheral_pwm_context_h dev, int duty_c
 	return ret;
 }
 
-int peripheral_gdbus_pwm_get_period(peripheral_pwm_context_h dev, int *period)
+int peripheral_gdbus_pwm_get_period(peripheral_pwm_h dev, int *period)
 {
 	GError *error = NULL;
 	gint32 ret = PERIPHERAL_ERROR_NONE;
@@ -166,7 +166,7 @@ int peripheral_gdbus_pwm_get_period(peripheral_pwm_context_h dev, int *period)
 	return ret;
 }
 
-int peripheral_gdbus_pwm_set_period(peripheral_pwm_context_h dev, int period)
+int peripheral_gdbus_pwm_set_period(peripheral_pwm_h dev, int period)
 {
 	GError *error = NULL;
 	gint32 ret = PERIPHERAL_ERROR_NONE;
@@ -190,7 +190,7 @@ int peripheral_gdbus_pwm_set_period(peripheral_pwm_context_h dev, int period)
 	return ret;
 }
 
-int peripheral_gdbus_pwm_set_enable(peripheral_pwm_context_h dev, peripheral_pwm_state_e enable)
+int peripheral_gdbus_pwm_set_enable(peripheral_pwm_h dev, peripheral_pwm_state_e enable)
 {
 	GError *error = NULL;
 	gint32 ret = PERIPHERAL_ERROR_NONE;

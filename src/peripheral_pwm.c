@@ -26,19 +26,19 @@
 #define PWM_ENABLE	1
 #define PWM_DISABLE	0
 
-peripheral_pwm_context_h peripheral_pwm_open(int device, int channel)
+peripheral_pwm_h peripheral_pwm_open(int device, int channel)
 {
-	peripheral_pwm_context_h dev = NULL;
+	peripheral_pwm_h dev = NULL;
 	int ret = PERIPHERAL_ERROR_NONE;
 
 	assert(device >= 0);
 	assert(channel >= 0);
 
 	/* Initialize */
-	dev = (peripheral_pwm_context_h)malloc(sizeof(struct _peripheral_pwm_s));
+	dev = (peripheral_pwm_h)malloc(sizeof(struct _peripheral_pwm_s));
 
 	if (dev == NULL) {
-		_E("Failed to allocate peripheral_pwm_context_h");
+		_E("Failed to allocate peripheral_pwm_h");
 		return NULL;
 	}
 
@@ -57,7 +57,7 @@ peripheral_pwm_context_h peripheral_pwm_open(int device, int channel)
 	return dev;
 }
 
-int peripheral_pwm_close(peripheral_pwm_context_h pwm)
+int peripheral_pwm_close(peripheral_pwm_h pwm)
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
@@ -73,7 +73,7 @@ int peripheral_pwm_close(peripheral_pwm_context_h pwm)
 }
 
 
-int	peripheral_pwm_set_duty_cycle(peripheral_pwm_context_h pwm, int duty_cycle)
+int	peripheral_pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle)
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
@@ -85,7 +85,7 @@ int	peripheral_pwm_set_duty_cycle(peripheral_pwm_context_h pwm, int duty_cycle)
 	return ret;
 }
 
-int peripheral_pwm_set_period(peripheral_pwm_context_h pwm, int period)
+int peripheral_pwm_set_period(peripheral_pwm_h pwm, int period)
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
@@ -97,7 +97,7 @@ int peripheral_pwm_set_period(peripheral_pwm_context_h pwm, int period)
 	return ret;
 }
 
-int	peripheral_pwm_set_enabled(peripheral_pwm_context_h pwm, peripheral_pwm_state_e enable)
+int	peripheral_pwm_set_enabled(peripheral_pwm_h pwm, peripheral_pwm_state_e enable)
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
@@ -109,7 +109,7 @@ int	peripheral_pwm_set_enabled(peripheral_pwm_context_h pwm, peripheral_pwm_stat
 	return PERIPHERAL_ERROR_NONE;
 }
 
-int peripheral_pwm_is_enabled(peripheral_pwm_context_h pwm)
+int peripheral_pwm_is_enabled(peripheral_pwm_h pwm)
 {
 	if (pwm->enabled == PWM_ENABLE)
 		return PWM_ENABLE;
@@ -117,7 +117,7 @@ int peripheral_pwm_is_enabled(peripheral_pwm_context_h pwm)
 		return PWM_DISABLE;
 }
 
-int peripheral_pwm_get_duty_cycle(peripheral_pwm_context_h pwm, int *duty_cycle)
+int peripheral_pwm_get_duty_cycle(peripheral_pwm_h pwm, int *duty_cycle)
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
@@ -129,7 +129,7 @@ int peripheral_pwm_get_duty_cycle(peripheral_pwm_context_h pwm, int *duty_cycle)
 	return ret;
 }
 
-int peripheral_pwm_get_period(peripheral_pwm_context_h pwm, int *period)
+int peripheral_pwm_get_period(peripheral_pwm_h pwm, int *period)
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 

@@ -376,28 +376,33 @@ struct _peripheral_pwm_s {
 	int duty_cycle;
 	int enabled;
 };
-typedef struct _peripheral_pwm_s *peripheral_pwm_context_h;
+
+/**
+ * @brief The handle to the pwm device
+ * @since_tizen 4.0
+ */
+typedef struct _peripheral_pwm_s *peripheral_pwm_h;
 
 typedef enum {
 	PERIPHERAL_PWM_DISABLE = 0,
 	PERIPHERAL_PWM_ENABLE,
 } peripheral_pwm_state_e;
 
-peripheral_pwm_context_h peripheral_pwm_open(int device, int channel);
+peripheral_pwm_h peripheral_pwm_open(int device, int channel);
 
-int peripheral_pwm_close(peripheral_pwm_context_h pwm);
+int peripheral_pwm_close(peripheral_pwm_h pwm);
 
-int peripheral_pwm_set_duty_cycle(peripheral_pwm_context_h pwm, int duty_cycle);
+int peripheral_pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle);
 
-int peripheral_pwm_set_period(peripheral_pwm_context_h pwm, int period);
+int peripheral_pwm_set_period(peripheral_pwm_h pwm, int period);
 
-int peripheral_pwm_set_enabled(peripheral_pwm_context_h pwm, peripheral_pwm_state_e enable);
+int peripheral_pwm_set_enabled(peripheral_pwm_h pwm, peripheral_pwm_state_e enable);
 
-int peripheral_pwm_is_enabled(peripheral_pwm_context_h pwm);
+int peripheral_pwm_is_enabled(peripheral_pwm_h pwm);
 
-int peripheral_pwm_get_duty_cycle(peripheral_pwm_context_h pwm, int *duty_cycle);
+int peripheral_pwm_get_duty_cycle(peripheral_pwm_h pwm, int *duty_cycle);
 
-int peripheral_pwm_get_period(peripheral_pwm_context_h pwm, int *period);
+int peripheral_pwm_get_period(peripheral_pwm_h pwm, int *period);
 
 
 /**

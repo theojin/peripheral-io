@@ -220,7 +220,7 @@ int pwm_test_led(void)
 
 	int set_duty_cycle;
 	int get_period, get_duty_cycle;
-	peripheral_pwm_context_h dev;
+	peripheral_pwm_h dev;
 
 	printf("<<< pwm_test >>>\n");
 
@@ -261,7 +261,7 @@ int pwm_test_motor(void)
 	int duty_cycle = 1500000;
 	int cnt = 0, idx = 0;
 	int degree[3] = {0, 45, 90};
-	peripheral_pwm_context_h dev;
+	peripheral_pwm_h dev;
 
 	printf("<<< pwm_test_motor >>>\n");
 
