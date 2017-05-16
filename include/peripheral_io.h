@@ -388,7 +388,7 @@ typedef enum {
 	PERIPHERAL_PWM_ENABLE,
 } peripheral_pwm_state_e;
 
-peripheral_pwm_h peripheral_pwm_open(int device, int channel);
+int peripheral_pwm_open(int device, int channel, peripheral_pwm_h *pwm);
 
 int peripheral_pwm_close(peripheral_pwm_h pwm);
 

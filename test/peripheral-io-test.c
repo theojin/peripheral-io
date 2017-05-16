@@ -224,7 +224,7 @@ int pwm_test_led(void)
 
 	printf("<<< pwm_test >>>\n");
 
-	dev = peripheral_pwm_open(device, channel);
+	peripheral_pwm_open(device, channel, &dev);
 	peripheral_pwm_set_period(dev, period);	/* period: nanosecond */
 	peripheral_pwm_set_duty_cycle(dev, duty_cycle);	/* duty_cycle: nanosecond */
 	peripheral_pwm_set_enabled(dev, 1);	/* 0: disable, 1: enable */
@@ -265,7 +265,7 @@ int pwm_test_motor(void)
 
 	printf("<<< pwm_test_motor >>>\n");
 
-	dev = peripheral_pwm_open(device, channel);
+	peripheral_pwm_open(device, channel, &dev);
 	for (cnt = 0; cnt < 5; cnt++) {
 		for (idx = 0; idx < 3; idx++) {
 			switch (degree[idx]) {

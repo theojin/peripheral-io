@@ -26,7 +26,7 @@
 #define PWM_ENABLE	1
 #define PWM_DISABLE	0
 
-peripheral_pwm_h peripheral_pwm_open(int device, int channel)
+int peripheral_pwm_open(int device, int channel, peripheral_pwm_h* pwm)
 {
 	peripheral_pwm_h dev = NULL;
 	int ret = PERIPHERAL_ERROR_NONE;
@@ -39,7 +39,7 @@ peripheral_pwm_h peripheral_pwm_open(int device, int channel)
 
 	if (dev == NULL) {
 		_E("Failed to allocate peripheral_pwm_h");
-		return NULL;
+		return PERIPHERAL_ERROR_OUT_OF_MEMORY;
 	}
 
 	pwm_proxy_init();
@@ -50,11 +50,13 @@ peripheral_pwm_h peripheral_pwm_open(int device, int channel)
 	ret = peripheral_gdbus_pwm_open(dev, device, channel);
 
 	if (ret != PERIPHERAL_ERROR_NONE) {
+		_E("PWM open error (%d, %d)", device, channel);
 		free(dev);
 		dev = NULL;
 	}
+	*pwm = dev;
 
-	return dev;
+	return ret;
 }
 
 int peripheral_pwm_close(peripheral_pwm_h pwm)
