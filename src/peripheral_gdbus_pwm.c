@@ -95,7 +95,7 @@ int peripheral_gdbus_pwm_close(peripheral_pwm_h dev)
 	return ret;
 }
 
-int peripheral_gdbus_pwm_get_duty_cycle(peripheral_pwm_h dev, int *duty_cycle)
+int peripheral_gdbus_pwm_set_period(peripheral_pwm_h dev, int period)
 {
 	GError *error = NULL;
 	gint32 ret = PERIPHERAL_ERROR_NONE;
@@ -103,34 +103,11 @@ int peripheral_gdbus_pwm_get_duty_cycle(peripheral_pwm_h dev, int *duty_cycle)
 	if (pwm_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
 
 	/* TODO: Need to reorganize arguments */
-	if (peripheral_io_gdbus_pwm_call_get_duty_cycle_sync(
+	if (peripheral_io_gdbus_pwm_call_set_period_sync(
 			pwm_proxy,
 			dev->device,
 			dev->channel,
-			duty_cycle,
-			&ret,
-			NULL,
-			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
-		g_error_free(error);
-		return PERIPHERAL_ERROR_UNKNOWN;
-	}
-
-	return ret;
-}
-int peripheral_gdbus_pwm_set_duty_cycle(peripheral_pwm_h dev, int duty_cycle)
-{
-	GError *error = NULL;
-	gint32 ret = PERIPHERAL_ERROR_NONE;
-
-	if (pwm_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
-
-	/* TODO: Need to reorganize arguments */
-	if (peripheral_io_gdbus_pwm_call_set_duty_cycle_sync(
-			pwm_proxy,
-			dev->device,
-			dev->channel,
-			duty_cycle,
+			period,
 			&ret,
 			NULL,
 			&error) == FALSE) {
@@ -166,7 +143,7 @@ int peripheral_gdbus_pwm_get_period(peripheral_pwm_h dev, int *period)
 	return ret;
 }
 
-int peripheral_gdbus_pwm_set_period(peripheral_pwm_h dev, int period)
+int peripheral_gdbus_pwm_set_duty_cycle(peripheral_pwm_h dev, int duty_cycle)
 {
 	GError *error = NULL;
 	gint32 ret = PERIPHERAL_ERROR_NONE;
@@ -174,11 +151,35 @@ int peripheral_gdbus_pwm_set_period(peripheral_pwm_h dev, int period)
 	if (pwm_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
 
 	/* TODO: Need to reorganize arguments */
-	if (peripheral_io_gdbus_pwm_call_set_period_sync(
+	if (peripheral_io_gdbus_pwm_call_set_duty_cycle_sync(
 			pwm_proxy,
 			dev->device,
 			dev->channel,
-			period,
+			duty_cycle,
+			&ret,
+			NULL,
+			&error) == FALSE) {
+		_E("Error in %s() : %s\n", __func__, error->message);
+		g_error_free(error);
+		return PERIPHERAL_ERROR_UNKNOWN;
+	}
+
+	return ret;
+}
+
+int peripheral_gdbus_pwm_get_duty_cycle(peripheral_pwm_h dev, int *duty_cycle)
+{
+	GError *error = NULL;
+	gint32 ret = PERIPHERAL_ERROR_NONE;
+
+	if (pwm_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
+
+	/* TODO: Need to reorganize arguments */
+	if (peripheral_io_gdbus_pwm_call_get_duty_cycle_sync(
+			pwm_proxy,
+			dev->device,
+			dev->channel,
+			duty_cycle,
 			&ret,
 			NULL,
 			&error) == FALSE) {

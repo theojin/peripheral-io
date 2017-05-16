@@ -74,19 +74,6 @@ int peripheral_pwm_close(peripheral_pwm_h pwm)
 	return ret;
 }
 
-
-int	peripheral_pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle)
-{
-	int ret = PERIPHERAL_ERROR_NONE;
-
-	ret = peripheral_gdbus_pwm_set_duty_cycle(pwm, duty_cycle);
-
-	if (ret != PERIPHERAL_ERROR_NONE)
-		pwm->duty_cycle = duty_cycle;
-
-	return ret;
-}
-
 int peripheral_pwm_set_period(peripheral_pwm_h pwm, int period)
 {
 	int ret = PERIPHERAL_ERROR_NONE;
@@ -99,7 +86,43 @@ int peripheral_pwm_set_period(peripheral_pwm_h pwm, int period)
 	return ret;
 }
 
-int	peripheral_pwm_set_enabled(peripheral_pwm_h pwm, peripheral_pwm_state_e enable)
+int peripheral_pwm_get_period(peripheral_pwm_h pwm, int *period)
+{
+	int ret = PERIPHERAL_ERROR_NONE;
+
+	ret = peripheral_gdbus_pwm_get_period(pwm, period);
+
+	if (ret != PERIPHERAL_ERROR_NONE)
+		pwm->period = *period;
+
+	return ret;
+}
+
+int peripheral_pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle)
+{
+	int ret = PERIPHERAL_ERROR_NONE;
+
+	ret = peripheral_gdbus_pwm_set_duty_cycle(pwm, duty_cycle);
+
+	if (ret != PERIPHERAL_ERROR_NONE)
+		pwm->duty_cycle = duty_cycle;
+
+	return ret;
+}
+
+int peripheral_pwm_get_duty_cycle(peripheral_pwm_h pwm, int *duty_cycle)
+{
+	int ret = PERIPHERAL_ERROR_NONE;
+
+	ret = peripheral_gdbus_pwm_get_duty_cycle(pwm, duty_cycle);
+
+	if (ret != PERIPHERAL_ERROR_NONE)
+		pwm->duty_cycle = *duty_cycle;
+
+	return ret;
+}
+
+int peripheral_pwm_set_enabled(peripheral_pwm_h pwm, peripheral_pwm_state_e enable)
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
@@ -119,26 +142,3 @@ int peripheral_pwm_is_enabled(peripheral_pwm_h pwm)
 		return PWM_DISABLE;
 }
 
-int peripheral_pwm_get_duty_cycle(peripheral_pwm_h pwm, int *duty_cycle)
-{
-	int ret = PERIPHERAL_ERROR_NONE;
-
-	ret = peripheral_gdbus_pwm_get_duty_cycle(pwm, duty_cycle);
-
-	if (ret != PERIPHERAL_ERROR_NONE)
-		pwm->duty_cycle = *duty_cycle;
-
-	return ret;
-}
-
-int peripheral_pwm_get_period(peripheral_pwm_h pwm, int *period)
-{
-	int ret = PERIPHERAL_ERROR_NONE;
-
-	ret = peripheral_gdbus_pwm_get_period(pwm, period);
-
-	if (ret != PERIPHERAL_ERROR_NONE)
-		pwm->period = *period;
-
-	return ret;
-}

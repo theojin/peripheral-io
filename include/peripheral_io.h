@@ -392,18 +392,18 @@ int peripheral_pwm_open(int device, int channel, peripheral_pwm_h *pwm);
 
 int peripheral_pwm_close(peripheral_pwm_h pwm);
 
-int peripheral_pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle);
 
 int peripheral_pwm_set_period(peripheral_pwm_h pwm, int period);
+
+int peripheral_pwm_get_period(peripheral_pwm_h pwm, int *period);
+
+int peripheral_pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle);
+
+int peripheral_pwm_get_duty_cycle(peripheral_pwm_h pwm, int *duty_cycle);
 
 int peripheral_pwm_set_enabled(peripheral_pwm_h pwm, peripheral_pwm_state_e enable);
 
 int peripheral_pwm_is_enabled(peripheral_pwm_h pwm);
-
-int peripheral_pwm_get_duty_cycle(peripheral_pwm_h pwm, int *duty_cycle);
-
-int peripheral_pwm_get_period(peripheral_pwm_h pwm, int *period);
-
 
 /**
 * @}
