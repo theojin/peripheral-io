@@ -375,11 +375,6 @@ int peripheral_i2c_write(peripheral_i2c_h i2c, uint8_t *data, int length);
  */
 typedef struct _peripheral_pwm_s *peripheral_pwm_h;
 
-typedef enum {
-	PERIPHERAL_PWM_DISABLE = 0,
-	PERIPHERAL_PWM_ENABLE,
-} peripheral_pwm_state_e;
-
 int peripheral_pwm_open(int device, int channel, peripheral_pwm_h *pwm);
 
 int peripheral_pwm_close(peripheral_pwm_h pwm);
@@ -393,9 +388,9 @@ int peripheral_pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle);
 
 int peripheral_pwm_get_duty_cycle(peripheral_pwm_h pwm, int *duty_cycle);
 
-int peripheral_pwm_set_enable(peripheral_pwm_h pwm, peripheral_pwm_state_e enable);
+int peripheral_pwm_set_enable(peripheral_pwm_h pwm, bool enable);
 
-int peripheral_pwm_get_enable(peripheral_pwm_h pwm, peripheral_pwm_state_e *enable);
+int peripheral_pwm_get_enable(peripheral_pwm_h pwm, bool *enable);
 
 /**
 * @}

@@ -100,14 +100,14 @@ int peripheral_pwm_get_duty_cycle(peripheral_pwm_h pwm, int *duty_cycle)
 	return peripheral_gdbus_pwm_get_duty_cycle(pwm, duty_cycle);
 }
 
-int peripheral_pwm_set_enable(peripheral_pwm_h pwm, peripheral_pwm_state_e enable)
+int peripheral_pwm_set_enable(peripheral_pwm_h pwm, bool enable)
 {
 	if (pwm == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
 
 	return peripheral_gdbus_pwm_set_enable(pwm, enable);
 }
 
-int peripheral_pwm_get_enable(peripheral_pwm_h pwm, peripheral_pwm_state_e *enable)
+int peripheral_pwm_get_enable(peripheral_pwm_h pwm, bool *enable)
 {
 	if (pwm == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
 

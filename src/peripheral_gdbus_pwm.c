@@ -187,7 +187,7 @@ int peripheral_gdbus_pwm_get_duty_cycle(peripheral_pwm_h pwm, int *duty_cycle)
 	return ret;
 }
 
-int peripheral_gdbus_pwm_set_enable(peripheral_pwm_h pwm, peripheral_pwm_state_e enable)
+int peripheral_gdbus_pwm_set_enable(peripheral_pwm_h pwm, bool enable)
 {
 	GError *error = NULL;
 	gint32 ret = PERIPHERAL_ERROR_NONE;
