@@ -52,11 +52,10 @@ void pwm_proxy_deinit()
 int peripheral_gdbus_pwm_open(peripheral_pwm_h pwm, int device, int channel)
 {
 	GError *error = NULL;
-	gint32 ret = PERIPHERAL_ERROR_NONE;
+	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
 
 	if (pwm_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
 
-	/* TODO: Need to reorganize arguments */
 	if (peripheral_io_gdbus_pwm_call_open_sync(
 			pwm_proxy,
 			device,
@@ -76,11 +75,10 @@ int peripheral_gdbus_pwm_open(peripheral_pwm_h pwm, int device, int channel)
 int peripheral_gdbus_pwm_close(peripheral_pwm_h pwm)
 {
 	GError *error = NULL;
-	gint32 ret = PERIPHERAL_ERROR_NONE;
+	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
 
 	if (pwm_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
 
-	/* TODO: Need to reorganize arguments */
 	if (peripheral_io_gdbus_pwm_call_close_sync(
 			pwm_proxy,
 			pwm->handle,
@@ -98,11 +96,10 @@ int peripheral_gdbus_pwm_close(peripheral_pwm_h pwm)
 int peripheral_gdbus_pwm_set_period(peripheral_pwm_h pwm, int period)
 {
 	GError *error = NULL;
-	gint32 ret = PERIPHERAL_ERROR_NONE;
+	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
 
 	if (pwm_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
 
-	/* TODO: Need to reorganize arguments */
 	if (peripheral_io_gdbus_pwm_call_set_period_sync(
 			pwm_proxy,
 			pwm->handle,
@@ -121,11 +118,10 @@ int peripheral_gdbus_pwm_set_period(peripheral_pwm_h pwm, int period)
 int peripheral_gdbus_pwm_get_period(peripheral_pwm_h pwm, int *period)
 {
 	GError *error = NULL;
-	gint32 ret = PERIPHERAL_ERROR_NONE;
+	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
 
 	if (pwm_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
 
-	/* TODO: Need to reorganize arguments */
 	if (peripheral_io_gdbus_pwm_call_get_period_sync(
 			pwm_proxy,
 			pwm->handle,
@@ -144,11 +140,10 @@ int peripheral_gdbus_pwm_get_period(peripheral_pwm_h pwm, int *period)
 int peripheral_gdbus_pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle)
 {
 	GError *error = NULL;
-	gint32 ret = PERIPHERAL_ERROR_NONE;
+	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
 
 	if (pwm_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
 
-	/* TODO: Need to reorganize arguments */
 	if (peripheral_io_gdbus_pwm_call_set_duty_cycle_sync(
 			pwm_proxy,
 			pwm->handle,
@@ -167,11 +162,10 @@ int peripheral_gdbus_pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle)
 int peripheral_gdbus_pwm_get_duty_cycle(peripheral_pwm_h pwm, int *duty_cycle)
 {
 	GError *error = NULL;
-	gint32 ret = PERIPHERAL_ERROR_NONE;
+	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
 
 	if (pwm_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
 
-	/* TODO: Need to reorganize arguments */
 	if (peripheral_io_gdbus_pwm_call_get_duty_cycle_sync(
 			pwm_proxy,
 			pwm->handle,
@@ -190,11 +184,10 @@ int peripheral_gdbus_pwm_get_duty_cycle(peripheral_pwm_h pwm, int *duty_cycle)
 int peripheral_gdbus_pwm_set_enable(peripheral_pwm_h pwm, bool enable)
 {
 	GError *error = NULL;
-	gint32 ret = PERIPHERAL_ERROR_NONE;
+	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
 
 	if (pwm_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
 
-	/* TODO: Need to reorganize arguments */
 	if (peripheral_io_gdbus_pwm_call_set_enable_sync(
 			pwm_proxy,
 			pwm->handle,
