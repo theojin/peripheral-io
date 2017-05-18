@@ -24,9 +24,6 @@
 #include "peripheral_common.h"
 #include "peripheral_internal.h"
 
-#define PWM_ENABLE	1
-#define PWM_DISABLE	0
-
 int peripheral_pwm_open(int device, int channel, peripheral_pwm_h* pwm)
 {
 	peripheral_pwm_h handle;
