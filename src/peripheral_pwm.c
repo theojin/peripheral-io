@@ -24,13 +24,12 @@
 #include "peripheral_common.h"
 #include "peripheral_internal.h"
 
-int peripheral_pwm_open(int device, int channel, peripheral_pwm_h* pwm)
+int peripheral_pwm_open(int device, int channel, peripheral_pwm_h *pwm)
 {
 	peripheral_pwm_h handle;
 	int ret = PERIPHERAL_ERROR_NONE;
 
-	assert(device >= 0);
-	assert(channel >= 0);
+	if (device < 0 || channel < 0) return PERIPHERAL_ERROR_INVALID_PARAMETER;
 
 	/* Initialize */
 	handle = (peripheral_pwm_h)calloc(1, sizeof(struct _peripheral_pwm_s));
