@@ -383,25 +383,180 @@ typedef enum {
 	PERIPHERAL_PWM_POLARITY_INVERSED,
 } peripheral_pwm_polarity_e;
 
+/**
+ * @brief Initializes(export) pwm device and creates pwm handle.
+ * @since_tizen 4.0
+ *
+ * @param[in] device The pwm chip number
+ * @param[in] channel The pwm channel number to control
+ * @param[out] pwm The pwm handle is created on success
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_OUT_OF_MEMORY Memory allocation failed
+ * @retval #PERIPHERAL_ERROR_RESOURCE_BUSY Device is in use
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
+ *
+ * @see peripheral_pwm_close()
+ */
 int peripheral_pwm_open(int device, int channel, peripheral_pwm_h *pwm);
 
+/**
+ * @brief Destory the pwm handle and finalize(unexport) the pwm device.
+ * @since_tizen 4.0
+ *
+ * @param[in] pwm The handle to the pwm device
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_INVALID_OPERATION Invalid access
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
+ *
+ * @see peripheral_pwm_open()
+ */
 int peripheral_pwm_close(peripheral_pwm_h pwm);
 
-
+/**
+ * @brief Sets Period of the pwm device.
+ * @since_tizen 4.0
+ *
+ * @param[in] pwm The handle to the pwm device
+ * @param[in] period The total period of the PWM signal (in nanoseconds)
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_INVALID_OPERATION Invalid access
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
+ */
 int peripheral_pwm_set_period(peripheral_pwm_h pwm, int period);
 
+/**
+ * @brief Gets Period of the pwm device.
+ * @since_tizen 4.0
+ *
+ * @param[in] pwm The handle to the pwm device
+ * @param[out] period The total period of the PWM signal (in nanoseconds)
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_INVALID_OPERATION Invalid access
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
+ */
 int peripheral_pwm_get_period(peripheral_pwm_h pwm, int *period);
 
+/**
+ * @brief Sets Duty Cycle of the pwm device.
+ * @since_tizen 4.0
+ *
+ * @param[in] pwm The handle to the pwm device
+ * @param[in] duty_cycle The active time of the pwm signal (in nanoseconds)
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_INVALID_OPERATION Invalid access
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
+ */
 int peripheral_pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle);
 
+/**
+ * @brief Gets Duty Cycle of the pwm device.
+ * @since_tizen 4.0
+ *
+ * @param[in] pwm The handle to the pwm device
+ * @param[out] duty_cycle The active time of the pwm signal (in nanoseconds)
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_INVALID_OPERATION Invalid access
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
+ */
 int peripheral_pwm_get_duty_cycle(peripheral_pwm_h pwm, int *duty_cycle);
 
+/**
+ * @brief Sets Polarity of the pwm device.
+ * @since_tizen 4.0
+ *
+ * @param[in] pwm The handle to the pwm device
+ * @param[in] polarity The polarity of the pwm signal
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_INVALID_OPERATION Invalid access
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
+ */
 int peripheral_pwm_set_polarity(peripheral_pwm_h pwm, peripheral_pwm_polarity_e polarity);
 
+/**
+ * @brief Gets Polarity of the pwm device.
+ * @since_tizen 4.0
+ *
+ * @param[in] pwm The handle to the pwm device
+ * @param[out] polarity The polarity of the pwm signal
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_INVALID_OPERATION Invalid access
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
+ */
 int peripheral_pwm_get_polarity(peripheral_pwm_h pwm, peripheral_pwm_polarity_e *polarity);
 
+/**
+ * @brief Enable of the pwm device.
+ * @since_tizen 4.0
+ *
+ * @param[in] pwm The handle to the pwm device
+ * @param[in] enable Enable/disable the pwm signal
+ *            true - enable
+ *            false - disable
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_INVALID_OPERATION Invalid access
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
+ */
 int peripheral_pwm_set_enable(peripheral_pwm_h pwm, bool enable);
 
+/**
+ * @brief Gets Enable status of the pwm device.
+ * @since_tizen 4.0
+ *
+ * @param[in] pwm The handle to the pwm device
+ * @param[out] enable Enable/disable the pwm signal
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_INVALID_OPERATION Invalid access
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
+ */
 int peripheral_pwm_get_enable(peripheral_pwm_h pwm, bool *enable);
 
 /**
