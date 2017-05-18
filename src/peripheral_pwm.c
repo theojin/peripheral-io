@@ -58,6 +58,8 @@ int peripheral_pwm_close(peripheral_pwm_h pwm)
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
+	if (pwm == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
+
 	ret = peripheral_gdbus_pwm_close(pwm);
 	pwm_proxy_deinit();
 
