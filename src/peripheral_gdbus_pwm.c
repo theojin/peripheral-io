@@ -181,6 +181,50 @@ int peripheral_gdbus_pwm_get_duty_cycle(peripheral_pwm_h pwm, int *duty_cycle)
 	return ret;
 }
 
+int peripheral_gdbus_pwm_set_polarity(peripheral_pwm_h pwm, peripheral_pwm_polarity_e polarity)
+{
+	GError *error = NULL;
+	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
+
+	if (pwm_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
+
+	if (peripheral_io_gdbus_pwm_call_set_polarity_sync(
+			pwm_proxy,
+			pwm->handle,
+			polarity,
+			&ret,
+			NULL,
+			&error) == FALSE) {
+		_E("%s", error->message);
+		g_error_free(error);
+		return PERIPHERAL_ERROR_UNKNOWN;
+	}
+
+	return ret;
+}
+
+int peripheral_gdbus_pwm_get_polarity(peripheral_pwm_h pwm, peripheral_pwm_polarity_e *polarity)
+{
+	GError *error = NULL;
+	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
+
+	if (pwm_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
+
+	if (peripheral_io_gdbus_pwm_call_get_polarity_sync(
+			pwm_proxy,
+			pwm->handle,
+			(gint*)polarity,
+			&ret,
+			NULL,
+			&error) == FALSE) {
+		_E("%s", error->message);
+		g_error_free(error);
+		return PERIPHERAL_ERROR_UNKNOWN;
+	}
+
+	return ret;
+}
+
 int peripheral_gdbus_pwm_set_enable(peripheral_pwm_h pwm, bool enable)
 {
 	GError *error = NULL;

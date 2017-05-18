@@ -99,6 +99,20 @@ int peripheral_pwm_get_duty_cycle(peripheral_pwm_h pwm, int *duty_cycle)
 	return peripheral_gdbus_pwm_get_duty_cycle(pwm, duty_cycle);
 }
 
+int peripheral_pwm_set_polarity(peripheral_pwm_h pwm, peripheral_pwm_polarity_e polarity)
+{
+	if (pwm == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
+
+	return peripheral_gdbus_pwm_set_polarity(pwm, polarity);
+}
+
+int peripheral_pwm_get_polarity(peripheral_pwm_h pwm, peripheral_pwm_polarity_e *polarity)
+{
+	if (pwm == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
+
+	return peripheral_gdbus_pwm_get_polarity(pwm, polarity);
+}
+
 int peripheral_pwm_set_enable(peripheral_pwm_h pwm, bool enable)
 {
 	if (pwm == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;

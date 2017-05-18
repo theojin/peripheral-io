@@ -375,6 +375,14 @@ int peripheral_i2c_write(peripheral_i2c_h i2c, uint8_t *data, int length);
  */
 typedef struct _peripheral_pwm_s *peripheral_pwm_h;
 
+/**
+ * @brief Enumeration for Polarity.
+ */
+typedef enum {
+	PERIPHERAL_PWM_POLARITY_NORMAL = 0,
+	PERIPHERAL_PWM_POLARITY_INVERSED,
+} peripheral_pwm_polarity_e;
+
 int peripheral_pwm_open(int device, int channel, peripheral_pwm_h *pwm);
 
 int peripheral_pwm_close(peripheral_pwm_h pwm);
@@ -387,6 +395,10 @@ int peripheral_pwm_get_period(peripheral_pwm_h pwm, int *period);
 int peripheral_pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle);
 
 int peripheral_pwm_get_duty_cycle(peripheral_pwm_h pwm, int *duty_cycle);
+
+int peripheral_pwm_set_polarity(peripheral_pwm_h pwm, peripheral_pwm_polarity_e polarity);
+
+int peripheral_pwm_get_polarity(peripheral_pwm_h pwm, peripheral_pwm_polarity_e *polarity);
 
 int peripheral_pwm_set_enable(peripheral_pwm_h pwm, bool enable);
 
