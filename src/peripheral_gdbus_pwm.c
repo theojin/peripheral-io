@@ -65,7 +65,7 @@ int peripheral_gdbus_pwm_open(peripheral_pwm_h pwm, int device, int channel)
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
+		_E("%s", error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
@@ -87,7 +87,7 @@ int peripheral_gdbus_pwm_close(peripheral_pwm_h pwm)
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
+		_E("%s", error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
@@ -110,7 +110,7 @@ int peripheral_gdbus_pwm_set_period(peripheral_pwm_h pwm, int period)
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
+		_E("%s", error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
@@ -133,7 +133,7 @@ int peripheral_gdbus_pwm_get_period(peripheral_pwm_h pwm, int *period)
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
+		_E("%s", error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
@@ -156,7 +156,7 @@ int peripheral_gdbus_pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle)
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
+		_E("%s", error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
@@ -179,7 +179,7 @@ int peripheral_gdbus_pwm_get_duty_cycle(peripheral_pwm_h pwm, int *duty_cycle)
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
+		_E("%s", error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
@@ -202,7 +202,7 @@ int peripheral_gdbus_pwm_set_enable(peripheral_pwm_h pwm, bool enable)
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
+		_E("%s", error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
