@@ -59,13 +59,11 @@ int peripheral_pwm_close(peripheral_pwm_h pwm)
 
 	if (pwm == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
 
-	ret = peripheral_gdbus_pwm_close(pwm);
-	pwm_proxy_deinit();
+	if ((ret = peripheral_gdbus_pwm_close(pwm)) < 0)
+		_E("Failed to close PWM device, continuing anyway");
 
-	if (ret == PERIPHERAL_ERROR_NONE) {
-		free(pwm);
-		pwm = NULL;
-	}
+	pwm_proxy_deinit();
+	free(pwm);
 
 	return ret;
 }
