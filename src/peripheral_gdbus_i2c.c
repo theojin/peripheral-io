@@ -29,8 +29,10 @@ void i2c_proxy_init(void)
 {
 	GError *error = NULL;
 
-	if (i2c_proxy != NULL)
+	if (i2c_proxy != NULL) {
+		g_object_ref(i2c_proxy);
 		return;
+	}
 
 	i2c_proxy = peripheral_io_gdbus_i2c_proxy_new_for_bus_sync(
 		G_BUS_TYPE_SYSTEM,
@@ -45,7 +47,6 @@ void i2c_proxy_deinit()
 {
 	if (i2c_proxy) {
 		g_object_unref(i2c_proxy);
-		i2c_proxy = NULL;
 	}
 }
 

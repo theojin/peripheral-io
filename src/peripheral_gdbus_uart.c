@@ -29,8 +29,10 @@ void uart_proxy_init(void)
 {
 	GError *error = NULL;
 
-	if (uart_proxy != NULL)
+	if (uart_proxy != NULL) {
+		g_object_ref(uart_proxy);
 		return;
+	}
 
 	uart_proxy = peripheral_io_gdbus_uart_proxy_new_for_bus_sync(
 		G_BUS_TYPE_SYSTEM,
@@ -45,7 +47,6 @@ void uart_proxy_deinit()
 {
 	if (uart_proxy) {
 		g_object_unref(uart_proxy);
-		uart_proxy = NULL;
 	}
 }
 

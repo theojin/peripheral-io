@@ -32,8 +32,10 @@ void gpio_proxy_init(void)
 {
 	GError *error = NULL;
 
-	if (gpio_proxy != NULL)
+	if (gpio_proxy != NULL) {
+		g_object_ref(gpio_proxy);
 		return;
+	}
 
 	gpio_proxy = peripheral_io_gdbus_gpio_proxy_new_for_bus_sync(
 		G_BUS_TYPE_SYSTEM,
@@ -58,7 +60,6 @@ void gpio_proxy_deinit()
 {
 	if (gpio_proxy) {
 		g_object_unref(gpio_proxy);
-		gpio_proxy = NULL;
 	}
 }
 

@@ -29,8 +29,10 @@ void pwm_proxy_init(void)
 {
 	GError *error = NULL;
 
-	if (pwm_proxy != NULL)
+	if (pwm_proxy != NULL) {
+		g_object_ref(pwm_proxy);
 		return;
+	}
 
 	pwm_proxy = peripheral_io_gdbus_pwm_proxy_new_for_bus_sync(
 		G_BUS_TYPE_SYSTEM,
@@ -45,7 +47,6 @@ void pwm_proxy_deinit()
 {
 	if (pwm_proxy) {
 		g_object_unref(pwm_proxy);
-		pwm_proxy = NULL;
 	}
 }
 
