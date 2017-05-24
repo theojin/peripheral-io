@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017 Samsung Electronics Co., Ltd.
+ * Copyright (c) 2017 Samsung Electronics Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,28 +14,59 @@
  * limitations under the License.
  */
 
-#include "peripheral_io.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 #include <gio/gio.h>
 
-extern int gpio_test();
-extern int i2c_test();
-extern int adc_test();
+#include "peripheral_io.h"
 
-GMainLoop *loop;
+#define BUFFER_LEN 32
 
-int gpio_test(void)
+typedef struct {
+	const char *tc_name;
+	int tc_code;
+	int (*tc_func)(void);
+} tc_table_t;
+
+tc_table_t *tc_table;
+
+GMainLoop *main_loop;
+GList *gpio_list;
+GList *i2c_list;
+GList *pwm_list;
+GList *adc_list;
+GList *uart_list;
+GList *spi_list;
+
+int read_int_input(int *input)
+{
+	char buf[BUFFER_LEN];
+	int rv;
+
+	rv = read(0, buf, BUFFER_LEN);
+
+	/* Ignore Enter without value */
+	if (*buf == '\n' || *buf == '\r') {
+		printf("No input value\n");
+		return -1;
+	}
+
+	if (rv < 0) return -1;
+	*input = atoi(buf);
+
+	return 0;
+}
+
+int gpio_led_test(void)
 {
 	int num;
 	int cnt = 0;
 	peripheral_gpio_h handle = NULL;
 
-	printf("artik5 : 135 \n");
-	printf("artik10 : 22 \n");
-	printf(">> PIN NUMBER : ");
+	printf("    %s()\n", __func__);
+	printf("Enter GPIO pin number ");
 
 	if (scanf("%d", &num) < 0)
 		return 0;
@@ -52,13 +83,13 @@ int gpio_test(void)
 	}
 
 	while (cnt++ < 5) {
-		printf("write~\n");
+		printf("Writing..\n");
 		peripheral_gpio_write(handle, 1);
 		sleep(1);
 		peripheral_gpio_write(handle, 0);
 		sleep(1);
 	}
-	printf("write finish\n");
+	printf("Write finish\n");
 	peripheral_gpio_close(handle);
 	return 1;
 
@@ -74,70 +105,66 @@ void gpio_irq_test_isr(void *user_data)
 
 	peripheral_gpio_get_pin(gpio, &pin);
 
-	printf("gpio_irq_test_isr: GPIO %d interrupt occurs.\n", pin);
+	printf("%s: GPIO %d interrupt occurs.\n", __func__, pin);
 }
 
-void *gpio_irq_test_thread(void *data)
+int gpio_irq_register(void)
 {
-	peripheral_gpio_h gpio = data;
-	int num;
-
-	printf(">> Press any key to exit GPIO IRQ Test : \n");
-	if (scanf("%d", &num) < 0)
-		return 0;
-
-	peripheral_gpio_unregister_cb(gpio);
-	peripheral_gpio_close(gpio);
-
-	g_main_loop_quit(loop);
-	return 0;
-}
-
-int gpio_irq_test(void)
-{
-	GThread *test_thread;
-	int num;
 	peripheral_gpio_h gpio = NULL;
-	peripheral_gpio_edge_e edge = PERIPHERAL_GPIO_EDGE_NONE;
+	int pin, ret;
 
-	printf("artik710 : 27 \n");
-	printf(">> PIN NUMBER : ");
+	printf("    %s()\n", __func__);
+	printf("Enter gpio pin number\n");
 
-	if (scanf("%d", &num) < 0)
-		return 0;
+	if (read_int_input(&pin) < 0)
+		return -1;
 
-	if (peripheral_gpio_open(num, &gpio) != PERIPHERAL_ERROR_NONE) {
-		printf("test dev is null\n");
-		return 0;
+	if ((ret = peripheral_gpio_open(pin, &gpio)) < 0) {
+		printf(">>>>> Failed to open GPIO pin, ret : %d\n", ret);
+		return -1;
 	}
+	gpio_list = g_list_append(gpio_list, gpio);
 
-	if (peripheral_gpio_set_direction(gpio, PERIPHERAL_GPIO_DIRECTION_IN) != 0) {
-		printf("test set direction error!!!");
+	if ((ret = peripheral_gpio_set_direction(gpio, PERIPHERAL_GPIO_DIRECTION_IN)) < 0) {
+		printf(">>>>> Failed to set direction, ret : %d\n", ret);
 		goto error;
 	}
-
-	printf(">> Select Edge Mode (0 = None, 1 = Falling, 2 = Rising, 3 = Both) : ");
-	if (scanf("%d", &num) < 0)
-		return 0;
-
-	if (num >= 0 && num <= 3)
-		edge = num;
-
-	peripheral_gpio_set_edge_mode( gpio, edge);
+	peripheral_gpio_set_edge_mode(gpio, PERIPHERAL_GPIO_EDGE_BOTH);
 	peripheral_gpio_register_cb(gpio, gpio_irq_test_isr, gpio);
-
-	test_thread = g_thread_new("key input thread", &gpio_irq_test_thread, gpio);
-	loop = g_main_loop_new(NULL, FALSE);
-	g_main_loop_run(loop);
-
-	g_thread_join(test_thread);
-	if (loop != NULL)
-		g_main_loop_unref(loop);
 
 	return 0;
 
 error:
+	gpio_list = g_list_remove(gpio_list, gpio);
 	peripheral_gpio_close(gpio);
+	return -1;
+}
+
+int gpio_irq_unregister(void)
+{
+	peripheral_gpio_h gpio;
+	int pin, ret;
+	int gpio_test_get_handle_by_pin(int pin, peripheral_gpio_h *gpio);
+
+	printf("    %s()\n", __func__);
+	printf("Enter gpio pin number\n");
+
+	if (read_int_input(&pin) < 0)
+		return -1;
+
+	if (gpio_test_get_handle_by_pin(pin, &gpio) < 0) {
+		printf(">>>>> cannot find handle. please open the gpio pin.\n");
+		return -1;
+	}
+
+	if ((ret = peripheral_gpio_unregister_cb(gpio)) < 0) {
+		printf(">>>>> failed to unregister callback function, ret : %d\n", ret);
+		return -1;
+	}
+
+	gpio_list = g_list_remove(gpio_list, gpio);
+	peripheral_gpio_close(gpio);
+
 	return 0;
 }
 
@@ -149,66 +176,45 @@ error:
 
 #define GY30_READ_INTENSITY(buf) ((buf[0] << 8 | buf[1]) / 1.2)
 
-int i2c_test(void)
+int i2c_gy30_test(void)
 {
 	int cnt = 0;
-	int bus_num;
+	int bus_num, ret;
 	unsigned char buf[10];
 	peripheral_i2c_h i2c;
 
-	printf(">> I2C bus number : ");
+	printf("    %s()\n", __func__);
+	printf("Enter I2C bus number : ");
 	if (scanf("%d", &bus_num) < 0)
-		return 0;
+		return -1;
 
-	if ((peripheral_i2c_open(bus_num, GY30_ADDR, &i2c)) != 0) {
-		printf("Failed to open I2C communication\n");
-		return 0;
+	if ((ret = peripheral_i2c_open(bus_num, GY30_ADDR, &i2c)) < 0) {
+		printf("Failed to open I2C communication, ret : %d\n", ret);
+		return -1;
 	}
 
 	buf[0] = GY30_CONT_HIGH_RES_MODE;
-	if (peripheral_i2c_write(i2c, buf, 1) != 0) {
-		printf("Failed to write\n");
+	if ((ret = peripheral_i2c_write(i2c, buf, 1)) < 0) {
+		printf("Failed to write, ret : %d\n", ret);
 		goto error;
 	}
 
 	while (cnt++ < 15) {
 		int result;
 		sleep(1);
-		peripheral_i2c_read(i2c, buf, 2);
+		ret = peripheral_i2c_read(i2c, buf, 2);
+		if (ret < 0)
+			printf("Failed to read, ret : %d\n", ret);
 		result = GY30_READ_INTENSITY(buf);
-		printf("Result [%d]\n", result);
+		printf("Light intensity : %d\n", result);
 	}
 
 	peripheral_i2c_close(i2c);
-	return 1;
+	return 0;
 
 error:
 	peripheral_i2c_close(i2c);
-	return 0;
-}
-
-int adc_test(void)
-{
-#if 0
-	int channel = 0;
-	int data = 0;
-	adc_context_h dev = NULL;
-
-	printf(">>channel :");
-	scanf("%d", &channel);
-
-	dev = peripheral_adc_open(channel);
-
-	if (!dev) {
-		printf("open error!\n");
-		return 1;
-	}
-
-	peripheral_adc_read(dev, &data);
-
-	peripheral_adc_close(dev);
-#endif
-	return 1;
+	return -1;
 }
 
 int pwm_test_led(void)
@@ -222,7 +228,7 @@ int pwm_test_led(void)
 	int get_period, get_duty_cycle;
 	peripheral_pwm_h dev;
 
-	printf("<<< pwm_test >>>\n");
+	printf("    %s()\n", __func__);
 
 	peripheral_pwm_open(device, channel, &dev);
 	peripheral_pwm_set_period(dev, period);	/* period: nanosecond */
@@ -263,7 +269,7 @@ int pwm_test_motor(void)
 	int degree[3] = {0, 45, 90};
 	peripheral_pwm_h dev;
 
-	printf("<<< pwm_test_motor >>>\n");
+	printf("    %s()\n", __func__);
 
 	peripheral_pwm_open(device, channel, &dev);
 	for (cnt = 0; cnt < 5; cnt++) {
@@ -305,25 +311,27 @@ int uart_test_accelerometer(void)
 	int loop = 100;
 	unsigned char buf[1024];
 
-	printf("<<< uart_test_accelerometer >>>\n");
-	printf("artik710 : 4 \n");
-	printf(">> PORT NUMBER : ");
+	printf("    %s()\n", __func__);
+	printf("Enter port number");
 
 	if (scanf("%d", &port) < 0)
-		return 0;
+		return -1;
 
 	ret = peripheral_uart_open(port, &uart);
 	if (ret < 0)
 		goto err_open;
+
 	ret = peripheral_uart_set_baudrate(uart, PERIPHERAL_UART_BAUDRATE_4800);
 	if (ret < 0)
 		goto out;
+
 	ret = peripheral_uart_set_mode(uart,
 			PERIPHERAL_UART_BYTESIZE_8BIT,
 			PERIPHERAL_UART_PARITY_NONE,
 			PERIPHERAL_UART_STOPBITS_1BIT);
 	if (ret < 0)
 		goto out;
+
 	ret = peripheral_uart_set_flowcontrol(uart, true, false);
 	if (ret < 0)
 		goto out;
@@ -347,65 +355,457 @@ int uart_test_accelerometer(void)
 		usleep(100000);
 	}
 
+	peripheral_uart_close(uart);
+	return 0;
+
 out:
 	peripheral_uart_close(uart);
 
 err_open:
-	printf(">> ret = %d\n", ret);
+	return -1;
+}
+
+int gpio_test_get_handle_by_pin(int pin, peripheral_gpio_h *gpio)
+{
+	peripheral_gpio_h handle;
+	GList *cursor;
+	int cur_pin;
+
+	cursor = gpio_list;
+	while (cursor) {
+		handle = (peripheral_gpio_h)cursor->data;
+		peripheral_gpio_get_pin(handle, &cur_pin);
+		if (pin == cur_pin)
+			break;
+		cursor = g_list_next(cursor);
+	}
+	if (!cursor) return -1;
+
+	*gpio = handle;
+
 	return 0;
+}
+
+int print_gpio_handle(void)
+{
+	peripheral_gpio_h gpio;
+	GList *cursor;
+	peripheral_gpio_direction_e direction;
+	peripheral_gpio_edge_e edge;
+	int pin, value;
+	char *dir_str, *edge_str;
+
+	printf("--- GPIO handle info. -------------------------------------------\n");
+	printf("      No     Pin   Direction   Value   Edge mode\n");
+
+	cursor = gpio_list;
+	while (cursor) {
+		gpio = (peripheral_gpio_h)cursor->data;
+
+		if (peripheral_gpio_get_pin(gpio, &pin) < 0)
+			continue;
+		if (peripheral_gpio_get_direction(gpio, &direction) < 0)
+			continue;
+		if (peripheral_gpio_get_edge_mode(gpio, &edge) < 0)
+			continue;
+
+		if (direction == PERIPHERAL_GPIO_DIRECTION_IN)
+			dir_str = "IN";
+		else if (direction == PERIPHERAL_GPIO_DIRECTION_OUT_LOW)
+			dir_str = "OUT_LOW";
+		else if (direction == PERIPHERAL_GPIO_DIRECTION_OUT_HIGH)
+			dir_str = "OUT_HIGH";
+		else
+			dir_str = "UNKNOWN";
+
+		if (edge == PERIPHERAL_GPIO_EDGE_NONE)
+			edge_str = "NONE";
+		else if (edge == PERIPHERAL_GPIO_EDGE_RISING)
+			edge_str = "RISING";
+		else if (edge == PERIPHERAL_GPIO_EDGE_FALLING)
+			edge_str = "FALLING";
+		else if (edge == PERIPHERAL_GPIO_EDGE_BOTH)
+			edge_str = "BOTH";
+		else
+			edge_str = "UNKNOWN";
+
+		if (direction == PERIPHERAL_GPIO_DIRECTION_IN) {
+			if (peripheral_gpio_read(gpio, &value) < 0)
+				continue;
+			printf("%8d%8d%12s%8d%12s\n", g_list_position(gpio_list, cursor),
+					pin, dir_str, value, edge_str);
+		} else
+			printf("%8d%8d%12s%20s\n", g_list_position(gpio_list, cursor),
+					pin, dir_str, edge_str);
+
+		cursor = g_list_next(cursor);
+	}
+	printf("-----------------------------------------------------------------\n");
+
+	return 0;
+}
+
+int gpio_test_open(void)
+{
+	peripheral_gpio_h gpio;
+	int pin, ret;
+
+	printf("%s\n", __func__);
+	printf("Enter GPIO pin number\n");
+
+	if (read_int_input(&pin) < 0)
+		return -1;
+
+	if ((ret = peripheral_gpio_open(pin, &gpio)) < 0) {
+		printf(">>>>> GPIO open failed, ret : %d\n", ret);
+		return -1;
+	}
+	gpio_list = g_list_append(gpio_list, gpio);
+	print_gpio_handle();
+
+	return 0;
+}
+
+int gpio_test_close(void)
+{
+	peripheral_gpio_h gpio;
+	int pin, ret;
+
+	printf("%s\n", __func__);
+	printf("Enter GPIO pin number\n");
+
+	if (read_int_input(&pin) < 0)
+		return -1;
+
+	if (gpio_test_get_handle_by_pin(pin, &gpio) < 0) {
+		printf(">>>>> Cannot find handle. Please open the GPIO pin\n");
+		return -1;
+	}
+	gpio_list = g_list_remove(gpio_list, gpio);
+
+	if ((ret = peripheral_gpio_close(gpio)) < 0) {
+		printf(">>>>> GPIO close failed, ret : %d\n", ret);
+		return -1;
+	}
+	print_gpio_handle();
+
+	return 0;
+}
+
+int gpio_test_set_direction(void)
+{
+	peripheral_gpio_h gpio;
+	int pin, ret;
+	int direction;
+
+	printf("%s\n", __func__);
+	printf("Enter gpio pin number\n");
+
+	if (read_int_input(&pin) < 0)
+		return -1;
+
+	if (gpio_test_get_handle_by_pin(pin, &gpio) < 0) {
+		printf(">>>>> Cannot find handle. Please open the GPIO pin\n");
+		return -1;
+	}
+
+	printf("Enter direction (0:IN, 1:OUT_LOW, 2:OUT_HIGH)\n");
+	if (read_int_input(&direction) < 0)
+		return -1;
+
+	if (direction > PERIPHERAL_GPIO_DIRECTION_OUT_HIGH ||
+		direction < PERIPHERAL_GPIO_DIRECTION_IN) {
+		printf(">>>>> Wrong input value\n");
+		return -1;
+	}
+
+	if ((ret = peripheral_gpio_set_direction(gpio, (peripheral_gpio_direction_e)direction)) < 0) {
+		printf(">>>>> Failed to set direction, ret : %d\n", ret);
+		return -1;
+	}
+
+	return 0;
+}
+
+int gpio_test_write(void)
+{
+	peripheral_gpio_h gpio;
+	int pin, ret;
+	int value;
+
+	printf("%s\n", __func__);
+	printf("Enter gpio pin number\n");
+
+	if (read_int_input(&pin) < 0)
+		return -1;
+
+	if (gpio_test_get_handle_by_pin(pin, &gpio) < 0) {
+		printf(">>>>> Cannot find handle. Please open the GPIO pin\n");
+		return -1;
+	}
+
+	printf("Enter value (0:LOW, 1:HIGH)\n");
+	if (read_int_input(&value) < 0)
+		return -1;
+
+	if (value < 0 || value > 1) {
+		printf(">>>>> Wrong input value\n");
+		return -1;
+	}
+
+	if ((ret = peripheral_gpio_write(gpio, value)) < 0) {
+		printf(">>>>> Failed to write value, ret : %d\n", ret);
+		return -1;
+	}
+
+	return 0;
+}
+
+int gpio_test_set_edge_mode(void)
+{
+	peripheral_gpio_h gpio;
+	int pin, ret;
+	int edge;
+
+	printf("%s\n", __func__);
+	printf("Enter gpio pin number\n");
+
+	if (read_int_input(&pin) < 0)
+		return -1;
+
+	if (gpio_test_get_handle_by_pin(pin, &gpio) < 0) {
+		printf(">>>>> Cannot find handle. Please open the GPIO pin\n");
+		return -1;
+	}
+
+	printf("Enter edge mode (0:NONE, 1:RISING, 2:FALLING, 3:BOTH)\n");
+	if (read_int_input(&edge) < 0)
+		return -1;
+
+	if (edge < PERIPHERAL_GPIO_EDGE_NONE || edge > PERIPHERAL_GPIO_EDGE_BOTH) {
+		printf(">>>>> Wrong input value\n");
+		return -1;
+	}
+
+	if ((ret = peripheral_gpio_set_edge_mode(gpio, (peripheral_gpio_edge_e)edge)) < 0) {
+		printf(">>>>> Failed to set edge mode, ret : %d\n", ret);
+		return -1;
+	}
+
+	return 0;
+}
+
+int gpio_test_set_register_cb(void)
+{
+	peripheral_gpio_h gpio;
+	int pin, ret;
+
+	printf("%s\n", __func__);
+	printf("Enter gpio pin number\n");
+
+	if (read_int_input(&pin) < 0)
+		return -1;
+
+	if (gpio_test_get_handle_by_pin(pin, &gpio) < 0) {
+		printf(">>>>> Cannot find handle. Please open the GPIO pin\n");
+		return -1;
+	}
+
+	if ((ret = peripheral_gpio_register_cb(gpio, gpio_irq_test_isr, gpio)) < 0) {
+		printf(">>>>> Failed to register callback function, ret : %d\n", ret);
+		return -1;
+	}
+	return 0;
+}
+
+int gpio_test_set_unregister_cb(void)
+{
+	peripheral_gpio_h gpio;
+	int pin, ret;
+
+	printf("%s\n", __func__);
+	printf("Enter gpio pin number\n");
+
+	if (read_int_input(&pin) < 0)
+		return -1;
+
+	if (gpio_test_get_handle_by_pin(pin, &gpio) < 0) {
+		printf(">>>>> Cannot find handle. Please open the GPIO pin\n");
+		return -1;
+	}
+
+	if ((ret = peripheral_gpio_unregister_cb(gpio)) < 0) {
+		printf(">>>>> failed to unregister callback function, ret : %d\n", ret);
+		return -1;
+	}
+
+	return 0;
+}
+
+int enter_main(void);
+
+tc_table_t gpio_tc_table[] = {
+	{"Open GPIO pin",				1, gpio_test_open},
+	{"Close GPIO pin",				2, gpio_test_close},
+	{"Set direction GPIO pin",		3, gpio_test_set_direction},
+	{"Write value to GPIO pin",		4, gpio_test_write},
+	{"Set edge mode",				5, gpio_test_set_edge_mode},
+	{"Register callback",			6, gpio_test_set_register_cb},
+	{"Unregister callback",			7, gpio_test_set_unregister_cb},
+	{"Print GPIO handle",			9, print_gpio_handle},
+	{"Go back to main",				0, enter_main},
+	{NULL,	0, NULL},
+};
+
+int enter_gpio_test(void)
+{
+	tc_table = gpio_tc_table;
+	print_gpio_handle();
+
+	return 0;
+}
+
+int enter_i2c_test(void)
+{
+	return 0;
+}
+
+int enter_pwm_test(void)
+{
+	return 0;
+}
+
+int enter_adc_test(void)
+{
+	return 0;
+}
+
+int enter_uart_test(void)
+{
+	return 0;
+}
+
+int enter_spi_test(void)
+{
+	return 0;
+}
+
+int terminate_test(void)
+{
+	int ret = 0;
+
+	printf("Terminate test\n");
+	g_main_loop_quit(main_loop);
+
+	exit(1);
+
+	return ret;
+}
+
+tc_table_t main_tc_table[] = {
+	{"GPIO Test Menu",							1, enter_gpio_test},
+	{"I2C Test Menu",							2, enter_i2c_test},
+	{"PWM Test Menu",							3, enter_pwm_test},
+	{"ADC Test Menu",							4, enter_adc_test},
+	{"UART Test Menu",							5, enter_uart_test},
+	{"SPI Test Menu",							6, enter_spi_test},
+	{"[Preset Test] GPIO LED",					11, gpio_led_test},
+	{"[Preset Test] I2C GY30 Light sensor",		12, i2c_gy30_test},
+	{"[Preset Test] PWM LED",					14, pwm_test_led},
+	{"[Preset Test] PWM Motor",					15, pwm_test_motor},
+	{"[Preset Test] Uart Accelerometer",		16, uart_test_accelerometer},
+	{"[Preset Test] GPIO IRQ register",			17, gpio_irq_register},
+	{"[Preset Test] GPIO IRQ unregister",		18, gpio_irq_unregister},
+	{"Exit Test",								0, terminate_test},
+	{NULL,	0, NULL},
+};
+
+int enter_main(void)
+{
+	tc_table = main_tc_table;
+
+	return 0;
+}
+
+static int test_input_callback(void *data)
+{
+	long test_id = (long)data;
+	int ret = PERIPHERAL_ERROR_NONE;
+	int i = 0;
+
+	while (tc_table[i].tc_name) {
+		if (tc_table[i].tc_code == test_id) {
+			ret = tc_table[i].tc_func();
+
+			if (ret != PERIPHERAL_ERROR_NONE)
+				printf(">>>>> Test Error Returned !!! : %d\n", ret);
+
+			break;
+		}
+		i++;
+	}
+	if (!tc_table[i].tc_name) {
+		printf(">>>>> Wrong input value!\n");
+		return -1;
+	}
+
+	return 0;
+}
+
+static void print_tc_usage(void)
+{
+	int i = 0;
+
+	printf("===========================================\n");
+	while (tc_table[i].tc_name) {
+		printf("    %2d : %s\n", tc_table[i].tc_code, tc_table[i].tc_name);
+		i++;
+	}
+	printf("===========================================\n");
+	printf("Enter TC number\n");
+}
+
+static gboolean key_event_cb(GIOChannel *chan, GIOCondition cond, gpointer data)
+{
+	char buf[BUFFER_LEN] = {0,};
+	long test_id;
+	int rv = 0;
+
+	memset(buf, 0, sizeof(buf));
+
+	rv = read(0, buf, BUFFER_LEN);
+
+	if (*buf == '\n' || *buf == '\r') {
+		print_tc_usage();
+		return TRUE;
+	}
+
+	if (rv < 0) return FALSE;
+
+	test_id = atoi(buf);
+
+	test_input_callback((void *)test_id);
+	print_tc_usage();
+
+	return TRUE;
 }
 
 int main(int argc, char **argv)
 {
-	int num = 1;
-	int ret;
+	GIOChannel *key_io;
 
-	printf("===================\n");
-	printf("  test Menu\n");
-	printf("===================\n");
-	printf(" 1. GPIO Test\n");
-	printf(" 2. I2C Test\n");
-	printf(" 3. pwm led test\n");
-	printf(" 4. pwm motor test\n");
-	printf(" 5. uart accelerometer test\n");
+	main_loop = g_main_loop_new(NULL, FALSE);
+	key_io = g_io_channel_unix_new(0);
 
-	printf(" 11. GPIO Interrupt Test\n");
-	printf(" 12. H/W IF I2C Test\n");
-	printf(" 13. H/W IF PWM Test\n");
-	printf(" 14. H/W IF SPI Test\n");
+	tc_table = main_tc_table;
 
-	if (scanf("%d", &num) < 0)
-		return 0;
+	print_tc_usage();
+	g_io_add_watch(key_io, (G_IO_IN | G_IO_HUP | G_IO_ERR | G_IO_NVAL), key_event_cb, NULL);
 
-	switch (num) {
-	case 1:
-		ret = gpio_test();
-		break;
-	case 2:
-		ret = i2c_test();
-		break;
-	case 3:
-		ret = pwm_test_led();
-		break;
-	case 4:
-		ret = pwm_test_motor();
-		break;
-	case 5:
-		ret = uart_test_accelerometer();
-		break;
-	case 11:
-		ret = gpio_irq_test();
-		break;
-	case 12:
-		ret = i2c_test();
-		break;
-	case 14:
-		ret = adc_test();
-		break;
-	default:
-		printf("Not support \n");
-	}
-	printf(" return : %d\n", ret);
+	g_main_loop_run(main_loop);
 
-	return 1;
+	g_io_channel_unref(key_io);
+	g_main_loop_unref(main_loop);
+
+	return 0;
 }
