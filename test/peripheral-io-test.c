@@ -217,6 +217,76 @@ error:
 	return -1;
 }
 
+#define MMA_7455_ADDRESS 0x1D //I2C Address for the sensor
+#define MMA_7455_MODE_CONTROL 0x16 //Call the sensors Mode Control
+
+#define MMA_7455_2G_MODE 0x04 //Set Sensitivity to 2g
+#define MMA_7455_4G_MODE 0x08 //Set Sensitivity to 4g
+#define MMA_7455_8G_MODE 0x00 //Set Sensitivity to 8g
+
+#define MMA_7455_STANDBY_MODE 0x0
+#define MMA_7455_MEASUREMENT_MODE 0x1
+#define MMA_7455_LEVEL_DETECTION_MODE 0x2
+#define MMA_7455_PULSE_DETECTION_MODE 0x3
+
+#define X_OUT 0x06 //Register for reading the X-Axis
+#define Y_OUT 0x07 //Register for reading the Y-Axis
+#define Z_OUT 0x08 //Register for reading the Z-Axis
+
+int i2c_mma7455_test(void)
+{
+	int cnt = 0;
+	int bus_num, ret;
+	unsigned char buf[10];
+	peripheral_i2c_h i2c;
+
+	printf("    %s()\n", __func__);
+	printf("Enter I2C bus number");
+	if (scanf("%d", &bus_num) < 0)
+		return -1;
+
+	if ((ret = peripheral_i2c_open(bus_num, MMA_7455_ADDRESS, &i2c)) < 0) {
+		printf(">>>>> Failed to open I2C communication, ret : %d \n", ret);
+		return -1;
+	}
+
+	buf[0] = MMA_7455_MODE_CONTROL;
+	buf[1] = MMA_7455_2G_MODE | MMA_7455_LEVEL_DETECTION_MODE;
+	if ((ret = peripheral_i2c_write(i2c, buf, 2)) != 0) {
+		printf(">>>>> Failed to write, ret : %d\n", ret);
+		goto error;
+	}
+
+	while (cnt++ < 10) {
+		int x_pos, y_pos, z_pos;
+		sleep(1);
+
+		buf[0] = X_OUT;
+		peripheral_i2c_write(i2c, buf, 1);
+		peripheral_i2c_read(i2c, buf, 1);
+		x_pos = (int)buf[0];
+
+		buf[0] = Y_OUT;
+		peripheral_i2c_write(i2c, buf, 1);
+		peripheral_i2c_read(i2c, buf, 1);
+		y_pos = (int)buf[0];
+
+		buf[0] = Z_OUT;
+		peripheral_i2c_write(i2c, buf, 1);
+		peripheral_i2c_read(i2c, buf, 1);
+		z_pos = (int)buf[0];
+
+		printf("Result X : %d, Y : %d, Z : %d\n", x_pos, y_pos, z_pos);
+	}
+
+	peripheral_i2c_close(i2c);
+	return 0;
+
+error:
+	peripheral_i2c_close(i2c);
+	return -1;
+}
+
 int pwm_test_led(void)
 {
 	int device = 0, channel = 0;
@@ -711,6 +781,7 @@ tc_table_t main_tc_table[] = {
 	{"SPI Test Menu",							6, enter_spi_test},
 	{"[Preset Test] GPIO LED",					11, gpio_led_test},
 	{"[Preset Test] I2C GY30 Light sensor",		12, i2c_gy30_test},
+	{"[Preset Test] I2C MMA7455 Accel. sensor",	13, i2c_mma7455_test},
 	{"[Preset Test] PWM LED",					14, pwm_test_led},
 	{"[Preset Test] PWM Motor",					15, pwm_test_motor},
 	{"[Preset Test] Uart Accelerometer",		16, uart_test_accelerometer},
