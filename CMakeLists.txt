@@ -47,10 +47,12 @@ SET(SOURCES src/peripheral_gpio.c
 			src/peripheral_pwm.c
 			src/peripheral_adc.c
 			src/peripheral_uart.c
+			src/peripheral_spi.c
 			src/peripheral_gdbus_gpio.c
 			src/peripheral_gdbus_i2c.c
 			src/peripheral_gdbus_pwm.c
 			src/peripheral_gdbus_uart.c
+			src/peripheral_gdbus_spi.c
 			src/peripheral_io_gdbus.c
 			src/peripheral_spi.c)
 

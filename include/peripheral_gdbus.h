@@ -23,6 +23,7 @@
 #define PERIPHERAL_GDBUS_I2C_PATH	"/Org/Tizen/Peripheral_io/I2c"
 #define PERIPHERAL_GDBUS_PWM_PATH	"/Org/Tizen/Peripheral_io/Pwm"
 #define PERIPHERAL_GDBUS_UART_PATH	"/Org/Tizen/Peripheral_io/Uart"
+#define PERIPHERAL_GDBUS_SPI_PATH	"/Org/Tizen/Peripheral_io/Spi"
 #define PERIPHERAL_GDBUS_NAME		"org.tizen.peripheral_io"
 
 #endif /* __PERIPHERAL_GDBUS_H__ */

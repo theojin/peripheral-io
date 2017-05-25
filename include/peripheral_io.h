@@ -825,33 +825,231 @@ int peripheral_uart_write(peripheral_uart_h uart, uint8_t *data, int length);
  * @{
  */
 
+/**
+ * @brief The handle to the spi device
+ * @since_tizen 4.0
+ */
+typedef struct _peripheral_spi_s* peripheral_spi_h;
+
+/**
+ * @brief Enumeration for SPI mode.
+ */
 typedef enum {
-	PERIPHERAL_SPI_MODE0 = 0,
-	PERIPHERAL_SPI_MODE1,
-	PERIPHERAL_SPI_MODE2,
-	PERIPHERAL_SPI_MODE3
+	PERIPHERAL_SPI_MODE_0 = 0,
+	PERIPHERAL_SPI_MODE_1,
+	PERIPHERAL_SPI_MODE_2,
+	PERIPHERAL_SPI_MODE_3
 } peripheral_spi_mode_e;
 
-struct peripheral_spi_config_s {
-	int fd;
-	char bits_per_word;
-	int lsb;
-	unsigned int chip_select;
-	unsigned int frequency;
-	peripheral_spi_mode_e mode;
-};
+/**
+ * @brief Initializes spi communication and creates spi handle.
+ * @since_tizen 4.0
+ *
+ * @param[in] bus The spi bus number that the slave device is connected
+ * @param[in] cs The spi chip select number that the slave device is connected
+ * @param[out] spi The spi handle is created on success
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ *
+ * @see peripheral_spi_close()
+ */
+int peripheral_spi_open(int bus, int cs, peripheral_spi_h *spi);
 
-typedef struct peripheral_spi_config_s * peripheral_spi_context_h;
+/**
+ * @brief Destory the spi handle and release the communication.
+ * @since_tizen 4.0
+ *
+ * @param[in] spi The handle to the spi device
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ *
+ * @see peripheral_spi_open()
+ */
+int peripheral_spi_close(peripheral_spi_h spi);
 
-peripheral_spi_context_h peripheral_spi_open(unsigned int bus, peripheral_spi_context_h config);
+/**
+ * @brief Sets mode of the spi device.
+ * @since_tizen 4.0
+ *
+ * @param[in] spi The handle to the spi device
+ * @param[in] mode The mode of the spi device
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
+ */
+int peripheral_spi_set_mode(peripheral_spi_h spi, peripheral_spi_mode_e mode);
 
-int	peripheral_spi_write(peripheral_spi_context_h hnd, char *txbuf, int length);
+/**
+ * @brief Gets mode of the spi device.
+ * @since_tizen 4.0
+ *
+ * @param[in] spi The handle to the spi device
+ * @param[out] mode The mode of the spi device
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
+ */
+int peripheral_spi_get_mode(peripheral_spi_h spi, peripheral_spi_mode_e *mode);
 
-int	peripheral_spi_recv(peripheral_spi_context_h hnd, char *rxbuf, int length);
+/**
+ * @brief Sets bits justification of the spi device.
+ * @since_tizen 4.0
+ *
+ * @param[in] spi The handle to the spi device
+ * @param[in] lsb The bit position to be transmitted first
+ *            true - LSB first
+ *            false - MSB first
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
+ */
+int peripheral_spi_set_lsb_first(peripheral_spi_h spi, bool lsb);
 
-int peripheral_spi_transfer_buf(peripheral_spi_context_h hnd, char *txbuf, char *rxbuf, int length);
+/**
+ * @brief Gets bits justification of the spi device.
+ * @since_tizen 4.0
+ *
+ * @param[in] spi The handle to the spi device
+ * @param[out] lsb The bit position to be transmitted first
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
+ */
+int peripheral_spi_get_lsb_first(peripheral_spi_h spi, bool *lsb);
 
-int	peripheral_spi_close(peripheral_spi_context_h hnd);
+/**
+ * @brief Sets the number of bits per word of the spi device
+ * @since_tizen 4.0
+ *
+ * @param[in] spi The handle to the spi device
+ * @param[in] bits The number of bits per word (in bits)
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
+ */
+int peripheral_spi_set_bits_per_word(peripheral_spi_h spi, unsigned char bits);
+
+/**
+ * @brief Gets the number of bits per word of the spi device
+ * @since_tizen 4.0
+ *
+ * @param[in] spi The handle to the spi device
+ * @param[out] bits The number of bits per word (in bits)
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
+ */
+int peripheral_spi_get_bits_per_word(peripheral_spi_h spi, unsigned char *bits);
+
+/**
+ * @brief Sets default max speed of the spi device.
+ * @since_tizen 4.0
+ *
+ * @param[in] spi The handle to the spi device
+ * @param[in] freq Max speed (in hz)
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
+ */
+int peripheral_spi_set_frequency(peripheral_spi_h spi, unsigned int freq);
+
+/**
+ * @brief Gets default max speed of the spi device.
+ * @since_tizen 4.0
+ *
+ * @param[in] spi The handle to the spi device
+ * @param[out] freq Max speed (in hz)
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
+ */
+
+int peripheral_spi_get_frequency(peripheral_spi_h spi, unsigned int *freq);
+
+/**
+ * @brief Reads data from the slave device.
+ * @since_tizen 4.0
+ *
+ * @param[in] spi The handle to the spi device
+ * @param[out] data The address of buffer to read
+ * @param[in] length The size of data buffer (in bytes)
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ */
+int peripheral_spi_read(peripheral_spi_h spi, unsigned char *data, int length);
+
+/**
+ * @brief Write data to the slave device.
+ * @since_tizen 4.0
+ *
+ * @param[in] spi The handle to the spi device
+ * @param[in] data The address of buffer to write
+ * @param[in] length The size of data (in bytes)
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ */
+int peripheral_spi_write(peripheral_spi_h spi, unsigned char *data, int length);
+
+/**
+ * @brief Exchange data with the slave device.
+ * @since_tizen 4.0
+ *
+ * @param[in] spi The handle to the spi device
+ * @param[in] txdata The address of buffer to write
+ * @param[out] rxdata The address of buffer to read
+ * @param[in] length The size of data (in bytes)
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ */
+int peripheral_spi_read_write(peripheral_spi_h spi, unsigned char *txdata, unsigned char *rxdata, int length);
 
 /**
 * @}

@@ -519,6 +519,80 @@ err_open:
 	return -1;
 }
 
+#define MMA7455_MCTL_SPI3W 0x20 // SPI is 3 wire mode
+#define MMA7455_MCTL_DRPD 0x40 // Data ready status is not output to INT1/DRDY PIN
+
+#define MMA7455_SPI_REGISTER_WRITE 0x40
+
+int spi_mma7455_module_test(void)
+{
+	int cnt = 0;
+	int bus_num, cs_num, ret;
+	unsigned char tx_buf[10];
+	unsigned char rx_buf[10];
+	unsigned int num;
+	peripheral_spi_h spi;
+
+	printf("	%s()\n", __func__);
+	printf("Enter SPI bus number : ");
+	if (scanf("%d", &bus_num) < 0)
+		return -1;
+
+	printf("Enter SPI cs number : ");
+	if (scanf("%d", &cs_num) < 0)
+		return -1;
+
+	if ((ret = peripheral_spi_open(bus_num, cs_num, &spi)) < 0) {
+		printf("Failed to open I2C communication, ret : %d\n", ret);
+		return -1;
+	}
+	peripheral_spi_set_mode(spi, PERIPHERAL_SPI_MODE_0);
+	peripheral_spi_set_lsb_first(spi, false);
+	peripheral_spi_set_bits_per_word(spi, 8);
+	peripheral_spi_set_frequency(spi, 100000);
+
+	printf("bus : %d, cs : %d, ", bus_num, cs_num);
+	peripheral_spi_get_mode(spi, (peripheral_spi_mode_e*)&num);
+	printf("mode : %d, ", num);
+	peripheral_spi_get_lsb_first(spi, (bool*)&num);
+	printf("lsb first : %d, ", (bool)num);
+	peripheral_spi_get_bits_per_word(spi, (unsigned char*)&num);
+	printf("bits : %d, ", (unsigned char)num);
+	peripheral_spi_get_frequency(spi, &num);
+	printf("max frequency : %d\n", num);
+
+	tx_buf[0] = (MMA7455_MCTL | MMA7455_SPI_REGISTER_WRITE) << 1;
+	tx_buf[1] = MMA7455_MCTL_DRPD | MMA7455_MCTL_SPI3W | MMA7455_MCTL_2G | MMA7455_MCTL_MEASUREMENT_MODE;
+	if ((ret = peripheral_spi_write(spi, tx_buf, 2)) < 0) {
+		printf("Failed to write, ret : %d\n", ret);
+		goto error;
+	}
+
+	while (cnt++ < 15) {
+		int i;
+		unsigned char buf[5];
+
+		sleep(1);
+		for (i = 0; i < 3; i++) {
+			tx_buf[0] = (MMA7455_XOUT8 + i) << 1;
+			tx_buf[1] = 0;
+			ret = peripheral_spi_read_write(spi, tx_buf, rx_buf, 2);
+			if (ret < 0)
+				printf("Failed to read, ret : %d\n", ret);
+			buf[i] = rx_buf[1];
+		}
+
+		printf("X = 0x%02X, Y = 0x%02X, Z = 0x%02X\n", buf[0], buf[1], buf[2]);
+	}
+
+	peripheral_spi_close(spi);
+	return 0;
+
+error:
+	peripheral_spi_close(spi);
+	return -1;
+}
+
 int gpio_test_get_handle_by_pin(int pin, peripheral_gpio_h *gpio)
 {
 	peripheral_gpio_h handle;
@@ -851,8 +925,9 @@ tc_table_t preset_tc_table[] = {
 	{"[Preset Test] PWM LED",					4, pwm_test_led},
 	{"[Preset Test] PWM Motor",					5, pwm_test_motor},
 	{"[Preset Test] Uart Accelerometer",		6, uart_test_accelerometer},
-	{"[Preset Test] GPIO IRQ register",			7, gpio_irq_register},
-	{"[Preset Test] GPIO IRQ unregister",		8, gpio_irq_unregister},
+	{"[Preset Test] SPI MMA7455 Accel. sensor",	7, spi_mma7455_module_test},
+	{"[Preset Test] GPIO IRQ register",			8, gpio_irq_register},
+	{"[Preset Test] GPIO IRQ unregister",		9, gpio_irq_unregister},
 	{"Go back to main",							0, enter_main},
 	{NULL,	0, NULL},
 };

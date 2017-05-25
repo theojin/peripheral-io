@@ -46,4 +46,11 @@ struct _peripheral_uart_s {
 	uint handle;
 };
 
+/**
+ * @brief Internal struct for spi context
+ */
+struct _peripheral_spi_s {
+	uint handle;
+};
+
 #endif /* __PERIPHERAL_INTERNAL_H__ */
