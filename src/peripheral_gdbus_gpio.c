@@ -60,6 +60,8 @@ void gpio_proxy_deinit()
 {
 	if (gpio_proxy) {
 		g_object_unref(gpio_proxy);
+		if (!G_IS_OBJECT(gpio_proxy))
+			gpio_proxy = NULL;
 	}
 }
 

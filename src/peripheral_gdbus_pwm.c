@@ -47,6 +47,8 @@ void pwm_proxy_deinit()
 {
 	if (pwm_proxy) {
 		g_object_unref(pwm_proxy);
+		if (!G_IS_OBJECT(pwm_proxy))
+			pwm_proxy = NULL;
 	}
 }
 

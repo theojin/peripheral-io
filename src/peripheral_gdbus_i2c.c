@@ -47,6 +47,8 @@ void i2c_proxy_deinit()
 {
 	if (i2c_proxy) {
 		g_object_unref(i2c_proxy);
+		if (!G_IS_OBJECT(i2c_proxy))
+			i2c_proxy = NULL;
 	}
 }
 

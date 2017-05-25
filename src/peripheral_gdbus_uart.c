@@ -47,6 +47,8 @@ void uart_proxy_deinit()
 {
 	if (uart_proxy) {
 		g_object_unref(uart_proxy);
+		if (!G_IS_OBJECT(uart_proxy))
+			uart_proxy = NULL;
 	}
 }
 
