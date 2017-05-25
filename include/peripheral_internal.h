@@ -22,8 +22,7 @@
  */
 struct _peripheral_gpio_s {
 	int pin;
-	peripheral_gpio_direction_e direction;
-	peripheral_gpio_edge_e edge;
+	uint handle;
 };
 
 /**

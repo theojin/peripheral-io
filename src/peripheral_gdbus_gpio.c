@@ -89,8 +89,7 @@ int peripheral_gdbus_gpio_open(peripheral_gpio_h gpio)
 	if (peripheral_io_gdbus_gpio_call_open_sync(
 			gpio_proxy,
 			gpio->pin,
-			(gint*)&gpio->edge,
-			(gint*)&gpio->direction,
+			&gpio->handle,
 			&ret,
 			NULL,
 			&error) == FALSE) {
@@ -111,7 +110,7 @@ int peripheral_gdbus_gpio_close(peripheral_gpio_h gpio)
 
 	if (peripheral_io_gdbus_gpio_call_close_sync(
 			gpio_proxy,
-			gpio->pin,
+			gpio->handle,
 			&ret,
 			NULL,
 			&error) == FALSE) {
@@ -132,7 +131,7 @@ int peripheral_gdbus_gpio_get_direction(peripheral_gpio_h gpio, peripheral_gpio_
 
 	if (peripheral_io_gdbus_gpio_call_get_direction_sync(
 			gpio_proxy,
-			gpio->pin,
+			gpio->handle,
 			(gint*)direction,
 			&ret,
 			NULL,
@@ -141,7 +140,6 @@ int peripheral_gdbus_gpio_get_direction(peripheral_gpio_h gpio, peripheral_gpio_
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
-	gpio->direction = *direction;
 
 	return ret;
 }
@@ -155,7 +153,7 @@ int peripheral_gdbus_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_
 
 	if (peripheral_io_gdbus_gpio_call_set_direction_sync(
 			gpio_proxy,
-			gpio->pin,
+			gpio->handle,
 			direction,
 			&ret,
 			NULL,
@@ -164,7 +162,6 @@ int peripheral_gdbus_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
-	gpio->direction = direction;
 
 	return ret;
 }
@@ -178,7 +175,7 @@ int peripheral_gdbus_gpio_read(peripheral_gpio_h gpio, int *value)
 
 	if (peripheral_io_gdbus_gpio_call_read_sync(
 			gpio_proxy,
-			gpio->pin,
+			gpio->handle,
 			value,
 			&ret,
 			NULL,
@@ -200,7 +197,7 @@ int peripheral_gdbus_gpio_write(peripheral_gpio_h gpio, int value)
 
 	if (peripheral_io_gdbus_gpio_call_write_sync(
 			gpio_proxy,
-			gpio->pin,
+			gpio->handle,
 			value,
 			&ret,
 			NULL,
@@ -222,7 +219,7 @@ int peripheral_gdbus_gpio_get_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_
 
 	if (peripheral_io_gdbus_gpio_call_get_edge_mode_sync(
 			gpio_proxy,
-			gpio->pin,
+			gpio->handle,
 			(int*)edge,
 			&ret,
 			NULL,
@@ -231,7 +228,6 @@ int peripheral_gdbus_gpio_get_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
-	gpio->edge = *edge;
 
 	return ret;
 }
@@ -245,7 +241,7 @@ int peripheral_gdbus_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_
 
 	if (peripheral_io_gdbus_gpio_call_set_edge_mode_sync(
 			gpio_proxy,
-			gpio->pin,
+			gpio->handle,
 			edge,
 			&ret,
 			NULL,
@@ -254,7 +250,6 @@ int peripheral_gdbus_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
-	gpio->edge = edge;
 
 	return ret;
 }
@@ -268,7 +263,7 @@ int peripheral_gdbus_gpio_register_cb(peripheral_gpio_h gpio, gpio_isr_cb callba
 
 	if (peripheral_io_gdbus_gpio_call_register_irq_sync(
 			gpio_proxy,
-			gpio->pin,
+			gpio->handle,
 			&ret,
 			NULL,
 			&error) == FALSE) {
@@ -289,7 +284,7 @@ int peripheral_gdbus_gpio_unregister_cb(peripheral_gpio_h gpio)
 
 	if (peripheral_io_gdbus_gpio_call_unregister_irq_sync(
 			gpio_proxy,
-			gpio->pin,
+			gpio->handle,
 			&ret,
 			NULL,
 			&error) == FALSE) {

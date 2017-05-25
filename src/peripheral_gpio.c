@@ -176,8 +176,6 @@ int peripheral_gpio_get_direction(peripheral_gpio_h gpio, peripheral_gpio_direct
 		return PERIPHERAL_ERROR_INVALID_PARAMETER;
 
 	ret = peripheral_gdbus_gpio_get_direction(gpio, direction);
-	if (ret == PERIPHERAL_ERROR_NONE)
-		gpio->direction = (*direction);
 
 	return ret;
 }
@@ -199,8 +197,6 @@ int peripheral_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_direct
 
 	/* call gpio_set_direction */
 	ret = peripheral_gdbus_gpio_set_direction(gpio, direction);
-	if (ret == PERIPHERAL_ERROR_NONE)
-		gpio->direction = direction;
 
 	return ret;
 }
@@ -251,8 +247,6 @@ int peripheral_gpio_get_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e
 		return PERIPHERAL_ERROR_INVALID_PARAMETER;
 
 	ret = peripheral_gdbus_gpio_get_edge_mode(gpio, edge);
-	if (ret == PERIPHERAL_ERROR_NONE)
-		gpio->edge = (*edge);
 
 	return ret;
 }
@@ -273,8 +267,6 @@ int peripheral_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e
 
 	/* call gpio_set_edge_mode */
 	ret = peripheral_gdbus_gpio_set_edge_mode(gpio, edge);
-	if (ret == PERIPHERAL_ERROR_NONE)
-		gpio->edge = edge;
 
 	return ret;
 }
