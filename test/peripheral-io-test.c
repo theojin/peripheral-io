@@ -61,7 +61,7 @@ int read_int_input(int *input)
 
 int gpio_led_test(void)
 {
-	int num;
+	int num, ret;
 	int cnt = 0;
 	peripheral_gpio_h handle = NULL;
 
@@ -69,16 +69,16 @@ int gpio_led_test(void)
 	printf("Enter GPIO pin number ");
 
 	if (scanf("%d", &num) < 0)
-		return 0;
+		return -1;
 	printf("num %d\n", num);
 
-	if (peripheral_gpio_open(num, &handle) != PERIPHERAL_ERROR_NONE) {
-		printf("handle is null\n");
-		return 0;
+	if ((ret = peripheral_gpio_open(num, &handle)) < PERIPHERAL_ERROR_NONE) {
+		printf("Failed to open\n");
+		return ret;
 	}
 
-	if (peripheral_gpio_set_direction(handle, PERIPHERAL_GPIO_DIRECTION_OUT) != PERIPHERAL_ERROR_NONE) {
-		printf("set direction error!!!");
+	if ((ret = peripheral_gpio_set_direction(handle, PERIPHERAL_GPIO_DIRECTION_OUT)) < PERIPHERAL_ERROR_NONE) {
+		printf("Failed to set direction!!\n");
 		goto error;
 	}
 
@@ -90,12 +90,16 @@ int gpio_led_test(void)
 		sleep(1);
 	}
 	printf("Write finish\n");
-	peripheral_gpio_close(handle);
-	return 1;
+	if ((ret = peripheral_gpio_close(handle)) < PERIPHERAL_ERROR_NONE) {
+		printf("Failed to close the pin\n");
+		return ret;
+	}
+
+	return 0;
 
 error:
 	peripheral_gpio_close(handle);
-	return 0;
+	return ret;
 }
 
 void gpio_irq_test_isr(void *user_data)
@@ -760,6 +764,25 @@ int enter_spi_test(void)
 	return 0;
 }
 
+tc_table_t preset_tc_table[] = {
+	{"[Preset Test] GPIO LED",					1, gpio_led_test},
+	{"[Preset Test] I2C GY30 Light sensor",		2, i2c_gy30_test},
+	{"[Preset Test] I2C MMA7455 Accel. sensor",	3, i2c_mma7455_test},
+	{"[Preset Test] PWM LED",					4, pwm_test_led},
+	{"[Preset Test] PWM Motor",					5, pwm_test_motor},
+	{"[Preset Test] Uart Accelerometer",		6, uart_test_accelerometer},
+	{"[Preset Test] GPIO IRQ register",			7, gpio_irq_register},
+	{"[Preset Test] GPIO IRQ unregister",		8, gpio_irq_unregister},
+	{"Go back to main",							0, enter_main},
+	{NULL,	0, NULL},
+};
+
+int enter_preset_test(void)
+{
+	tc_table = preset_tc_table;
+	return 0;
+}
+
 int terminate_test(void)
 {
 	int ret = 0;
@@ -779,14 +802,7 @@ tc_table_t main_tc_table[] = {
 	{"ADC Test Menu",							4, enter_adc_test},
 	{"UART Test Menu",							5, enter_uart_test},
 	{"SPI Test Menu",							6, enter_spi_test},
-	{"[Preset Test] GPIO LED",					11, gpio_led_test},
-	{"[Preset Test] I2C GY30 Light sensor",		12, i2c_gy30_test},
-	{"[Preset Test] I2C MMA7455 Accel. sensor",	13, i2c_mma7455_test},
-	{"[Preset Test] PWM LED",					14, pwm_test_led},
-	{"[Preset Test] PWM Motor",					15, pwm_test_motor},
-	{"[Preset Test] Uart Accelerometer",		16, uart_test_accelerometer},
-	{"[Preset Test] GPIO IRQ register",			17, gpio_irq_register},
-	{"[Preset Test] GPIO IRQ unregister",		18, gpio_irq_unregister},
+	{"Preset Test",								10, enter_preset_test},
 	{"Exit Test",								0, terminate_test},
 	{NULL,	0, NULL},
 };
@@ -800,14 +816,16 @@ int enter_main(void)
 
 static int test_input_callback(void *data)
 {
+	tc_table_t *tc;
 	long test_id = (long)data;
 	int ret = PERIPHERAL_ERROR_NONE;
 	int i = 0;
 
-	while (tc_table[i].tc_name) {
-		if (tc_table[i].tc_code == test_id) {
-			ret = tc_table[i].tc_func();
+	tc = tc_table;
 
+	while (tc[i].tc_name) {
+		if (tc[i].tc_code == test_id && tc[i].tc_func) {
+			ret = tc[i].tc_func();
 			if (ret != PERIPHERAL_ERROR_NONE)
 				printf(">>>>> Test Error Returned !!! : %d\n", ret);
 
@@ -815,7 +833,7 @@ static int test_input_callback(void *data)
 		}
 		i++;
 	}
-	if (!tc_table[i].tc_name) {
+	if (!tc[i].tc_name) {
 		printf(">>>>> Wrong input value!\n");
 		return -1;
 	}
