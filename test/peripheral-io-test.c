@@ -188,8 +188,9 @@ int i2c_gy30_test(void)
 	peripheral_i2c_h i2c;
 
 	printf("    %s()\n", __func__);
-	printf("Enter I2C bus number : ");
-	if (scanf("%d", &bus_num) < 0)
+	printf("Enter I2C bus number\n");
+
+	if (read_int_input(&bus_num) < 0)
 		return -1;
 
 	if ((ret = peripheral_i2c_open(bus_num, GY30_ADDR, &i2c)) < 0) {
@@ -197,8 +198,7 @@ int i2c_gy30_test(void)
 		return -1;
 	}
 
-	buf[0] = GY30_CONT_HIGH_RES_MODE;
-	if ((ret = peripheral_i2c_write(i2c, buf, 1)) < 0) {
+	if ((ret = peripheral_i2c_write_byte(i2c, GY30_CONT_HIGH_RES_MODE)) < 0) {
 		printf("Failed to write, ret : %d\n", ret);
 		goto error;
 	}
@@ -221,73 +221,153 @@ error:
 	return -1;
 }
 
-#define MMA_7455_ADDRESS 0x1D //I2C Address for the sensor
-#define MMA_7455_MODE_CONTROL 0x16 //Call the sensors Mode Control
+#define MMA7455_ADDRESS 0x1D //I2C Address for the sensor
 
-#define MMA_7455_2G_MODE 0x04 //Set Sensitivity to 2g
-#define MMA_7455_4G_MODE 0x08 //Set Sensitivity to 4g
-#define MMA_7455_8G_MODE 0x00 //Set Sensitivity to 8g
+#define MMA7455_MCTL 0x16 // Mode Control
 
-#define MMA_7455_STANDBY_MODE 0x0
-#define MMA_7455_MEASUREMENT_MODE 0x1
-#define MMA_7455_LEVEL_DETECTION_MODE 0x2
-#define MMA_7455_PULSE_DETECTION_MODE 0x3
+#define MMA7455_MCTL_STANDBY_MODE 0x0
+#define MMA7455_MCTL_MEASUREMENT_MODE 0x01
+#define MMA7455_MCTL_LEVEL_DETECTION_MODE 0x02
+#define MMA7455_MCTL_PULSE_DETECTION_MODE 0x03
+#define MMA7455_MCTL_2G 0x04 //Set Sensitivity to 2g
+#define MMA7455_MCTL_4G 0x08 //Set Sensitivity to 4g
+#define MMA7455_MCTL_8G 0x00 //Set Sensitivity to 8g
 
-#define X_OUT 0x06 //Register for reading the X-Axis
-#define Y_OUT 0x07 //Register for reading the Y-Axis
-#define Z_OUT 0x08 //Register for reading the Z-Axis
+#define MMA7455_INTRST 0x17
+
+#define MMA7455_CONTROL1 0x18
+#define MMA7455_CONTROL1_INTREG 0x06
+#define MMA7455_CONTROL1_DFBW 0x80
+
+#define MMA7455_XOUT8 0x06 //Register for reading the X-Axis
+#define MMA7455_YOUT8 0x07 //Register for reading the Y-Axis
+#define MMA7455_ZOUT8 0x08 //Register for reading the Z-Axis
+
+static void i2c_mma7455_isr(void *user_data)
+{
+	peripheral_i2c_h i2c = user_data;
+	int x_pos, y_pos, z_pos;
+	uint8_t buf[4];
+
+	peripheral_i2c_write_byte(i2c, MMA7455_XOUT8);
+	peripheral_i2c_read_byte(i2c, buf);
+	x_pos = (int)buf[0];
+
+	peripheral_i2c_write_byte(i2c, MMA7455_YOUT8);
+	peripheral_i2c_read_byte(i2c, buf);
+	y_pos = (int)buf[0];
+
+	peripheral_i2c_write_byte(i2c, MMA7455_ZOUT8);
+	peripheral_i2c_read_byte(i2c, buf);
+	z_pos = (int)buf[0];
+
+	printf("Result X : %d, Y : %d, Z : %d\n", x_pos, y_pos, z_pos);
+
+	/* Reset interrupt flags */
+	buf[0] = MMA7455_INTRST;
+	buf[1] = 0x3;
+	peripheral_i2c_write(i2c, buf, 2);
+	buf[1] = 0x0;
+	peripheral_i2c_write(i2c, buf, 2);
+
+	return;
+}
 
 int i2c_mma7455_test(void)
 {
+	static peripheral_i2c_h i2c;
+	static peripheral_gpio_h isr_gpio;
+	unsigned char buf[4];
+	int bus_num, gpio_num, ret;
 	int cnt = 0;
-	int bus_num, ret;
-	unsigned char buf[10];
-	peripheral_i2c_h i2c;
 
 	printf("    %s()\n", __func__);
-	printf("Enter I2C bus number");
-	if (scanf("%d", &bus_num) < 0)
+	if (i2c) {
+		printf("Disabling the test\n");
+
+		peripheral_i2c_close(i2c);
+		i2c = NULL;
+		printf("i2c(bus = %d address = %d) handle is closed\n", bus_num, MMA7455_ADDRESS);
+
+		if (isr_gpio) {
+			peripheral_gpio_close(isr_gpio);
+			isr_gpio = NULL;
+			printf("isr_gpio handle is closed\n");
+		}
+
+		return 0;
+	}
+
+	printf("Enter I2C bus number\n");
+
+	if (read_int_input(&bus_num) < 0)
 		return -1;
 
-	if ((ret = peripheral_i2c_open(bus_num, MMA_7455_ADDRESS, &i2c)) < 0) {
+	if ((ret = peripheral_i2c_open(bus_num, MMA7455_ADDRESS, &i2c)) < 0) {
 		printf(">>>>> Failed to open I2C communication, ret : %d \n", ret);
 		return -1;
 	}
 
-	buf[0] = MMA_7455_MODE_CONTROL;
-	buf[1] = MMA_7455_2G_MODE | MMA_7455_LEVEL_DETECTION_MODE;
+	buf[0] = MMA7455_MCTL;
+	buf[1] = MMA7455_MCTL_8G | MMA7455_MCTL_PULSE_DETECTION_MODE;
 	if ((ret = peripheral_i2c_write(i2c, buf, 2)) != 0) {
 		printf(">>>>> Failed to write, ret : %d\n", ret);
 		goto error;
 	}
 
-	while (cnt++ < 10) {
-		int x_pos, y_pos, z_pos;
-		sleep(1);
+	printf("Enter GPIO pin number for Interrupt\n");
+	if (read_int_input(&gpio_num) < 0)
+		gpio_num = -1;
 
-		buf[0] = X_OUT;
-		peripheral_i2c_write(i2c, buf, 1);
-		peripheral_i2c_read(i2c, buf, 1);
-		x_pos = (int)buf[0];
+	if ((gpio_num > 0) && (peripheral_gpio_open(gpio_num, &isr_gpio) == 0)) {
+		ret = peripheral_gpio_set_direction(isr_gpio, PERIPHERAL_GPIO_DIRECTION_IN);
+		if (ret < 0)
+			printf(">>>> Failed to set direction of isr_gpio\n");
 
-		buf[0] = Y_OUT;
-		peripheral_i2c_write(i2c, buf, 1);
-		peripheral_i2c_read(i2c, buf, 1);
-		y_pos = (int)buf[0];
+		ret = peripheral_gpio_set_edge_mode(isr_gpio, PERIPHERAL_GPIO_EDGE_RISING);
+		if (ret < 0)
+			printf(">>>> Failed to set edge mode of isr_gpio\n");
 
-		buf[0] = Z_OUT;
-		peripheral_i2c_write(i2c, buf, 1);
-		peripheral_i2c_read(i2c, buf, 1);
-		z_pos = (int)buf[0];
+		ret = peripheral_gpio_register_cb(isr_gpio, i2c_mma7455_isr, (void*)i2c);
+		if (ret < 0)
+			printf(">>>> Failed to register gpio callback\n");
 
-		printf("Result X : %d, Y : %d, Z : %d\n", x_pos, y_pos, z_pos);
+		buf[0] = MMA7455_INTRST;
+		buf[1] = 0x03;
+		peripheral_i2c_write(i2c, buf, 2);
+		buf[1] = 0x0;
+		peripheral_i2c_write(i2c, buf, 2);
+
+		printf("callback is registered on gpio pin %d\n", gpio_num);
+		printf("i2c(bus = %d address = %d) handle is open\n", bus_num, MMA7455_ADDRESS);
+	} else {
+		while (cnt++ < 10) {
+			int x_pos, y_pos, z_pos;
+			sleep(1);
+
+			peripheral_i2c_write_byte(i2c, MMA7455_XOUT8);
+			peripheral_i2c_read_byte(i2c, buf);
+			x_pos = (int)buf[0];
+
+			peripheral_i2c_write_byte(i2c, MMA7455_YOUT8);
+			peripheral_i2c_read_byte(i2c, buf);
+			y_pos = (int)buf[0];
+
+			peripheral_i2c_write_byte(i2c, MMA7455_ZOUT8);
+			peripheral_i2c_read_byte(i2c, buf);
+			z_pos = (int)buf[0];
+
+			printf("Result X : %d, Y : %d, Z : %d\n", x_pos, y_pos, z_pos);
+		}
+		peripheral_i2c_close(i2c);
+		i2c = NULL;
+		printf("i2c(bus = %d address = %d) handle is closed\n", bus_num, MMA7455_ADDRESS);
 	}
-
-	peripheral_i2c_close(i2c);
 	return 0;
 
 error:
 	peripheral_i2c_close(i2c);
+	i2c = NULL;
 	return -1;
 }
 
