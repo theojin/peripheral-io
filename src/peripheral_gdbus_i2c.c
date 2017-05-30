@@ -126,6 +126,7 @@ int peripheral_gdbus_i2c_read(peripheral_i2c_h i2c, uint8_t *data, int length)
 		if (i++ == length) break;
 	}
 	g_variant_iter_free(iter);
+	g_variant_unref(data_array);
 
 	return ret;
 }

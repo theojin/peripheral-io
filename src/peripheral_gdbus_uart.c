@@ -215,6 +215,7 @@ int peripheral_gdbus_uart_read(peripheral_uart_h uart, uint8_t *data, int length
 		if (i++ == length) break;
 	}
 	g_variant_iter_free(iter);
+	g_variant_unref(data_array);
 
 	return ret;
 }
