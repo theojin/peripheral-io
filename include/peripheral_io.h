@@ -332,7 +332,7 @@ int peripheral_i2c_close(peripheral_i2c_h i2c);
  * @since_tizen 4.0
  *
  * @param[in] i2c The handle to the i2c device
- * @param[in, out] data The address of read buffer
+ * @param[out] data The address of data buffer to read
  * @param[in] length The size of data buffer (in bytes)
  *
  * @return 0 on success, otherwise a negative error value
@@ -348,7 +348,7 @@ int peripheral_i2c_read(peripheral_i2c_h i2c, uint8_t *data, int length);
  * @since_tizen 4.0
  *
  * @param[in] i2c The handle to the i2c device
- * @param[in, out] data The address of buffer to write
+ * @param[in] data The address of data buffer to write
  * @param[in] length The size of data buffer (in bytes)
  *
  * @return 0 on success, otherwise a negative error value
@@ -359,6 +359,34 @@ int peripheral_i2c_read(peripheral_i2c_h i2c, uint8_t *data, int length);
  */
 int peripheral_i2c_write(peripheral_i2c_h i2c, uint8_t *data, int length);
 
+/**
+ * @brief Reads single byte data from the i2c device.
+ * @since_tizen 4.0
+ *
+ * @param[in] i2c The handle to the i2c device
+ * @param[out] data The address of data buffer to read
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ */
+int peripheral_i2c_read_byte(peripheral_i2c_h i2c, uint8_t *data);
+/**
+ * @brief Write single byte data to the i2c device.
+ * @since_tizen 4.0
+ *
+ * @param[in] i2c The handle to the i2c device
+ * @param[in] data The byte value to write
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ */
+int peripheral_i2c_write_byte(peripheral_i2c_h i2c, uint8_t data);
 
 /**
 * @}

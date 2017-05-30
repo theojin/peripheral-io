@@ -89,3 +89,21 @@ int peripheral_i2c_write(peripheral_i2c_h i2c, uint8_t *data, int length)
 
 	return peripheral_gdbus_i2c_write(i2c, data, length);
 }
+
+int peripheral_i2c_read_byte(peripheral_i2c_h i2c, uint8_t *data)
+{
+	int ret = PERIPHERAL_ERROR_NONE;
+
+	if (i2c == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
+
+	ret = peripheral_gdbus_i2c_read(i2c, data, 0x1);
+
+	return ret;
+}
+
+int peripheral_i2c_write_byte(peripheral_i2c_h i2c, uint8_t data)
+{
+	if (i2c == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
+
+	return peripheral_gdbus_i2c_write(i2c, &data, 0x1);
+}
