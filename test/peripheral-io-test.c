@@ -908,8 +908,40 @@ int enter_pwm_test(void)
 	return 0;
 }
 
+int adc_read_channel(void)
+{
+	int device, channel, ret;
+	int value;
+
+	printf("%s\n", __func__);
+
+	printf("Enter adc device number\n");
+	if (read_int_input(&device) < 0)
+		return -1;
+
+	printf("Enter adc channel number\n");
+	if (read_int_input(&channel) < 0)
+		return -1;
+
+	if ((ret = peripheral_adc_read(device, channel, &value)) < 0) {
+		printf(">>>>> Failed to read adc value, ret : %d\n", ret);
+		return -1;
+	}
+	printf("ADC(%d,%d) Value = %d\n", device, channel, value);
+
+	return 0;
+}
+
+tc_table_t adc_tc_table[] = {
+	{"Read ADC Channel",			1, adc_read_channel},
+	{"Go back to main",				0, enter_main},
+	{NULL,	0, NULL},
+};
+
 int enter_adc_test(void)
 {
+	tc_table = adc_tc_table;
+
 	return 0;
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017 Samsung Electronics Co., Ltd.
+ * Copyright (c) 2017 Samsung Electronics Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-#include "peripheral_io.h"
-#include "peripheral_gdbus_adc.h"
-#include "peripheral_common.h"
+#ifndef __PERIPHERAL_GDBUS_ADC_H__
+#define __PERIPHERAL_GDBUS_ADC_H__
 
-int peripheral_adc_read(unsigned int device, unsigned int channel, int *data)
-{
-	int ret = PERIPHERAL_ERROR_NONE;
+void adc_proxy_init(void);
+void adc_proxy_deinit(void);
 
-	adc_proxy_init();
+int peripheral_gdbus_adc_read(unsigned int device, unsigned int channel, int *data);
 
-	ret = peripheral_gdbus_adc_read(device, channel, data);
-	if (ret < PERIPHERAL_ERROR_NONE)
-		_E("Failed to read, ret : %d", ret);
-
-	return ret;
-}
+#endif /* __PERIPHERAL_GDBUS_ADC_H__ */

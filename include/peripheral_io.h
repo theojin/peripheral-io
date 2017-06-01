@@ -662,26 +662,21 @@ int peripheral_pwm_get_enable(peripheral_pwm_h pwm, bool *enable);
  */
 
 /**
- * @brief Struct for peripheral_gpio_s
+ * @brief Reads data from the adc device.
+ * @since_tizen 4.0
+ *
+ * @param[in] device The device number of the adc device
+ * @param[in] channel The channel number to read
+ * @param[out] data The address of buffer to read
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device is not exist or removed
  */
-
-#define DEVICE_NAME_SIZE	20
-
-struct _peripheral_adc_s {
-	char device_name[DEVICE_NAME_SIZE];
-	int channel;
-};
-
-/**
- * @brief Pointer definition to the internal struct peripheral_adc_s
- */
-typedef struct _peripheral_adc_s* peripheral_adc_context_h;
-
-peripheral_adc_context_h peripheral_adc_open(int channel);
-
-int peripheral_adc_read(peripheral_adc_context_h dev, int *data);
-
-int peripheral_adc_close(peripheral_adc_context_h dev);
+int peripheral_adc_read(unsigned int device, unsigned int channel, int *data);
 
 /**
 * @}
