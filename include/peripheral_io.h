@@ -328,7 +328,7 @@ int peripheral_i2c_open(int bus, int address, peripheral_i2c_h *i2c);
 int peripheral_i2c_close(peripheral_i2c_h i2c);
 
 /**
- * @brief Reads data from the i2c device.
+ * @brief Reads data from the i2c slave device.
  * @since_tizen 4.0
  *
  * @param[in] i2c The handle to the i2c device
@@ -344,7 +344,7 @@ int peripheral_i2c_close(peripheral_i2c_h i2c);
 int peripheral_i2c_read(peripheral_i2c_h i2c, uint8_t *data, int length);
 
 /**
- * @brief Write data to the i2c device.
+ * @brief Write data to the i2c slave device.
  * @since_tizen 4.0
  *
  * @param[in] i2c The handle to the i2c device
@@ -360,7 +360,7 @@ int peripheral_i2c_read(peripheral_i2c_h i2c, uint8_t *data, int length);
 int peripheral_i2c_write(peripheral_i2c_h i2c, uint8_t *data, int length);
 
 /**
- * @brief Reads single byte data from the i2c device.
+ * @brief Reads single byte data from the i2c slave device.
  * @since_tizen 4.0
  *
  * @param[in] i2c The handle to the i2c device
@@ -373,8 +373,9 @@ int peripheral_i2c_write(peripheral_i2c_h i2c, uint8_t *data, int length);
  * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
  */
 int peripheral_i2c_read_byte(peripheral_i2c_h i2c, uint8_t *data);
+
 /**
- * @brief Write single byte data to the i2c device.
+ * @brief Write single byte data to the i2c slave device.
  * @since_tizen 4.0
  *
  * @param[in] i2c The handle to the i2c device
@@ -387,6 +388,70 @@ int peripheral_i2c_read_byte(peripheral_i2c_h i2c, uint8_t *data);
  * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
  */
 int peripheral_i2c_write_byte(peripheral_i2c_h i2c, uint8_t data);
+
+/**
+ * @brief Reads byte data from the register of i2c slave device.
+ * @since_tizen 4.0
+ *
+ * @param[in] i2c The handle to the i2c device
+ * @param[in] address The register address of the i2c slave device to read
+ * @param[out] data The byte output of slave device(register value)
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ */
+int peripheral_i2c_read_register_byte(peripheral_i2c_h i2c, uint8_t address, uint8_t *data);
+
+/**
+ * @brief Write byte data to the register of i2c slave device.
+ * @since_tizen 4.0
+ *
+ * @param[in] i2c The handle to the i2c device
+ * @param[in] address The register address of the i2c slave device to write
+ * @param[in] data The byte value to write
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ */
+int peripheral_i2c_write_register_byte(peripheral_i2c_h i2c, uint8_t address, uint8_t data);
+
+/**
+ * @brief Reads word data from the register of i2c slave device.
+ * @since_tizen 4.0
+ *
+ * @param[in] i2c The handle to the i2c device
+ * @param[in] address The register address of the i2c slave device to read
+ * @param[out] data The word output(2 bytes) of slave device(register value)
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ */
+int peripheral_i2c_read_register_word(peripheral_i2c_h i2c, uint8_t address, uint16_t *data);
+
+/**
+ * @brief Write byte data to the register of i2c slave device.
+ * @since_tizen 4.0
+ *
+ * @param[in] i2c The handle to the i2c device
+ * @param[in] address The register address of the i2c slave device to write
+ * @param[in] data The word(2 bytes) value to write
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ */
+int peripheral_i2c_write_register_word(peripheral_i2c_h i2c, uint8_t address, uint16_t data);
 
 /**
 * @}

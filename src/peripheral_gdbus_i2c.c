@@ -165,3 +165,29 @@ int peripheral_gdbus_i2c_write(peripheral_i2c_h i2c, uint8_t *data, int length)
 
 	return ret;
 }
+
+int peripheral_gdbus_i2c_smbus_ioctl(peripheral_i2c_h i2c, uint8_t read_write, uint8_t command, uint32_t size, uint16_t data_in, uint16_t *data_out)
+{
+	GError *error = NULL;
+	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
+
+	if (i2c_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
+
+	if (peripheral_io_gdbus_i2c_call_smbus_ioctl_sync(
+			i2c_proxy,
+			i2c->handle,
+			read_write,
+			command,
+			size,
+			data_in,
+			data_out,
+			&ret,
+			NULL,
+			&error) == FALSE) {
+		_E("Error in %s() : %s\n", __func__, error->message);
+		g_error_free(error);
+		return PERIPHERAL_ERROR_UNKNOWN;
+	}
+
+	return ret;
+}

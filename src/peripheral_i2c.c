@@ -24,6 +24,16 @@
 #include "peripheral_common.h"
 #include "peripheral_internal.h"
 
+/* i2c_smbus_xfer read or write markers */
+#define I2C_SMBUS_READ	1
+#define I2C_SMBUS_WRITE	0
+
+/* SMBus transaction types */
+#define I2C_SMBUS_QUICK		    0
+#define I2C_SMBUS_BYTE		    1
+#define I2C_SMBUS_BYTE_DATA	    2
+#define I2C_SMBUS_WORD_DATA	    3
+
 int peripheral_i2c_open(int bus, int address, peripheral_i2c_h *i2c)
 {
 	peripheral_i2c_h handle;
@@ -75,11 +85,7 @@ int peripheral_i2c_read(peripheral_i2c_h i2c, uint8_t *data, int length)
 	if (i2c == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
 
 	ret = peripheral_gdbus_i2c_read(i2c, data, length);
-	/*
-	_D("I2C read data : ");
-	for (int i = 0 ; i < length ; i++)
-		_D("[%02x]", data[i]);
-	*/
+
 	return ret;
 }
 
@@ -93,17 +99,81 @@ int peripheral_i2c_write(peripheral_i2c_h i2c, uint8_t *data, int length)
 int peripheral_i2c_read_byte(peripheral_i2c_h i2c, uint8_t *data)
 {
 	int ret = PERIPHERAL_ERROR_NONE;
+	uint16_t w_data, dummy = 0;
 
 	if (i2c == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
 
-	ret = peripheral_gdbus_i2c_read(i2c, data, 0x1);
+	ret = peripheral_gdbus_i2c_smbus_ioctl(i2c, I2C_SMBUS_READ, 0x0, I2C_SMBUS_BYTE, dummy, &w_data);
+	if (ret < PERIPHERAL_ERROR_NONE)
+		_E("Failed to read, ret : %d", ret);
+
+	*data = (uint8_t)w_data;
 
 	return ret;
 }
 
 int peripheral_i2c_write_byte(peripheral_i2c_h i2c, uint8_t data)
 {
+	int ret = PERIPHERAL_ERROR_NONE;
+	uint16_t dummy = 0;
+
 	if (i2c == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
 
-	return peripheral_gdbus_i2c_write(i2c, &data, 0x1);
+	ret = peripheral_gdbus_i2c_smbus_ioctl(i2c, I2C_SMBUS_WRITE, dummy, I2C_SMBUS_BYTE, (uint16_t)data, &dummy);
+	if (ret < PERIPHERAL_ERROR_NONE)
+		_E("Failed to read, ret : %d", ret);
+
+	return ret;
+}
+
+int peripheral_i2c_read_register_byte(peripheral_i2c_h i2c, uint8_t address, uint8_t *data)
+{
+	int ret;
+	uint16_t w_data, dummy = 0;
+
+	ret = peripheral_gdbus_i2c_smbus_ioctl(i2c, I2C_SMBUS_READ, address, I2C_SMBUS_BYTE_DATA, dummy, &w_data);
+	if (ret < PERIPHERAL_ERROR_NONE)
+		_E("Smbus transaction failed, ret : %d", ret);
+
+	*data = (uint8_t)w_data;
+
+	return ret;
+}
+
+int peripheral_i2c_write_register_byte(peripheral_i2c_h i2c, uint8_t address, uint8_t data)
+{
+	int ret;
+	uint16_t dummy = 0;
+
+	ret = peripheral_gdbus_i2c_smbus_ioctl(i2c, I2C_SMBUS_WRITE, address, I2C_SMBUS_BYTE_DATA, (uint16_t)data, &dummy);
+	if (ret < PERIPHERAL_ERROR_NONE)
+		_E("Smbus transaction failed, ret : %d", ret);
+
+	return ret;
+}
+
+int peripheral_i2c_read_register_word(peripheral_i2c_h i2c, uint8_t address, uint16_t *data)
+{
+	int ret;
+	uint16_t dummy = 0, data_out;
+
+	ret = peripheral_gdbus_i2c_smbus_ioctl(i2c, I2C_SMBUS_READ, address, I2C_SMBUS_WORD_DATA, dummy, &data_out);
+	if (ret < PERIPHERAL_ERROR_NONE)
+		_E("Smbus transaction failed, ret : %d", ret);
+
+	*data = data_out;
+
+	return ret;
+}
+
+int peripheral_i2c_write_register_word(peripheral_i2c_h i2c, uint8_t address, uint16_t data)
+{
+	int ret;
+	uint16_t dummy = 0;
+
+	ret = peripheral_gdbus_i2c_smbus_ioctl(i2c, I2C_SMBUS_WRITE, address, I2C_SMBUS_WORD_DATA, data, &dummy);
+	if (ret < PERIPHERAL_ERROR_NONE)
+		_E("Smbus transaction failed, ret : %d", ret);
+
+	return ret;
 }
