@@ -126,20 +126,25 @@ int peripheral_gdbus_gpio_get_direction(peripheral_gpio_h gpio, peripheral_gpio_
 {
 	GError *error = NULL;
 	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
+	gint value = 0;
 
 	if (gpio_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
 
 	if (peripheral_io_gdbus_gpio_call_get_direction_sync(
 			gpio_proxy,
 			gpio->handle,
-			(gint*)direction,
+			&value,
 			&ret,
 			NULL,
 			&error) == FALSE) {
 		_E("Error in %s() : %s\n", __func__, error->message);
 		g_error_free(error);
-		return PERIPHERAL_ERROR_UNKNOWN;
 	}
+
+	if (value >= PERIPHERAL_GPIO_DIRECTION_IN && value <= PERIPHERAL_GPIO_DIRECTION_OUT_HIGH)
+		*direction = value;
+	else
+		return PERIPHERAL_ERROR_UNKNOWN;
 
 	return ret;
 }
@@ -214,13 +219,14 @@ int peripheral_gdbus_gpio_get_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_
 {
 	GError *error = NULL;
 	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
+	gint value = 0;
 
 	if (gpio_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
 
 	if (peripheral_io_gdbus_gpio_call_get_edge_mode_sync(
 			gpio_proxy,
 			gpio->handle,
-			(int*)edge,
+			&value,
 			&ret,
 			NULL,
 			&error) == FALSE) {
@@ -228,6 +234,11 @@ int peripheral_gdbus_gpio_get_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
+
+	if (value >= PERIPHERAL_GPIO_EDGE_NONE && value <= PERIPHERAL_GPIO_EDGE_BOTH)
+		*edge = value;
+	else
+		return PERIPHERAL_ERROR_UNKNOWN;
 
 	return ret;
 }
