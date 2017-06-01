@@ -18,6 +18,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/time.h>
 #include <gio/gio.h>
 
 #include "peripheral_io.h"
@@ -183,9 +184,10 @@ int gpio_irq_unregister(void)
 int i2c_gy30_test(void)
 {
 	int cnt = 0;
-	int bus_num, ret;
 	unsigned char buf[10];
 	peripheral_i2c_h i2c;
+	struct timeval tv_1, tv_2;
+	int bus_num, ret, result, interval;
 
 	printf("    %s()\n", __func__);
 	printf("Enter I2C bus number\n");
@@ -203,15 +205,17 @@ int i2c_gy30_test(void)
 		goto error;
 	}
 
-	while (cnt++ < 15) {
-		int result;
-		sleep(1);
-		ret = peripheral_i2c_read(i2c, buf, 2);
+	gettimeofday(&tv_1, NULL);
+	while (cnt++ < 1000) {
+		ret = peripheral_i2c_read_byte(i2c, buf);
 		if (ret < 0)
 			printf("Failed to read, ret : %d\n", ret);
 		result = GY30_READ_INTENSITY(buf);
 		printf("Light intensity : %d\n", result);
 	}
+	gettimeofday(&tv_2, NULL);
+	interval = (tv_2.tv_sec - tv_1.tv_sec) * 1000 + (int)(tv_2.tv_usec - tv_1.tv_usec)/1000;
+	printf("1000 i2c read calls took %d ms\n", interval);
 
 	peripheral_i2c_close(i2c);
 	return 0;
@@ -234,6 +238,8 @@ error:
 #define MMA7455_MCTL_8G 0x00 //Set Sensitivity to 8g
 
 #define MMA7455_INTRST 0x17
+#define MMA7455_INTRST_CLRINT 0x03
+#define MMA7445_INTRST_DONOTCLR 0x00
 
 #define MMA7455_CONTROL1 0x18
 #define MMA7455_CONTROL1_INTREG 0x06
@@ -246,29 +252,17 @@ error:
 static void i2c_mma7455_isr(void *user_data)
 {
 	peripheral_i2c_h i2c = user_data;
-	int x_pos, y_pos, z_pos;
-	uint8_t buf[4];
+	uint8_t x_pos, y_pos, z_pos;
 
-	peripheral_i2c_write_byte(i2c, MMA7455_XOUT8);
-	peripheral_i2c_read_byte(i2c, buf);
-	x_pos = (int)buf[0];
-
-	peripheral_i2c_write_byte(i2c, MMA7455_YOUT8);
-	peripheral_i2c_read_byte(i2c, buf);
-	y_pos = (int)buf[0];
-
-	peripheral_i2c_write_byte(i2c, MMA7455_ZOUT8);
-	peripheral_i2c_read_byte(i2c, buf);
-	z_pos = (int)buf[0];
+	peripheral_i2c_read_register_byte(i2c, MMA7455_XOUT8, &x_pos);
+	peripheral_i2c_read_register_byte(i2c, MMA7455_YOUT8, &y_pos);
+	peripheral_i2c_read_register_byte(i2c, MMA7455_ZOUT8, &z_pos);
 
 	printf("Result X : %d, Y : %d, Z : %d\n", x_pos, y_pos, z_pos);
 
 	/* Reset interrupt flags */
-	buf[0] = MMA7455_INTRST;
-	buf[1] = 0x3;
-	peripheral_i2c_write(i2c, buf, 2);
-	buf[1] = 0x0;
-	peripheral_i2c_write(i2c, buf, 2);
+	peripheral_i2c_write_register_byte(i2c, MMA7455_INTRST, MMA7455_INTRST_CLRINT);
+	peripheral_i2c_write_register_byte(i2c, MMA7455_INTRST, MMA7445_INTRST_DONOTCLR);
 
 	return;
 }
@@ -277,7 +271,6 @@ int i2c_mma7455_test(void)
 {
 	static peripheral_i2c_h i2c;
 	static peripheral_gpio_h isr_gpio;
-	unsigned char buf[4];
 	int bus_num, gpio_num, ret;
 	int cnt = 0;
 
@@ -287,7 +280,7 @@ int i2c_mma7455_test(void)
 
 		peripheral_i2c_close(i2c);
 		i2c = NULL;
-		printf("i2c(bus = %d address = %d) handle is closed\n", bus_num, MMA7455_ADDRESS);
+		printf("i2c handle is closed\n");
 
 		if (isr_gpio) {
 			peripheral_gpio_close(isr_gpio);
@@ -308,9 +301,10 @@ int i2c_mma7455_test(void)
 		return -1;
 	}
 
-	buf[0] = MMA7455_MCTL;
-	buf[1] = MMA7455_MCTL_8G | MMA7455_MCTL_PULSE_DETECTION_MODE;
-	if ((ret = peripheral_i2c_write(i2c, buf, 2)) != 0) {
+	ret = peripheral_i2c_write_register_byte(i2c,
+		MMA7455_MCTL,
+		MMA7455_MCTL_8G | MMA7455_MCTL_PULSE_DETECTION_MODE);
+	if (ret < PERIPHERAL_ERROR_NONE) {
 		printf(">>>>> Failed to write, ret : %d\n", ret);
 		goto error;
 	}
@@ -332,32 +326,43 @@ int i2c_mma7455_test(void)
 		if (ret < 0)
 			printf(">>>> Failed to register gpio callback\n");
 
-		buf[0] = MMA7455_INTRST;
-		buf[1] = 0x03;
-		peripheral_i2c_write(i2c, buf, 2);
-		buf[1] = 0x0;
-		peripheral_i2c_write(i2c, buf, 2);
+		/* Reset interrupt flags */
+		peripheral_i2c_write_register_byte(i2c, MMA7455_INTRST, MMA7455_INTRST_CLRINT);
+		peripheral_i2c_write_register_byte(i2c, MMA7455_INTRST, MMA7445_INTRST_DONOTCLR);
 
 		printf("callback is registered on gpio pin %d\n", gpio_num);
 		printf("i2c(bus = %d address = %d) handle is open\n", bus_num, MMA7455_ADDRESS);
 	} else {
 		while (cnt++ < 10) {
-			int x_pos, y_pos, z_pos;
+			uint8_t x_pos, y_pos, z_pos;
+			unsigned char buf[4];
 			sleep(1);
 
+			/* Get measurement data with different APIs */
+			buf[0] = MMA7455_XOUT8;
+			peripheral_i2c_write(i2c, buf, 0x1);
+			peripheral_i2c_read(i2c, &x_pos, 0x1);
+			buf[0] = MMA7455_YOUT8;
+			peripheral_i2c_write(i2c, buf, 0x1);
+			peripheral_i2c_read(i2c, &y_pos, 0x1);
+			buf[0] = MMA7455_ZOUT8;
+			peripheral_i2c_write(i2c, buf, 0x1);
+			peripheral_i2c_read(i2c, &z_pos, 0x1);
+			printf("Result X : %d, Y : %d, Z : %d  (peripheral_i2c_read)\n", x_pos, y_pos, z_pos);
+
 			peripheral_i2c_write_byte(i2c, MMA7455_XOUT8);
-			peripheral_i2c_read_byte(i2c, buf);
-			x_pos = (int)buf[0];
-
+			peripheral_i2c_read_byte(i2c, &x_pos);
 			peripheral_i2c_write_byte(i2c, MMA7455_YOUT8);
-			peripheral_i2c_read_byte(i2c, buf);
-			y_pos = (int)buf[0];
-
+			peripheral_i2c_read_byte(i2c, &y_pos);
 			peripheral_i2c_write_byte(i2c, MMA7455_ZOUT8);
-			peripheral_i2c_read_byte(i2c, buf);
-			z_pos = (int)buf[0];
+			peripheral_i2c_read_byte(i2c, &z_pos);
+			printf("Result X : %d, Y : %d, Z : %d (peripheral_i2c_read_byte)\n", x_pos, y_pos, z_pos);
 
-			printf("Result X : %d, Y : %d, Z : %d\n", x_pos, y_pos, z_pos);
+			peripheral_i2c_read_register_byte(i2c, MMA7455_XOUT8, &x_pos);
+			peripheral_i2c_read_register_byte(i2c, MMA7455_YOUT8, &y_pos);
+			peripheral_i2c_read_register_byte(i2c, MMA7455_ZOUT8, &z_pos);
+			printf("Result X : %d, Y : %d, Z : %d  (peripheral_i2c_read_register_byte)\n", x_pos, y_pos, z_pos);
+
 		}
 		peripheral_i2c_close(i2c);
 		i2c = NULL;
