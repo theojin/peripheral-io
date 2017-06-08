@@ -36,6 +36,7 @@ extern "C" {
 typedef enum {
 	PERIPHERAL_ERROR_NONE                = TIZEN_ERROR_NONE,                /**< Successful */
 	PERIPHERAL_ERROR_IO_ERROR            = TIZEN_ERROR_IO_ERROR,            /**< I/O error */
+	PERIPHERAL_ERROR_NO_DEVICE           = TIZEN_ERROR_NO_SUCH_DEVICE,      /**< No such device */
 	PERIPHERAL_ERROR_OUT_OF_MEMORY       = TIZEN_ERROR_OUT_OF_MEMORY,       /**< Out of memory */
 	PERIPHERAL_ERROR_PERMISSION_DENIED   = TIZEN_ERROR_PERMISSION_DENIED,   /**< Permission denied */
 	PERIPHERAL_ERROR_RESOURCE_BUSY       = TIZEN_ERROR_RESOURCE_BUSY,       /**< Device or resource busy */
@@ -45,7 +46,6 @@ typedef enum {
 	PERIPHERAL_ERROR_TIMED_OUT           = TIZEN_ERROR_TIMED_OUT,           /**< Time out */
 	PERIPHERAL_ERROR_NOT_SUPPORTED       = TIZEN_ERROR_NOT_SUPPORTED,       /**< Not supported */
 	PERIPHERAL_ERROR_UNKNOWN             = TIZEN_ERROR_UNKNOWN,             /**< Unknown error */
-	PERIPHERAL_ERROR_NO_DEVICE           = -ENODEV,                         /**< No such device */
 } peripheral_error_e;
 
 /**
