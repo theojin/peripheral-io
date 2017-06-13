@@ -74,8 +74,6 @@ void handle_gpio_changed(
 	if (!gpio)
 		return;
 
-	_D("gpio=%d state=%d", pin, state);
-
 	peripheral_gpio_isr_callback(pin);
 }
 
@@ -93,7 +91,7 @@ int peripheral_gdbus_gpio_open(peripheral_gpio_h gpio)
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
+		_E("Error in %s() : %s", __func__, error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
@@ -114,7 +112,7 @@ int peripheral_gdbus_gpio_close(peripheral_gpio_h gpio)
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
+		_E("Error in %s() : %s", __func__, error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
@@ -137,7 +135,7 @@ int peripheral_gdbus_gpio_get_direction(peripheral_gpio_h gpio, peripheral_gpio_
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
+		_E("Error in %s() : %s", __func__, error->message);
 		g_error_free(error);
 	}
 
@@ -163,7 +161,7 @@ int peripheral_gdbus_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
+		_E("Error in %s() : %s", __func__, error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
@@ -185,7 +183,7 @@ int peripheral_gdbus_gpio_read(peripheral_gpio_h gpio, int *value)
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
+		_E("Error in %s() : %s", __func__, error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
@@ -207,7 +205,7 @@ int peripheral_gdbus_gpio_write(peripheral_gpio_h gpio, int value)
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
+		_E("Error in %s() : %s", __func__, error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
@@ -230,7 +228,7 @@ int peripheral_gdbus_gpio_get_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
+		_E("Error in %s() : %s", __func__, error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
@@ -257,7 +255,7 @@ int peripheral_gdbus_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
+		_E("Error in %s() : %s", __func__, error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
@@ -278,7 +276,7 @@ int peripheral_gdbus_gpio_register_cb(peripheral_gpio_h gpio, gpio_isr_cb callba
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
+		_E("Error in %s() : %s", __func__, error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
@@ -299,7 +297,7 @@ int peripheral_gdbus_gpio_unregister_cb(peripheral_gpio_h gpio)
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
+		_E("Error in %s() : %s", __func__, error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}

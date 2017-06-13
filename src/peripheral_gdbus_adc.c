@@ -65,7 +65,7 @@ int peripheral_gdbus_adc_read(unsigned int device, unsigned int channel, int *da
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
+		_E("Error in %s() : %s", __func__, error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}

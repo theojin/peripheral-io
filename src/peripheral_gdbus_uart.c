@@ -66,7 +66,7 @@ int peripheral_gdbus_uart_open(peripheral_uart_h uart, int port)
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
+		_E("Error in %s() : %s", __func__, error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
@@ -87,7 +87,7 @@ int peripheral_gdbus_uart_close(peripheral_uart_h uart)
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
+		_E("Error in %s() : %s", __func__, error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
@@ -108,7 +108,7 @@ int peripheral_gdbus_uart_flush(peripheral_uart_h uart)
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
+		_E("Error in %s() : %s", __func__, error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
@@ -130,7 +130,7 @@ int peripheral_gdbus_uart_set_baudrate(peripheral_uart_h uart, peripheral_uart_b
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
+		_E("Error in %s() : %s", __func__, error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
@@ -154,7 +154,7 @@ int peripheral_gdbus_uart_set_mode(peripheral_uart_h uart, peripheral_uart_bytes
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
+		_E("Error in %s() : %s", __func__, error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
@@ -177,7 +177,7 @@ int peripheral_gdbus_uart_set_flowcontrol(peripheral_uart_h uart, bool xonxoff, 
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
+		_E("Error in %s() : %s", __func__, error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
@@ -204,7 +204,7 @@ int peripheral_gdbus_uart_read(peripheral_uart_h uart, uint8_t *data, int length
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
+		_E("Error in %s() : %s", __func__, error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
@@ -247,7 +247,7 @@ int peripheral_gdbus_uart_write(peripheral_uart_h uart, uint8_t *data, int lengt
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
+		_E("Error in %s() : %s", __func__, error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}

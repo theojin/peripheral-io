@@ -67,7 +67,7 @@ int peripheral_gdbus_i2c_open(peripheral_i2c_h i2c, int bus, int address)
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
+		_E("Error in %s() : %s", __func__, error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
@@ -88,7 +88,7 @@ int peripheral_gdbus_i2c_close(peripheral_i2c_h i2c)
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
+		_E("Error in %s() : %s", __func__, error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
@@ -115,7 +115,7 @@ int peripheral_gdbus_i2c_read(peripheral_i2c_h i2c, uint8_t *data, int length)
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
+		_E("Error in %s() : %s", __func__, error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
@@ -158,7 +158,7 @@ int peripheral_gdbus_i2c_write(peripheral_i2c_h i2c, uint8_t *data, int length)
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
+		_E("Error in %s() : %s", __func__, error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
@@ -184,7 +184,7 @@ int peripheral_gdbus_i2c_smbus_ioctl(peripheral_i2c_h i2c, uint8_t read_write, u
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s\n", __func__, error->message);
+		_E("Error in %s() : %s", __func__, error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
