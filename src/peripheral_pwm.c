@@ -29,7 +29,7 @@ int peripheral_pwm_open(int device, int channel, peripheral_pwm_h *pwm)
 	peripheral_pwm_h handle;
 	int ret = PERIPHERAL_ERROR_NONE;
 
-	if (device < 0 || channel < 0) return PERIPHERAL_ERROR_INVALID_PARAMETER;
+	RETVM_IF(device < 0 || channel < 0, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
 
 	/* Initialize */
 	handle = (peripheral_pwm_h)calloc(1, sizeof(struct _peripheral_pwm_s));
@@ -44,7 +44,7 @@ int peripheral_pwm_open(int device, int channel, peripheral_pwm_h *pwm)
 	ret = peripheral_gdbus_pwm_open(handle, device, channel);
 
 	if (ret != PERIPHERAL_ERROR_NONE) {
-		_E("PWM open error (%d, %d)", device, channel);
+		_E("Failed to open PWM device : %d, channel : %d", device, channel);
 		free(handle);
 		handle = NULL;
 	}
@@ -57,10 +57,10 @@ int peripheral_pwm_close(peripheral_pwm_h pwm)
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
-	if (pwm == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
+	RETVM_IF(pwm == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "pwm handle is NULL");
 
 	if ((ret = peripheral_gdbus_pwm_close(pwm)) < 0)
-		_E("Failed to close PWM device, continuing anyway");
+		_E("Failed to close PWM device, continuing anyway, ret : %d", ret);
 
 	pwm_proxy_deinit();
 	free(pwm);
@@ -70,56 +70,106 @@ int peripheral_pwm_close(peripheral_pwm_h pwm)
 
 int peripheral_pwm_set_period(peripheral_pwm_h pwm, int period)
 {
-	if (pwm == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
+	int ret;
 
-	return peripheral_gdbus_pwm_set_period(pwm, period);
+	RETVM_IF(pwm == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "pwm handle is NULL");
+
+	ret = peripheral_gdbus_pwm_set_period(pwm, period);
+	if (ret != PERIPHERAL_ERROR_NONE)
+		_E("Failed to set period, ret : %d", ret);
+
+	return ret;
 }
 
 int peripheral_pwm_get_period(peripheral_pwm_h pwm, int *period)
 {
-	if (pwm == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
+	int ret;
 
-	return peripheral_gdbus_pwm_get_period(pwm, period);
+	RETVM_IF(pwm == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "pwm handle is NULL");
+
+	ret = peripheral_gdbus_pwm_get_period(pwm, period);
+	if (ret != PERIPHERAL_ERROR_NONE)
+		_E("Failed to get period, ret : %d", ret);
+
+	return ret;
 }
 
 int peripheral_pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle)
 {
-	if (pwm == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
+	int ret;
 
-	return peripheral_gdbus_pwm_set_duty_cycle(pwm, duty_cycle);
+	RETVM_IF(pwm == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "pwm handle is NULL");
+
+	ret = peripheral_gdbus_pwm_set_duty_cycle(pwm, duty_cycle);
+	if (ret != PERIPHERAL_ERROR_NONE)
+		_E("Failed to set duty cycle, ret : %d", ret);
+
+	return ret;
 }
 
 int peripheral_pwm_get_duty_cycle(peripheral_pwm_h pwm, int *duty_cycle)
 {
-	if (pwm == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
+	int ret;
 
-	return peripheral_gdbus_pwm_get_duty_cycle(pwm, duty_cycle);
+	RETVM_IF(pwm == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "pwm handle is NULL");
+
+	ret = peripheral_gdbus_pwm_get_duty_cycle(pwm, duty_cycle);
+	if (ret != PERIPHERAL_ERROR_NONE)
+		_E("Failed to get duty cycle, ret : %d", ret);
+
+	return ret;
 }
 
 int peripheral_pwm_set_polarity(peripheral_pwm_h pwm, peripheral_pwm_polarity_e polarity)
 {
-	if (pwm == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
+	int ret;
 
-	return peripheral_gdbus_pwm_set_polarity(pwm, polarity);
+	RETVM_IF(pwm == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "pwm handle is NULL");
+	RETVM_IF(polarity > PERIPHERAL_PWM_POLARITY_INVERSED, PERIPHERAL_ERROR_INVALID_PARAMETER,
+		"Invalid polarity parameter");
+
+	ret = peripheral_gdbus_pwm_set_polarity(pwm, polarity);
+	if (ret != PERIPHERAL_ERROR_NONE)
+		_E("Failed to set polarity, ret : %d", ret);
+
+	return ret;
 }
 
 int peripheral_pwm_get_polarity(peripheral_pwm_h pwm, peripheral_pwm_polarity_e *polarity)
 {
-	if (pwm == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
+	int ret;
 
-	return peripheral_gdbus_pwm_get_polarity(pwm, polarity);
+	RETVM_IF(pwm == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "pwm handle is NULL");
+
+	ret = peripheral_gdbus_pwm_get_polarity(pwm, polarity);
+	if (ret != PERIPHERAL_ERROR_NONE)
+		_E("Failed to get polarity, ret : %d", ret);
+
+	return ret;
 }
 
 int peripheral_pwm_set_enable(peripheral_pwm_h pwm, bool enable)
 {
-	if (pwm == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
+	int ret;
 
-	return peripheral_gdbus_pwm_set_enable(pwm, enable);
+	RETVM_IF(pwm == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "pwm handle is NULL");
+
+	ret = peripheral_gdbus_pwm_set_enable(pwm, enable);
+	if (ret != PERIPHERAL_ERROR_NONE)
+		_E("Failed to set enable, ret : %d", ret);
+
+	return ret;
 }
 
 int peripheral_pwm_get_enable(peripheral_pwm_h pwm, bool *enable)
 {
-	if (pwm == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
+	int ret;
 
-	return peripheral_gdbus_pwm_get_enable(pwm, enable);
+	RETVM_IF(pwm == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "pwm handle is NULL");
+
+	ret = peripheral_gdbus_pwm_get_enable(pwm, enable);
+	if (ret != PERIPHERAL_ERROR_NONE)
+		_E("Failed to get enable, ret : %d", ret);
+
+	return ret;
 }

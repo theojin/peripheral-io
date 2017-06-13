@@ -115,7 +115,7 @@ int peripheral_gpio_open(int gpio_pin, peripheral_gpio_h *gpio)
 	int ret = PERIPHERAL_ERROR_NONE;
 	peripheral_gpio_h handle;
 
-	assert(gpio_pin >= 0);
+	RETVM_IF(gpio_pin < 0, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid gpio pin number");
 
 	/* Initialize */
 	handle = (peripheral_gpio_h)calloc(1, sizeof(struct _peripheral_gpio_s));
@@ -131,6 +131,7 @@ int peripheral_gpio_open(int gpio_pin, peripheral_gpio_h *gpio)
 	ret = peripheral_gdbus_gpio_open(handle);
 
 	if (ret != PERIPHERAL_ERROR_NONE) {
+		_E("Failed to open the gpio pin, ret : %d", ret);
 		free(handle);
 		handle = NULL;
 	}
@@ -148,14 +149,12 @@ int peripheral_gpio_close(peripheral_gpio_h gpio)
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
-	/* check validation of gpio context handle */
-	if (gpio == NULL)
-		return PERIPHERAL_ERROR_INVALID_PARAMETER;
+	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
 
 	/* call gpio_close */
 	ret = peripheral_gdbus_gpio_close(gpio);
-	if (ret)
-		ret = TIZEN_ERROR_IO_ERROR;
+	if (ret != PERIPHERAL_ERROR_NONE)
+		_E("Failed to close the gpio pin, ret : %d", ret);
 	gpio_proxy_deinit();
 
 	free(gpio);
@@ -171,11 +170,11 @@ int peripheral_gpio_get_direction(peripheral_gpio_h gpio, peripheral_gpio_direct
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
-	/* check validation of gpio context handle */
-	if (gpio == NULL)
-		return PERIPHERAL_ERROR_INVALID_PARAMETER;
+	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
 
 	ret = peripheral_gdbus_gpio_get_direction(gpio, direction);
+	if (ret != PERIPHERAL_ERROR_NONE)
+		_E("Failed to get direction of the gpio pin, ret : %d", ret);
 
 	return ret;
 }
@@ -188,15 +187,14 @@ int peripheral_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_direct
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
-	/* check validation of gpio context handle */
-	if (gpio == NULL)
-		return PERIPHERAL_ERROR_INVALID_PARAMETER;
-
-	if (direction > PERIPHERAL_GPIO_DIRECTION_OUT_HIGH)
-		return PERIPHERAL_ERROR_INVALID_PARAMETER;
+	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
+	RETVM_IF(direction > PERIPHERAL_GPIO_DIRECTION_OUT_HIGH, PERIPHERAL_ERROR_INVALID_PARAMETER,
+		"Invalid direction input");
 
 	/* call gpio_set_direction */
 	ret = peripheral_gdbus_gpio_set_direction(gpio, direction);
+	if (ret != PERIPHERAL_ERROR_NONE)
+		_E("Failed to set gpio direction, ret : %d", ret);
 
 	return ret;
 }
@@ -208,12 +206,12 @@ int peripheral_gpio_read(peripheral_gpio_h gpio, int *value)
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
-	/* check validation of gpio context handle */
-	if (gpio == NULL)
-		return PERIPHERAL_ERROR_INVALID_PARAMETER;
+	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
 
 	/* call gpio_read */
 	ret = peripheral_gdbus_gpio_read(gpio, value);
+	if (ret != PERIPHERAL_ERROR_NONE)
+		_E("Failed to read value of the gpio pin, ret : %d", ret);
 
 	return ret;
 }
@@ -225,12 +223,12 @@ int peripheral_gpio_write(peripheral_gpio_h gpio, int value)
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
-	/* check validation of gpio context handle */
-	if (gpio == NULL)
-		return PERIPHERAL_ERROR_INVALID_PARAMETER;
+	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
 
 	/* call gpio_write */
 	ret = peripheral_gdbus_gpio_write(gpio, value);
+	if (ret != PERIPHERAL_ERROR_NONE)
+		_E("Failed to write to the gpio pin, ret : %d", ret);
 
 	return ret;
 }
@@ -242,11 +240,11 @@ int peripheral_gpio_get_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
-	/* check validation of gpio context handle */
-	if (gpio == NULL)
-		return PERIPHERAL_ERROR_INVALID_PARAMETER;
+	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
 
 	ret = peripheral_gdbus_gpio_get_edge_mode(gpio, edge);
+	if (ret != PERIPHERAL_ERROR_NONE)
+		_E("Failed to get edge mode of the gpio pin, ret : %d", ret);
 
 	return ret;
 }
@@ -258,15 +256,14 @@ int peripheral_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
-	/* check validation of gpio context handle */
-	if (gpio == NULL)
-		return PERIPHERAL_ERROR_INVALID_PARAMETER;
-
-	if (edge > PERIPHERAL_GPIO_EDGE_BOTH)
-		return PERIPHERAL_ERROR_INVALID_PARAMETER;
+	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
+	RETVM_IF(edge > PERIPHERAL_GPIO_EDGE_BOTH, PERIPHERAL_ERROR_INVALID_PARAMETER,
+		"Invalid edge input");
 
 	/* call gpio_set_edge_mode */
 	ret = peripheral_gdbus_gpio_set_edge_mode(gpio, edge);
+	if (ret != PERIPHERAL_ERROR_NONE)
+		_E("Failed to set edge mode of the gpio pin, ret : %d", ret);
 
 	return ret;
 }
@@ -278,16 +275,18 @@ int peripheral_gpio_register_cb(peripheral_gpio_h gpio, gpio_isr_cb callback, vo
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
-	/* check validation of gpio context handle */
-	if (gpio == NULL)
-		return PERIPHERAL_ERROR_INVALID_PARAMETER;
+	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
 
 	ret = peripheral_gdbus_gpio_register_cb(gpio, callback, user_data);
-	if (ret != PERIPHERAL_ERROR_NONE)
+	if (ret != PERIPHERAL_ERROR_NONE) {
+		_E("Failed to register cb, ret : %d", ret);
 		return ret;
+	}
 
 	/* set isr */
 	ret = peripheral_gpio_isr_set(gpio->pin, callback, user_data);
+	if (ret != PERIPHERAL_ERROR_NONE)
+		_E("Failed to register gpio isr, ret : %d", ret);
 
 	return ret;
 }
@@ -299,13 +298,13 @@ int peripheral_gpio_unregister_cb(peripheral_gpio_h gpio)
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
-	/* check validation of gpio context handle */
-	if (gpio == NULL)
-		return PERIPHERAL_ERROR_INVALID_PARAMETER;
+	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
 
 	ret = peripheral_gdbus_gpio_unregister_cb(gpio);
-	if (ret != PERIPHERAL_ERROR_NONE)
+	if (ret != PERIPHERAL_ERROR_NONE) {
+		_E("Failed to unregister gpio isr, ret : %d", ret);
 		return ret;
+	}
 
 	/* clean up isr */
 	ret = peripheral_gpio_isr_unset(gpio->pin);
@@ -318,9 +317,7 @@ int peripheral_gpio_unregister_cb(peripheral_gpio_h gpio)
  */
 int peripheral_gpio_get_pin(peripheral_gpio_h gpio, int *gpio_pin)
 {
-	/* check validation of gpio context handle */
-	if (gpio == NULL)
-		return PERIPHERAL_ERROR_INVALID_PARAMETER;
+	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
 
 	*gpio_pin = gpio->pin;
 

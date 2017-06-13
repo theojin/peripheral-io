@@ -20,12 +20,12 @@
 
 int peripheral_adc_read(unsigned int device, unsigned int channel, int *data)
 {
-	int ret = PERIPHERAL_ERROR_NONE;
+	int ret;
 
 	adc_proxy_init();
 
 	ret = peripheral_gdbus_adc_read(device, channel, data);
-	if (ret < PERIPHERAL_ERROR_NONE)
+	if (ret != PERIPHERAL_ERROR_NONE)
 		_E("Failed to read, ret : %d", ret);
 
 	return ret;

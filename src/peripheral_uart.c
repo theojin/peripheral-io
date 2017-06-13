@@ -30,10 +30,9 @@
 int peripheral_uart_open(int port, peripheral_uart_h *uart)
 {
 	peripheral_uart_h handle;
-	int ret = PERIPHERAL_ERROR_NONE;
+	int ret;
 
-	if (port < 0)
-		return PERIPHERAL_ERROR_INVALID_PARAMETER;
+	RETVM_IF(port < 0, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid port number");
 
 	handle = (peripheral_uart_h)calloc(1, sizeof(struct _peripheral_uart_s));
 
@@ -47,7 +46,7 @@ int peripheral_uart_open(int port, peripheral_uart_h *uart)
 	ret = peripheral_gdbus_uart_open(handle, port);
 
 	if (ret != PERIPHERAL_ERROR_NONE) {
-		_E("[PERIPHERAL] UART open error\n");
+		_E("Failed to open uart port, ret : %d", ret);
 		free(handle);
 		handle = NULL;
 	}
@@ -61,11 +60,13 @@ int peripheral_uart_open(int port, peripheral_uart_h *uart)
  */
 int peripheral_uart_close(peripheral_uart_h uart)
 {
-	int ret = PERIPHERAL_ERROR_NONE;
+	int ret;
 
-	if (uart == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
+	RETVM_IF(uart == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "uart handle is NULL");
 
 	ret = peripheral_gdbus_uart_close(uart);
+	if (ret < PERIPHERAL_ERROR_NONE)
+		_E("Failed to close uart communication, continuing anyway, ret : %d", ret);
 	uart_proxy_deinit();
 
 	free(uart);
@@ -80,9 +81,15 @@ int peripheral_uart_close(peripheral_uart_h uart)
  */
 int peripheral_uart_flush(peripheral_uart_h uart)
 {
-	if (uart == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
+	int ret;
 
-	return peripheral_gdbus_uart_flush(uart);
+	RETVM_IF(uart == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "uart handle is NULL");
+
+	ret = peripheral_gdbus_uart_flush(uart);
+	if (ret != PERIPHERAL_ERROR_NONE)
+		_E("Failed to flush, ret : %d", ret);
+
+	return ret;
 }
 
 /**
@@ -90,9 +97,17 @@ int peripheral_uart_flush(peripheral_uart_h uart)
  */
 int peripheral_uart_set_baudrate(peripheral_uart_h uart, peripheral_uart_baudrate_e baud)
 {
-	if (uart == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
+	int ret;
 
-	return peripheral_gdbus_uart_set_baudrate(uart, baud);
+	RETVM_IF(uart == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "uart handle is NULL");
+	RETVM_IF(baud > PERIPHERAL_UART_BAUDRATE_230400, PERIPHERAL_ERROR_INVALID_PARAMETER,
+		"Invalid baud input");
+
+	ret = peripheral_gdbus_uart_set_baudrate(uart, baud);
+	if (ret != PERIPHERAL_ERROR_NONE)
+		_E("Failed to set baudrate, ret : %d", ret);
+
+	return ret;
 }
 
 /**
@@ -100,9 +115,19 @@ int peripheral_uart_set_baudrate(peripheral_uart_h uart, peripheral_uart_baudrat
  */
 int peripheral_uart_set_mode(peripheral_uart_h uart, peripheral_uart_bytesize_e bytesize, peripheral_uart_parity_e parity, peripheral_uart_stopbits_e stopbits)
 {
-	if (uart == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
+	int ret;
 
-	return peripheral_gdbus_uart_set_mode(uart, bytesize, parity, stopbits);
+	RETVM_IF(uart == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "uart handle is NULL");
+	RETVM_IF(bytesize > PERIPHERAL_UART_BYTESIZE_8BIT
+			|| parity > PERIPHERAL_UART_PARITY_ODD
+			|| stopbits > PERIPHERAL_UART_STOPBITS_2BIT,
+		PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
+
+	ret = peripheral_gdbus_uart_set_mode(uart, bytesize, parity, stopbits);
+	if (ret != PERIPHERAL_ERROR_NONE)
+		_E("Failed to set uart mode, ret : %d", ret);
+
+	return ret;
 }
 
 /**
@@ -110,9 +135,15 @@ int peripheral_uart_set_mode(peripheral_uart_h uart, peripheral_uart_bytesize_e 
  */
 int peripheral_uart_set_flowcontrol(peripheral_uart_h uart, bool xonxoff, bool rtscts)
 {
-	if (uart == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
+	int ret;
 
-	return peripheral_gdbus_uart_set_flowcontrol(uart, xonxoff, rtscts);
+	RETVM_IF(uart == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "uart handle is NULL");
+
+	ret = peripheral_gdbus_uart_set_flowcontrol(uart, xonxoff, rtscts);
+	if (ret != PERIPHERAL_ERROR_NONE)
+		_E("Failed to set flocontrol, ret : %d", ret);
+
+	return ret;
 }
 
 /**
@@ -120,9 +151,16 @@ int peripheral_uart_set_flowcontrol(peripheral_uart_h uart, bool xonxoff, bool r
  */
 int peripheral_uart_read(peripheral_uart_h uart, uint8_t *data, int length)
 {
-	if (uart == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
+	int ret;
 
-	return peripheral_gdbus_uart_read(uart, data, length);
+	RETVM_IF(uart == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "uart handle is NULL");
+	RETVM_IF(data == NULL || length < 0, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
+
+	ret = peripheral_gdbus_uart_read(uart, data, length);
+	if (ret < PERIPHERAL_ERROR_NONE)
+		_E("Failed to read from uart device, ret : %d", ret);
+
+	return ret;
 }
 
 /**
@@ -130,7 +168,14 @@ int peripheral_uart_read(peripheral_uart_h uart, uint8_t *data, int length)
  */
 int peripheral_uart_write(peripheral_uart_h uart, uint8_t *data, int length)
 {
-	if (uart == NULL) return PERIPHERAL_ERROR_INVALID_PARAMETER;
+	int ret;
 
-	return peripheral_gdbus_uart_write(uart, data, length);
+	RETVM_IF(uart == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "uart handle is NULL");
+	RETVM_IF(data == NULL || length < 0, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
+
+	ret = peripheral_gdbus_uart_write(uart, data, length);
+	if (ret < PERIPHERAL_ERROR_NONE)
+		_E("Failed to write to uart device, ret : %d", ret);
+
+	return ret;
 }
