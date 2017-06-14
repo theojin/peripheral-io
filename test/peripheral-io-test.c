@@ -207,7 +207,7 @@ int i2c_gy30_test(void)
 
 	gettimeofday(&tv_1, NULL);
 	while (cnt++ < 1000) {
-		ret = peripheral_i2c_read_byte(i2c, buf);
+		ret = peripheral_i2c_read(i2c, buf, 2);
 		if (ret < 0)
 			printf("Failed to read, ret : %d\n", ret);
 		result = GY30_READ_INTENSITY(buf);
@@ -378,7 +378,7 @@ error:
 
 int pwm_test_led(void)
 {
-	int device = 0, channel = 0;
+	int device, channel, ret;
 	int period = 1 * 1000;
 	int duty_cycle = 1 * 1000 / 100;
 	int cnt = 0;
@@ -388,13 +388,24 @@ int pwm_test_led(void)
 	peripheral_pwm_h dev;
 
 	printf("    %s()\n", __func__);
+	printf("Enter PWM device number\n");
+	if (read_int_input(&device) < 0)
+		return -1;
 
-	peripheral_pwm_open(device, channel, &dev);
+	printf("Enter PWM channel number\n");
+	if (read_int_input(&channel) < 0)
+		return -1;
+
+	ret = peripheral_pwm_open(device, channel, &dev);
+	if (ret != PERIPHERAL_ERROR_NONE) {
+		printf("Failed to open\n");
+		return ret;
+	}
 	peripheral_pwm_set_period(dev, period);	/* period: nanosecond */
 	peripheral_pwm_set_duty_cycle(dev, duty_cycle);	/* duty_cycle: nanosecond */
 	peripheral_pwm_set_enable(dev, 1);	/* 0: disable, 1: enable */
 
-	while (cnt < 5) {
+	while (cnt < 2) {
 		for (set_duty_cycle = period; set_duty_cycle > 0; set_duty_cycle -= 50) {
 			/* set duty cycle */
 			peripheral_pwm_set_duty_cycle(dev, set_duty_cycle);
@@ -421,7 +432,7 @@ int pwm_test_led(void)
 
 int pwm_test_motor(void)
 {
-	int device = 0, channel = 0;
+	int device, channel, ret;
 	int period = 20000000;
 	int duty_cycle = 1500000;
 	int cnt = 0, idx = 0;
@@ -429,8 +440,19 @@ int pwm_test_motor(void)
 	peripheral_pwm_h dev;
 
 	printf("    %s()\n", __func__);
+	printf("Enter PWM device number\n");
+	if (read_int_input(&device) < 0)
+		return -1;
 
-	peripheral_pwm_open(device, channel, &dev);
+	printf("Enter PWM channel number\n");
+	if (read_int_input(&channel) < 0)
+		return -1;
+
+	ret = peripheral_pwm_open(device, channel, &dev);
+	if (ret != PERIPHERAL_ERROR_NONE) {
+		printf("Failed to open\n");
+		return ret;
+	}
 	for (cnt = 0; cnt < 5; cnt++) {
 		for (idx = 0; idx < 3; idx++) {
 			switch (degree[idx]) {
