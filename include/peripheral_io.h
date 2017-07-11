@@ -74,6 +74,19 @@ typedef enum {
 } peripheral_gpio_edge_e;
 
 /**
+ * @brief Gpio isr callback data delivered via gpio_isr_cb().
+ * @details A gpio isr callback data is delivered as a structure, which contains
+ *          the pin number, the pin value, and the timestamp of the gpio interrupt
+ *          in microseconds.
+ * @since_tizen 4.0
+ */
+typedef struct {
+	int pin;
+	int value;
+	unsigned long long timestamp;
+} gpio_isr_cb_s;
+
+/**
  * @brief The handle to the gpio pin
  * @since_tizen 4.0
  */
@@ -225,12 +238,13 @@ int peripheral_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e
  * @brief Called when the gpio interrupt is triggered.
  * @since_tizen 4.0
  *
+ * @param[in] data The gpio isr callback data
  * @param[in] user_data The user data passed from the callback registration function
  *
  * @see peripheral_gpio_register_cb()
  * @see peripheral_gpio_unregister_cb()
  */
-typedef void(*gpio_isr_cb)(void *user_data);
+typedef void(*gpio_isr_cb)(gpio_isr_cb_s *data, void *user_data);
 
 /**
  * @brief Registers a callback function to be invoked when the gpio interrupt is triggered.

@@ -33,18 +33,22 @@ typedef struct {
 
 static GList *gpio_isr_list = NULL;
 
-int peripheral_gpio_isr_callback(int pin)
+int peripheral_gpio_isr_callback(int pin, int value, unsigned long long timestamp)
 {
 	GList *link;
 	gpio_isr_data_s *isr_data;
+	gpio_isr_cb_s cb_data;
 
 	link = gpio_isr_list;
 	while (link) {
 		isr_data = (gpio_isr_data_s*)link->data;
 
 		if (isr_data->pin == pin) {
+			cb_data.pin = pin;
+			cb_data.value = value;
+			cb_data.timestamp = timestamp;
 			if (isr_data->callback)
-				isr_data->callback(isr_data->user_data);
+				isr_data->callback(&cb_data, isr_data->user_data);
 			return PERIPHERAL_ERROR_NONE;
 		}
 		link = g_list_next(link);

@@ -23,8 +23,14 @@
 #include "peripheral_internal.h"
 #include "peripheral_io_gdbus.h"
 
-extern int peripheral_gpio_isr_callback(int pin);
-void handle_gpio_changed(PeripheralIoGdbusGpio *gpio, gint pin, gint state, gpointer user_data);
+extern int peripheral_gpio_isr_callback(int pin, int value, unsigned long long timestamp);
+
+void handle_gpio_changed(
+		PeripheralIoGdbusGpio *gpio,
+		gint pin,
+		gint value,
+		guint64 timestamp,
+		gpointer user_data);
 
 PeripheralIoGdbusGpio *gpio_proxy = NULL;
 
@@ -68,13 +74,14 @@ void gpio_proxy_deinit()
 void handle_gpio_changed(
 		PeripheralIoGdbusGpio *gpio,
 		gint pin,
-		gint state,
+		gint value,
+		guint64 timestamp,
 		gpointer user_data)
 {
 	if (!gpio)
 		return;
 
-	peripheral_gpio_isr_callback(pin);
+	peripheral_gpio_isr_callback(pin, value, timestamp);
 }
 
 int peripheral_gdbus_gpio_open(peripheral_gpio_h gpio)

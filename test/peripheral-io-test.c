@@ -103,7 +103,7 @@ error:
 	return ret;
 }
 
-void gpio_irq_test_isr(void *user_data)
+void gpio_irq_test_isr(gpio_isr_cb_s *data, void *user_data)
 {
 	int pin;
 	peripheral_gpio_h gpio = user_data;
@@ -249,7 +249,7 @@ error:
 #define MMA7455_YOUT8 0x07 //Register for reading the Y-Axis
 #define MMA7455_ZOUT8 0x08 //Register for reading the Z-Axis
 
-static void i2c_mma7455_isr(void *user_data)
+static void i2c_mma7455_isr(gpio_isr_cb_s *data, void *user_data)
 {
 	peripheral_i2c_h i2c = user_data;
 	uint8_t x_pos, y_pos, z_pos;
