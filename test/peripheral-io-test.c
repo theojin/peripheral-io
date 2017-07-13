@@ -26,6 +26,12 @@
 #define BUFFER_LEN 32
 
 typedef struct {
+	int cnt;
+	peripheral_gpio_h gpio_trig;
+	peripheral_gpio_h gpio_echo;
+} gpio_hcsr04_module_s;
+
+typedef struct {
 	const char *tc_name;
 	int tc_code;
 	int (*tc_func)(void);
@@ -620,6 +626,94 @@ error:
 	return -1;
 }
 
+void gpio_hcsr04_isr(gpio_isr_cb_s *data, void *user_data)
+{
+	float dist = 0;
+	static unsigned long long timestamp = 0;
+
+	if (timestamp > 0 && data->value == 0) {
+		dist = data->timestamp - timestamp;
+		dist = (dist * 34300) / 2000000;
+		printf("%s: Measured Distance : %0.2fcm\n", __func__, dist);
+	}
+
+	timestamp = data->timestamp;
+}
+
+gboolean gpio_hcsr04_timeout_cb(gpointer data)
+{
+	gpio_hcsr04_module_s *dev = (gpio_hcsr04_module_s*)data;
+
+	if (dev->cnt--) {
+		peripheral_gpio_write(dev->gpio_trig, 1);
+		peripheral_gpio_write(dev->gpio_trig, 0);
+	} else
+		return FALSE;
+
+	return TRUE;
+}
+
+void gpio_hcsr04_destroy(gpointer data)
+{
+	gpio_hcsr04_module_s *dev = (gpio_hcsr04_module_s*)data;
+
+	peripheral_gpio_unregister_cb(dev->gpio_echo);
+	peripheral_gpio_close(dev->gpio_echo);
+	peripheral_gpio_close(dev->gpio_trig);
+	free(dev);
+}
+
+int gpio_hcsr04_ultrasonic_ranging_module(void)
+{
+	gpio_hcsr04_module_s *dev;
+	int pin_trig, pin_echo, ret;
+
+	printf("    %s()\n", __func__);
+	printf("Enter triger gpio pin number\n");
+	if (read_int_input(&pin_trig) < 0)
+		return -1;
+
+	printf("Enter echo gpio pin number\n");
+	if (read_int_input(&pin_echo) < 0)
+		return -1;
+
+	dev = calloc(1, sizeof(gpio_hcsr04_module_s));
+	if (dev == NULL) {
+		printf("failed to allocate gpio_hcsr04_module_s\n");
+		return -1;
+	}
+
+	if ((ret = peripheral_gpio_open(pin_trig, &dev->gpio_trig)) < 0) {
+		printf(">>>>> Failed to open GPIO pin, ret : %d\n", ret);
+		goto err;
+	}
+
+	if ((ret = peripheral_gpio_open(pin_echo, &dev->gpio_echo)) < 0) {
+		printf(">>>>> Failed to open GPIO pin, ret : %d\n", ret);
+		peripheral_gpio_close(dev->gpio_trig);
+		goto err;
+	}
+
+	peripheral_gpio_set_direction(dev->gpio_echo, PERIPHERAL_GPIO_DIRECTION_IN);
+	peripheral_gpio_set_edge_mode(dev->gpio_echo, PERIPHERAL_GPIO_EDGE_BOTH);
+	peripheral_gpio_register_cb(dev->gpio_echo, gpio_hcsr04_isr, NULL);
+	peripheral_gpio_set_direction(dev->gpio_trig, PERIPHERAL_GPIO_DIRECTION_OUT);
+
+	dev->cnt = 20;
+
+	g_timeout_add_seconds_full(G_PRIORITY_DEFAULT,
+					1,
+					gpio_hcsr04_timeout_cb,
+					dev,
+					gpio_hcsr04_destroy);
+
+	return 0;
+
+err:
+	free(dev);
+	return -1;
+}
+
 int gpio_test_get_handle_by_pin(int pin, peripheral_gpio_h *gpio)
 {
 	peripheral_gpio_h handle;
@@ -985,8 +1079,9 @@ tc_table_t preset_tc_table[] = {
 	{"[Preset Test] PWM Motor",					5, pwm_test_motor},
 	{"[Preset Test] Uart Accelerometer",		6, uart_test_accelerometer},
 	{"[Preset Test] SPI MMA7455 Accel. sensor",	7, spi_mma7455_module_test},
-	{"[Preset Test] GPIO IRQ register",			8, gpio_irq_register},
-	{"[Preset Test] GPIO IRQ unregister",		9, gpio_irq_unregister},
+	{"[Preset Test] GPIO HC-SR04 Range sensor",	8, gpio_hcsr04_ultrasonic_ranging_module},
+	{"[Preset Test] GPIO IRQ register",			10, gpio_irq_register},
+	{"[Preset Test] GPIO IRQ unregister",		11, gpio_irq_unregister},
 	{"Go back to main",							0, enter_main},
 	{NULL,	0, NULL},
 };
