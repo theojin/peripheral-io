@@ -23,6 +23,8 @@
 
 #include "peripheral_io.h"
 
+#include "mma7455.h"
+
 #define BUFFER_LEN 32
 
 typedef struct {
@@ -231,68 +233,35 @@ error:
 	return -1;
 }
 
-#define MMA7455_ADDRESS 0x1D //I2C Address for the sensor
-
-#define MMA7455_MCTL 0x16 // Mode Control
-
-#define MMA7455_MCTL_STANDBY_MODE 0x0
-#define MMA7455_MCTL_MEASUREMENT_MODE 0x01
-#define MMA7455_MCTL_LEVEL_DETECTION_MODE 0x02
-#define MMA7455_MCTL_PULSE_DETECTION_MODE 0x03
-#define MMA7455_MCTL_2G 0x04 //Set Sensitivity to 2g
-#define MMA7455_MCTL_4G 0x08 //Set Sensitivity to 4g
-#define MMA7455_MCTL_8G 0x00 //Set Sensitivity to 8g
-
-#define MMA7455_INTRST 0x17
-#define MMA7455_INTRST_CLRINT 0x03
-#define MMA7445_INTRST_DONOTCLR 0x00
-
-#define MMA7455_CONTROL1 0x18
-#define MMA7455_CONTROL1_INTREG 0x06
-#define MMA7455_CONTROL1_DFBW 0x80
-
-#define MMA7455_XOUT8 0x06 //Register for reading the X-Axis
-#define MMA7455_YOUT8 0x07 //Register for reading the Y-Axis
-#define MMA7455_ZOUT8 0x08 //Register for reading the Z-Axis
-
 static void i2c_mma7455_isr(gpio_isr_cb_s *data, void *user_data)
 {
-	peripheral_i2c_h i2c = user_data;
-	uint8_t x_pos, y_pos, z_pos;
+	mma7455_axes result;
 
-	peripheral_i2c_read_register_byte(i2c, MMA7455_XOUT8, &x_pos);
-	peripheral_i2c_read_register_byte(i2c, MMA7455_YOUT8, &y_pos);
-	peripheral_i2c_read_register_byte(i2c, MMA7455_ZOUT8, &z_pos);
-
-	printf("Result X : %d, Y : %d, Z : %d\n", x_pos, y_pos, z_pos);
+	mma7455_i2c_get_measurement_3(&result);
+	printf("Result X : %d, Y : %d, Z : %d\n", result.x_pos, result.y_pos, result.z_pos);
 
 	/* Reset interrupt flags */
-	peripheral_i2c_write_register_byte(i2c, MMA7455_INTRST, MMA7455_INTRST_CLRINT);
-	peripheral_i2c_write_register_byte(i2c, MMA7455_INTRST, MMA7445_INTRST_DONOTCLR);
+	mma7455_i2c_reset_isr();
 
 	return;
 }
 
 int i2c_mma7455_test(void)
 {
-	static peripheral_i2c_h i2c;
-	static peripheral_gpio_h isr_gpio;
-	int bus_num, gpio_num, ret;
+	static int gpio_num;
+	static bool enable;
+	int bus_num;
 	int cnt = 0;
 
 	printf("    %s()\n", __func__);
-	if (i2c) {
+	if (enable) {
 		printf("Disabling the test\n");
 
-		peripheral_i2c_close(i2c);
-		i2c = NULL;
-		printf("i2c handle is closed\n");
+		mma7455_i2c_unregister_isr();
+		mma7455_i2c_close();
+		printf("mma7455 is closed\n");
 
-		if (isr_gpio) {
-			peripheral_gpio_close(isr_gpio);
-			isr_gpio = NULL;
-			printf("isr_gpio handle is closed\n");
-		}
+		enable = FALSE;
 
 		return 0;
 	}
@@ -302,84 +271,47 @@ int i2c_mma7455_test(void)
 	if (read_int_input(&bus_num) < 0)
 		return -1;
 
-	if ((ret = peripheral_i2c_open(bus_num, MMA7455_ADDRESS, &i2c)) < 0) {
-		printf(">>>>> Failed to open I2C communication, ret : %d \n", ret);
+	if (mma7455_i2c_init(bus_num) < 0)
 		return -1;
-	}
-
-	ret = peripheral_i2c_write_register_byte(i2c,
-		MMA7455_MCTL,
-		MMA7455_MCTL_8G | MMA7455_MCTL_PULSE_DETECTION_MODE);
-	if (ret < PERIPHERAL_ERROR_NONE) {
-		printf(">>>>> Failed to write, ret : %d\n", ret);
-		goto error;
-	}
 
 	printf("Enter GPIO pin number for Interrupt\n");
 	if (read_int_input(&gpio_num) < 0)
 		gpio_num = -1;
 
-	if ((gpio_num > 0) && (peripheral_gpio_open(gpio_num, &isr_gpio) == 0)) {
-		ret = peripheral_gpio_set_direction(isr_gpio, PERIPHERAL_GPIO_DIRECTION_IN);
-		if (ret < 0)
-			printf(">>>> Failed to set direction of isr_gpio\n");
-
-		ret = peripheral_gpio_set_edge_mode(isr_gpio, PERIPHERAL_GPIO_EDGE_RISING);
-		if (ret < 0)
-			printf(">>>> Failed to set edge mode of isr_gpio\n");
-
-		ret = peripheral_gpio_register_cb(isr_gpio, i2c_mma7455_isr, (void*)i2c);
-		if (ret < 0)
-			printf(">>>> Failed to register gpio callback\n");
+	if (gpio_num > 0) {
+		if (mma7455_i2c_register_isr(gpio_num, i2c_mma7455_isr) != 0)
+			return -1;
 
 		/* Reset interrupt flags */
-		peripheral_i2c_write_register_byte(i2c, MMA7455_INTRST, MMA7455_INTRST_CLRINT);
-		peripheral_i2c_write_register_byte(i2c, MMA7455_INTRST, MMA7445_INTRST_DONOTCLR);
+		mma7455_i2c_reset_isr();
+
+		enable = TRUE;
 
 		printf("callback is registered on gpio pin %d\n", gpio_num);
 		printf("i2c(bus = %d address = %d) handle is open\n", bus_num, MMA7455_ADDRESS);
 	} else {
 		while (cnt++ < 10) {
-			uint8_t x_pos, y_pos, z_pos;
-			unsigned char buf[4];
+			mma7455_axes result;
+
 			sleep(1);
 
 			/* Get measurement data with different APIs */
-			buf[0] = MMA7455_XOUT8;
-			peripheral_i2c_write(i2c, buf, 0x1);
-			peripheral_i2c_read(i2c, &x_pos, 0x1);
-			buf[0] = MMA7455_YOUT8;
-			peripheral_i2c_write(i2c, buf, 0x1);
-			peripheral_i2c_read(i2c, &y_pos, 0x1);
-			buf[0] = MMA7455_ZOUT8;
-			peripheral_i2c_write(i2c, buf, 0x1);
-			peripheral_i2c_read(i2c, &z_pos, 0x1);
-			printf("Result X : %d, Y : %d, Z : %d  (peripheral_i2c_read)\n", x_pos, y_pos, z_pos);
+			mma7455_i2c_get_measurement_1(&result);
+			printf("Result X : %d, Y : %d, Z : %d  (peripheral_i2c_read)\n",
+				result.x_pos, result.y_pos, result.z_pos);
 
-			peripheral_i2c_write_byte(i2c, MMA7455_XOUT8);
-			peripheral_i2c_read_byte(i2c, &x_pos);
-			peripheral_i2c_write_byte(i2c, MMA7455_YOUT8);
-			peripheral_i2c_read_byte(i2c, &y_pos);
-			peripheral_i2c_write_byte(i2c, MMA7455_ZOUT8);
-			peripheral_i2c_read_byte(i2c, &z_pos);
-			printf("Result X : %d, Y : %d, Z : %d (peripheral_i2c_read_byte)\n", x_pos, y_pos, z_pos);
+			mma7455_i2c_get_measurement_2(&result);
+			printf("Result X : %d, Y : %d, Z : %d  (peripheral_i2c_read_byte)\n",
+				result.x_pos, result.y_pos, result.z_pos);
 
-			peripheral_i2c_read_register_byte(i2c, MMA7455_XOUT8, &x_pos);
-			peripheral_i2c_read_register_byte(i2c, MMA7455_YOUT8, &y_pos);
-			peripheral_i2c_read_register_byte(i2c, MMA7455_ZOUT8, &z_pos);
-			printf("Result X : %d, Y : %d, Z : %d  (peripheral_i2c_read_register_byte)\n", x_pos, y_pos, z_pos);
-
+			mma7455_i2c_get_measurement_3(&result);
+			printf("Result X : %d, Y : %d, Z : %d  (peripheral_i2c_read_register_byte)\n",
+				result.x_pos, result.y_pos, result.z_pos);
 		}
-		peripheral_i2c_close(i2c);
-		i2c = NULL;
+		mma7455_i2c_close();
 		printf("i2c(bus = %d address = %d) handle is closed\n", bus_num, MMA7455_ADDRESS);
 	}
 	return 0;
-
-error:
-	peripheral_i2c_close(i2c);
-	i2c = NULL;
-	return -1;
 }
 
 int pwm_test_led(void)
@@ -552,19 +484,11 @@ err_open:
 	return -1;
 }
 
-#define MMA7455_MCTL_SPI3W 0x20 // SPI is 3 wire mode
-#define MMA7455_MCTL_DRPD 0x40 // Data ready status is not output to INT1/DRDY PIN
-
-#define MMA7455_SPI_REGISTER_WRITE 0x40
-
 int spi_mma7455_module_test(void)
 {
 	int cnt = 0;
-	int bus_num, cs_num, ret;
-	unsigned char tx_buf[10];
-	unsigned char rx_buf[10];
-	unsigned int num;
-	peripheral_spi_h spi;
+	int bus_num, cs_num;
+	mma7455_axes result;
 
 	printf("	%s()\n", __func__);
 	printf("Enter SPI bus number : ");
@@ -575,55 +499,19 @@ int spi_mma7455_module_test(void)
 	if (scanf("%d", &cs_num) < 0)
 		return -1;
 
-	if ((ret = peripheral_spi_open(bus_num, cs_num, &spi)) < 0) {
-		printf("Failed to open I2C communication, ret : %d\n", ret);
+	if (mma7455_spi_init(bus_num, cs_num) < 0)
 		return -1;
-	}
-	peripheral_spi_set_mode(spi, PERIPHERAL_SPI_MODE_0);
-	peripheral_spi_set_lsb_first(spi, false);
-	peripheral_spi_set_bits_per_word(spi, 8);
-	peripheral_spi_set_frequency(spi, 100000);
-
-	printf("bus : %d, cs : %d, ", bus_num, cs_num);
-	peripheral_spi_get_mode(spi, (peripheral_spi_mode_e*)&num);
-	printf("mode : %d, ", num);
-	peripheral_spi_get_lsb_first(spi, (bool*)&num);
-	printf("lsb first : %d, ", (bool)num);
-	peripheral_spi_get_bits_per_word(spi, (unsigned char*)&num);
-	printf("bits : %d, ", (unsigned char)num);
-	peripheral_spi_get_frequency(spi, &num);
-	printf("max frequency : %d\n", num);
-
-	tx_buf[0] = (MMA7455_MCTL | MMA7455_SPI_REGISTER_WRITE) << 1;
-	tx_buf[1] = MMA7455_MCTL_DRPD | MMA7455_MCTL_SPI3W | MMA7455_MCTL_2G | MMA7455_MCTL_MEASUREMENT_MODE;
-	if ((ret = peripheral_spi_write(spi, tx_buf, 2)) < 0) {
-		printf("Failed to write, ret : %d\n", ret);
-		goto error;
-	}
 
 	while (cnt++ < 15) {
-		int i;
-		unsigned char buf[5];
-
 		sleep(1);
-		for (i = 0; i < 3; i++) {
-			tx_buf[0] = (MMA7455_XOUT8 + i) << 1;
-			tx_buf[1] = 0;
-			ret = peripheral_spi_read_write(spi, tx_buf, rx_buf, 2);
-			if (ret < 0)
-				printf("Failed to read, ret : %d\n", ret);
-			buf[i] = rx_buf[1];
-		}
-
-		printf("X = 0x%02X, Y = 0x%02X, Z = 0x%02X\n", buf[0], buf[1], buf[2]);
+		mma7455_spi_get_measurement(&result);
+		printf("Result X : %d, Y : %d, Z : %d\n",
+			result.x_pos, result.y_pos, result.z_pos);
 	}
 
-	peripheral_spi_close(spi);
-	return 0;
+	mma7455_spi_close();
 
-error:
-	peripheral_spi_close(spi);
-	return -1;
+	return 0;
 }
 
 void gpio_hcsr04_isr(gpio_isr_cb_s *data, void *user_data)
