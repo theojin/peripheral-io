@@ -11,7 +11,8 @@ ENDFOREACH()
 SET(SAMPLE_INC_DIR ./samples/include)
 INCLUDE_DIRECTORIES(${SAMPLE_INC_DIR})
 
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS} -Wall")
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS} -Wall -fPIE")
+SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--as-needed -pie")
 
 AUX_SOURCE_DIRECTORY(samples sample_sources)
 FOREACH(src ${sample_sources})
