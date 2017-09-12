@@ -261,7 +261,10 @@ static int mma7455_spi_mctl_write_byte(unsigned char value)
 
 int mma7455_spi_init(int bus_num, int cs_num)
 {
-	unsigned int num;
+	peripheral_spi_mode_e spi_mode;
+	bool spi_lsb;
+	unsigned char spi_bits;
+	unsigned int spi_freq;
 	int ret;
 
 	/* Return if it's already initialized */
@@ -282,15 +285,12 @@ int mma7455_spi_init(int bus_num, int cs_num)
 	peripheral_spi_set_bits_per_word(mma7455_spi, 8);
 	peripheral_spi_set_frequency(mma7455_spi, 8*1024*1024);
 
-	LOG("bus : %d, cs : %d, ", bus_num, cs_num);
-	peripheral_spi_get_mode(mma7455_spi, (peripheral_spi_mode_e*)&num);
-	LOG("mode : %d, ", num);
-	peripheral_spi_get_lsb_first(mma7455_spi, (bool*)&num);
-	LOG("lsb first : %d, ", (bool)num);
-	peripheral_spi_get_bits_per_word(mma7455_spi, (unsigned char*)&num);
-	LOG("bits : %d, ", (unsigned char)num);
-	peripheral_spi_get_frequency(mma7455_spi, &num);
-	LOG("max frequency : %d\n", num);
+	peripheral_spi_get_mode(mma7455_spi, &spi_mode);
+	peripheral_spi_get_lsb_first(mma7455_spi, &spi_lsb);
+	peripheral_spi_get_bits_per_word(mma7455_spi, &spi_bits);
+	peripheral_spi_get_frequency(mma7455_spi, &spi_freq);
+	LOG("bus : %d, cs : %d, mode : %d, lsb first : %d, bits : %d, max frequency : %d\n",
+			bus_num, cs_num, spi_mode, spi_lsb, spi_bits, spi_freq);
 
 	/* Set mode control register */
 	ret = mma7455_spi_mctl_write_byte(MMA7455_MCTL_SPI3W
