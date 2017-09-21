@@ -39,6 +39,7 @@ int peripheral_i2c_open(int bus, int address, peripheral_i2c_h *i2c)
 	peripheral_i2c_h handle;
 	int ret = PERIPHERAL_ERROR_NONE;
 
+	RETVM_IF(i2c == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid i2c handle");
 	RETVM_IF(bus < 0 || address < 0, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
 
 	handle = (peripheral_i2c_h)malloc(sizeof(struct _peripheral_i2c_s));
@@ -84,7 +85,7 @@ int peripheral_i2c_read(peripheral_i2c_h i2c, uint8_t *data, uint32_t length)
 	int ret;
 
 	RETVM_IF(i2c == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "i2c handle is NULL");
-	RETVM_IF(data == NULL || length < 0, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
+	RETVM_IF(data == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
 
 	ret = peripheral_gdbus_i2c_read(i2c, data, (int)length);
 	if (ret != PERIPHERAL_ERROR_NONE)
@@ -98,7 +99,7 @@ int peripheral_i2c_write(peripheral_i2c_h i2c, uint8_t *data, uint32_t length)
 	int ret;
 
 	RETVM_IF(i2c == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "i2c handle is NULL");
-	RETVM_IF(data == NULL || length < 0, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
+	RETVM_IF(data == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
 
 	ret = peripheral_gdbus_i2c_write(i2c, data, (int)length);
 	if (ret != PERIPHERAL_ERROR_NONE)
@@ -113,6 +114,7 @@ int peripheral_i2c_read_register_byte(peripheral_i2c_h i2c, uint8_t reg, uint8_t
 	uint16_t w_data, dummy = 0;
 
 	RETVM_IF(i2c == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "i2c handle is NULL");
+	RETVM_IF(data == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
 
 	ret = peripheral_gdbus_i2c_smbus_ioctl(i2c, I2C_SMBUS_READ, reg, I2C_SMBUS_BYTE_DATA, dummy, &w_data);
 	if (ret != PERIPHERAL_ERROR_NONE)
@@ -143,6 +145,7 @@ int peripheral_i2c_read_register_word(peripheral_i2c_h i2c, uint8_t reg, uint16_
 	uint16_t dummy = 0, data_out;
 
 	RETVM_IF(i2c == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "i2c handle is NULL");
+	RETVM_IF(data == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
 
 	ret = peripheral_gdbus_i2c_smbus_ioctl(i2c, I2C_SMBUS_READ, reg, I2C_SMBUS_WORD_DATA, dummy, &data_out);
 	if (ret != PERIPHERAL_ERROR_NONE)

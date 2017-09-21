@@ -30,6 +30,7 @@ int peripheral_spi_open(int bus, int cs, peripheral_spi_h *spi)
 	peripheral_spi_h handle;
 	int ret = PERIPHERAL_ERROR_NONE;
 
+	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid spi handle");
 	RETVM_IF(bus < 0 || cs < 0, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
 
 	/* Initialize */
@@ -75,8 +76,7 @@ int peripheral_spi_set_mode(peripheral_spi_h spi, peripheral_spi_mode_e mode)
 	int ret;
 
 	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
-	RETVM_IF(mode > PERIPHERAL_SPI_MODE_3, PERIPHERAL_ERROR_INVALID_PARAMETER,
-		"Invalid spi mode parameter");
+	RETVM_IF((mode < PERIPHERAL_SPI_MODE_0) || (mode > PERIPHERAL_SPI_MODE_3), PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid spi mode parameter");
 
 	ret = peripheral_gdbus_spi_set_mode(spi, mode);
 	if (ret != PERIPHERAL_ERROR_NONE)
@@ -90,6 +90,7 @@ int peripheral_spi_set_bit_order(peripheral_spi_h spi, peripheral_spi_bit_order_
 	int ret;
 
 	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
+	RETVM_IF((bit_order < PERIPHERAL_SPI_BIT_ORDER_MSB) || (bit_order > PERIPHERAL_SPI_BIT_ORDER_LSB), PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid bit order parameter");
 
 	bool lsb = (bit_order == PERIPHERAL_SPI_BIT_ORDER_LSB) ? true : false;
 	ret = peripheral_gdbus_spi_set_bit_order(spi, lsb);
@@ -130,6 +131,7 @@ int peripheral_spi_read(peripheral_spi_h spi, uint8_t *data, uint32_t length)
 	int ret;
 
 	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
+	RETVM_IF(data == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
 
 	ret = peripheral_gdbus_spi_read(spi, data, (int)length);
 	if (ret != PERIPHERAL_ERROR_NONE)
@@ -143,6 +145,7 @@ int peripheral_spi_write(peripheral_spi_h spi, uint8_t *data, uint32_t length)
 	int ret;
 
 	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
+	RETVM_IF(data == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
 
 	ret = peripheral_gdbus_spi_write(spi, data, (int)length);
 	if (ret != PERIPHERAL_ERROR_NONE)
@@ -156,6 +159,7 @@ int peripheral_spi_transfer(peripheral_spi_h spi, uint8_t *txdata, uint8_t *rxda
 	int ret;
 
 	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
+	RETVM_IF(txdata == NULL || rxdata == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
 
 	ret = peripheral_gdbus_spi_transfer(spi, txdata, rxdata, (int)length);
 	if (ret != PERIPHERAL_ERROR_NONE)

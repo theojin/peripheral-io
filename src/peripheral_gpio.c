@@ -114,6 +114,7 @@ int peripheral_gpio_open(int gpio_pin, peripheral_gpio_h *gpio)
 	int ret = PERIPHERAL_ERROR_NONE;
 	peripheral_gpio_h handle;
 
+	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid gpio handle");
 	RETVM_IF(gpio_pin < 0, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid gpio pin number");
 
 	/* Initialize */
@@ -170,6 +171,7 @@ int peripheral_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_direct
 	int ret = PERIPHERAL_ERROR_NONE;
 
 	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
+	RETVM_IF((direction < PERIPHERAL_GPIO_DIRECTION_IN) || (direction > PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_LOW), PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid direction input");
 
 	/* call gpio_set_direction */
 	ret = peripheral_gdbus_gpio_set_direction(gpio, direction);
@@ -188,8 +190,7 @@ int peripheral_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e
 	int ret = PERIPHERAL_ERROR_NONE;
 
 	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
-	RETVM_IF(edge > PERIPHERAL_GPIO_EDGE_BOTH, PERIPHERAL_ERROR_INVALID_PARAMETER,
-		"Invalid edge input");
+	RETVM_IF((edge < PERIPHERAL_GPIO_EDGE_NONE) || (edge > PERIPHERAL_GPIO_EDGE_BOTH), PERIPHERAL_ERROR_INVALID_PARAMETER, "edge input is invalid");
 
 	/* call gpio_set_edge_mode */
 	ret = peripheral_gdbus_gpio_set_edge_mode(gpio, edge);
@@ -207,6 +208,7 @@ int peripheral_gpio_set_interrupted_cb(peripheral_gpio_h gpio, peripheral_gpio_i
 	int ret = PERIPHERAL_ERROR_NONE;
 
 	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
+	RETVM_IF(callback == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio interrupted callback is NULL");
 
 	ret = peripheral_gdbus_gpio_set_interrupted_cb(gpio, callback, user_data);
 	if (ret != PERIPHERAL_ERROR_NONE) {
@@ -252,6 +254,7 @@ int peripheral_gpio_read(peripheral_gpio_h gpio, uint32_t *value)
 	int ret = PERIPHERAL_ERROR_NONE;
 
 	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
+	RETVM_IF(value == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio read value is invalid");
 
 	/* call gpio_read */
 	ret = peripheral_gdbus_gpio_read(gpio, (int *)value);
@@ -269,6 +272,7 @@ int peripheral_gpio_write(peripheral_gpio_h gpio, uint32_t value)
 	int ret = PERIPHERAL_ERROR_NONE;
 
 	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
+	RETVM_IF((value != 0) && (value != 1), PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio value is invalid");
 
 	/* call gpio_write */
 	ret = peripheral_gdbus_gpio_write(gpio, (int)value);

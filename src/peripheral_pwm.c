@@ -29,6 +29,7 @@ int peripheral_pwm_open(int chip, int pin, peripheral_pwm_h *pwm)
 	peripheral_pwm_h handle;
 	int ret = PERIPHERAL_ERROR_NONE;
 
+	RETVM_IF(pwm == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid pwm handle");
 	RETVM_IF(chip < 0 || pin < 0, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
 
 	/* Initialize */
@@ -99,6 +100,7 @@ int peripheral_pwm_set_polarity(peripheral_pwm_h pwm, peripheral_pwm_polarity_e 
 	int ret;
 
 	RETVM_IF(pwm == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "pwm handle is NULL");
+	RETVM_IF((polarity < PERIPHERAL_PWM_POLARITY_ACTIVE_HIGH) || (polarity > PERIPHERAL_PWM_POLARITY_ACTIVE_LOW), PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid polarity parameter");
 
 	ret = peripheral_gdbus_pwm_set_polarity(pwm, polarity);
 	if (ret != PERIPHERAL_ERROR_NONE)
