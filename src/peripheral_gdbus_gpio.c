@@ -25,7 +25,7 @@
 
 extern int peripheral_gpio_interrupted_cb_handler(int pin, int value, unsigned long long timestamp, int err);
 
-PeripheralIoGdbusGpio *gpio_proxy = NULL;
+static PeripheralIoGdbusGpio *gpio_proxy = NULL;
 
 static void __peripheral_gpio_interrupted_cb(PeripheralIoGdbusGpio *gpio, gint pin, gint value, guint64 timestamp, gpointer user_data)
 {

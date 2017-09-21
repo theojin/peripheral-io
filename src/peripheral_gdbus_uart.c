@@ -23,7 +23,7 @@
 #include "peripheral_internal.h"
 #include "peripheral_io_gdbus.h"
 
-PeripheralIoGdbusUart *uart_proxy = NULL;
+static PeripheralIoGdbusUart *uart_proxy = NULL;
 
 void uart_proxy_init(void)
 {

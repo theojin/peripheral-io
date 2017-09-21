@@ -23,7 +23,7 @@
 #include "peripheral_internal.h"
 #include "peripheral_io_gdbus.h"
 
-PeripheralIoGdbusSpi *spi_proxy = NULL;
+static PeripheralIoGdbusSpi *spi_proxy = NULL;
 
 void spi_proxy_init(void)
 {

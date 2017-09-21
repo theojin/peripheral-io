@@ -23,7 +23,7 @@
 #include "peripheral_internal.h"
 #include "peripheral_io_gdbus.h"
 
-PeripheralIoGdbusPwm *pwm_proxy = NULL;
+static PeripheralIoGdbusPwm *pwm_proxy = NULL;
 
 void pwm_proxy_init(void)
 {
