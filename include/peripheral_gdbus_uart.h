@@ -21,10 +21,11 @@ void uart_proxy_deinit();
 
 int peripheral_gdbus_uart_open(peripheral_uart_h uart, int port);
 int peripheral_gdbus_uart_close(peripheral_uart_h uart);
-int peripheral_gdbus_uart_flush(peripheral_uart_h uart);
-int peripheral_gdbus_uart_set_baudrate(peripheral_uart_h uart, peripheral_uart_baudrate_e baud);
-int peripheral_gdbus_uart_set_mode(peripheral_uart_h uart, peripheral_uart_bytesize_e bytesize, peripheral_uart_parity_e parity, peripheral_uart_stopbits_e stopbits);
-int peripheral_gdbus_uart_set_flowcontrol(peripheral_uart_h uart, bool xonxoff, bool rtscts);
+int peripheral_gdbus_uart_set_baud_rate(peripheral_uart_h uart, peripheral_uart_baud_rate_e baud);
+int peripheral_gdbus_uart_set_byte_size(peripheral_uart_h uart, peripheral_uart_byte_size_e byte_size);
+int peripheral_gdbus_uart_set_parity(peripheral_uart_h uart, peripheral_uart_parity_e parity);
+int peripheral_gdbus_uart_set_stop_bits(peripheral_uart_h uart, peripheral_uart_stop_bits_e stop_bits);
+int peripheral_gdbus_uart_set_flow_control(peripheral_uart_h uart, bool xonxoff, bool rtscts);
 int peripheral_gdbus_uart_read(peripheral_uart_h uart, uint8_t *data, int length);
 int peripheral_gdbus_uart_write(peripheral_uart_h uart, uint8_t *data, int length);
 

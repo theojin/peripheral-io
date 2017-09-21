@@ -26,29 +26,24 @@
 #include "peripheral_io_gdbus.h"
 
 typedef struct {
-	int pin;
-	gpio_isr_cb callback;
+	peripheral_gpio_h handle;
+	peripheral_gpio_interrupted_cb callback;
 	void *user_data;
-} gpio_isr_data_s;
+} interrupted_cb_info_s;
 
-static GList *gpio_isr_list = NULL;
+static GList *interrupted_cb_info_list = NULL;
 
-int peripheral_gpio_isr_callback(int pin, int value, unsigned long long timestamp)
+int peripheral_gpio_interrupted_cb_handler(int pin, int value, unsigned long long timestamp, int error)
 {
 	GList *link;
-	gpio_isr_data_s *isr_data;
-	gpio_isr_cb_s cb_data;
+	interrupted_cb_info_s *cb_info;
 
-	link = gpio_isr_list;
+	link = interrupted_cb_info_list;
 	while (link) {
-		isr_data = (gpio_isr_data_s*)link->data;
-
-		if (isr_data->pin == pin) {
-			cb_data.pin = pin;
-			cb_data.value = value;
-			cb_data.timestamp = timestamp;
-			if (isr_data->callback)
-				isr_data->callback(&cb_data, isr_data->user_data);
+		cb_info = (interrupted_cb_info_s*)link->data;
+		if (cb_info->handle->pin == pin) {
+			if (cb_info->callback)
+				cb_info->callback(cb_info->handle, error, cb_info->user_data);
 			return PERIPHERAL_ERROR_NONE;
 		}
 		link = g_list_next(link);
@@ -57,50 +52,50 @@ int peripheral_gpio_isr_callback(int pin, int value, unsigned long long timestam
 	return PERIPHERAL_ERROR_NONE;
 }
 
-int peripheral_gpio_isr_set(int pin, gpio_isr_cb callback, void *user_data)
+static int __interrupted_cb_info_list_append(peripheral_gpio_h gpio, peripheral_gpio_interrupted_cb callback, void *user_data)
 {
 	GList *link;
-	gpio_isr_data_s *isr_data = NULL;
+	interrupted_cb_info_s *cb_info = NULL;
 
-	link = gpio_isr_list;
+	link = interrupted_cb_info_list;
 	while (link) {
-		gpio_isr_data_s *tmp;
-		tmp = (gpio_isr_data_s*)link->data;
-		if (tmp->pin == pin) {
-			isr_data = tmp;
+		interrupted_cb_info_s *tmp;
+		tmp = (interrupted_cb_info_s*)link->data;
+		if (tmp->handle == gpio) {
+			cb_info = tmp;
 			break;
 		}
 		link = g_list_next(link);
 	}
 
-	if (isr_data == NULL) {
-		isr_data = (gpio_isr_data_s*)calloc(1, sizeof(gpio_isr_data_s));
-		if (isr_data == NULL) {
-			_E("failed to allocate gpio_isr_data_s");
+	if (cb_info == NULL) {
+		cb_info = (interrupted_cb_info_s*)calloc(1, sizeof(interrupted_cb_info_s));
+		if (cb_info == NULL) {
+			_E("failed to allocate interrupted_cb_info_s");
 			return PERIPHERAL_ERROR_OUT_OF_MEMORY;
 		}
 
-		gpio_isr_list = g_list_append(gpio_isr_list, isr_data);
+		link = g_list_append(link, cb_info);
 	}
 
-	isr_data->pin = pin;
-	isr_data->callback = callback;
-	isr_data->user_data = user_data;
+	cb_info->handle = gpio;
+	cb_info->callback = callback;
+	cb_info->user_data = user_data;
 
 	return PERIPHERAL_ERROR_NONE;
 }
 
-int peripheral_gpio_isr_unset(int pin)
+static int __interrupted_cb_info_list_remove(peripheral_gpio_h gpio)
 {
 	GList *link;
-	gpio_isr_data_s *isr_data;
+	interrupted_cb_info_s *cb_info;
 
-	link = gpio_isr_list;
+	link = interrupted_cb_info_list;
 	while (link) {
-		isr_data = (gpio_isr_data_s*)link->data;
+		cb_info = (interrupted_cb_info_s*)link->data;
 
-		if (isr_data->pin == pin) {
-			gpio_isr_list = g_list_remove_link(gpio_isr_list, link);
+		if (cb_info->handle == gpio) {
+			interrupted_cb_info_list = g_list_remove_link(interrupted_cb_info_list, link);
 			free(link->data);
 			g_list_free(link);
 			break;
@@ -168,23 +163,6 @@ int peripheral_gpio_close(peripheral_gpio_h gpio)
 }
 
 /**
- * @brief Gets direction of the gpio.
- */
-int peripheral_gpio_get_direction(peripheral_gpio_h gpio, peripheral_gpio_direction_e *direction)
-{
-	int ret = PERIPHERAL_ERROR_NONE;
-
-	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
-
-	ret = peripheral_gdbus_gpio_get_direction(gpio, direction);
-	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("Failed to get direction of the gpio pin, ret : %d", ret);
-
-	return ret;
-}
-
-
-/**
  * @brief Sets direction of the gpio pin.
  */
 int peripheral_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_direction_e direction)
@@ -192,8 +170,6 @@ int peripheral_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_direct
 	int ret = PERIPHERAL_ERROR_NONE;
 
 	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
-	RETVM_IF(direction > PERIPHERAL_GPIO_DIRECTION_OUT_HIGH, PERIPHERAL_ERROR_INVALID_PARAMETER,
-		"Invalid direction input");
 
 	/* call gpio_set_direction */
 	ret = peripheral_gdbus_gpio_set_direction(gpio, direction);
@@ -203,55 +179,6 @@ int peripheral_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_direct
 	return ret;
 }
 
-/**
- * @brief Reads value of the gpio.
- */
-int peripheral_gpio_read(peripheral_gpio_h gpio, int *value)
-{
-	int ret = PERIPHERAL_ERROR_NONE;
-
-	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
-
-	/* call gpio_read */
-	ret = peripheral_gdbus_gpio_read(gpio, value);
-	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("Failed to read value of the gpio pin, ret : %d", ret);
-
-	return ret;
-}
-
-/**
- * @brief Writes value to the gpio.
- */
-int peripheral_gpio_write(peripheral_gpio_h gpio, int value)
-{
-	int ret = PERIPHERAL_ERROR_NONE;
-
-	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
-
-	/* call gpio_write */
-	ret = peripheral_gdbus_gpio_write(gpio, value);
-	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("Failed to write to the gpio pin, ret : %d", ret);
-
-	return ret;
-}
-
-/**
- * @brief Gets the edge mode of the gpio.
- */
-int peripheral_gpio_get_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e *edge)
-{
-	int ret = PERIPHERAL_ERROR_NONE;
-
-	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
-
-	ret = peripheral_gdbus_gpio_get_edge_mode(gpio, edge);
-	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("Failed to get edge mode of the gpio pin, ret : %d", ret);
-
-	return ret;
-}
 
 /**
  * @brief Sets the edge mode of the gpio pin.
@@ -275,22 +202,22 @@ int peripheral_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e
 /**
  * @brief Registers a callback function to be invoked when the gpio interrupt is triggered.
  */
-int peripheral_gpio_register_cb(peripheral_gpio_h gpio, gpio_isr_cb callback, void *user_data)
+int peripheral_gpio_set_interrupted_cb(peripheral_gpio_h gpio, peripheral_gpio_interrupted_cb callback, void *user_data)
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
 	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
 
-	ret = peripheral_gdbus_gpio_register_cb(gpio, callback, user_data);
+	ret = peripheral_gdbus_gpio_set_interrupted_cb(gpio, callback, user_data);
 	if (ret != PERIPHERAL_ERROR_NONE) {
-		_E("Failed to register cb, ret : %d", ret);
+		_E("Failed to set gpio interrupted cb, ret : %d", ret);
 		return ret;
 	}
 
 	/* set isr */
-	ret = peripheral_gpio_isr_set(gpio->pin, callback, user_data);
+	ret = __interrupted_cb_info_list_append(gpio, callback, user_data);
 	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("Failed to register gpio isr, ret : %d", ret);
+		_E("Failed to append gpio interrupt callback info, ret : %d", ret);
 
 	return ret;
 }
@@ -298,32 +225,55 @@ int peripheral_gpio_register_cb(peripheral_gpio_h gpio, gpio_isr_cb callback, vo
 /**
  * @brief Unregisters the callback function for the gpio handler.
  */
-int peripheral_gpio_unregister_cb(peripheral_gpio_h gpio)
+int peripheral_gpio_unset_interrupted_cb(peripheral_gpio_h gpio)
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
 	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
 
-	ret = peripheral_gdbus_gpio_unregister_cb(gpio);
+	ret = peripheral_gdbus_gpio_unset_interrupted_cb(gpio);
 	if (ret != PERIPHERAL_ERROR_NONE) {
-		_E("Failed to unregister gpio isr, ret : %d", ret);
+		_E("Failed to unset gpio interrupt callback, ret : %d", ret);
 		return ret;
 	}
 
-	/* clean up isr */
-	ret = peripheral_gpio_isr_unset(gpio->pin);
+	ret = __interrupted_cb_info_list_remove(gpio);
+	if (ret != PERIPHERAL_ERROR_NONE)
+		_E("Failed to remove gpio interrupt callback info, ret : %d", ret);
 
 	return ret;
 }
 
 /**
- * @brief Gets pin number of the gpio handle.
+ * @brief Reads value of the gpio.
  */
-int peripheral_gpio_get_pin(peripheral_gpio_h gpio, int *gpio_pin)
+int peripheral_gpio_read(peripheral_gpio_h gpio, uint32_t *value)
 {
+	int ret = PERIPHERAL_ERROR_NONE;
+
 	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
 
-	*gpio_pin = gpio->pin;
+	/* call gpio_read */
+	ret = peripheral_gdbus_gpio_read(gpio, (int *)value);
+	if (ret != PERIPHERAL_ERROR_NONE)
+		_E("Failed to read value of the gpio pin, ret : %d", ret);
 
-	return PERIPHERAL_ERROR_NONE;
+	return ret;
+}
+
+/**
+ * @brief Writes value to the gpio.
+ */
+int peripheral_gpio_write(peripheral_gpio_h gpio, uint32_t value)
+{
+	int ret = PERIPHERAL_ERROR_NONE;
+
+	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
+
+	/* call gpio_write */
+	ret = peripheral_gdbus_gpio_write(gpio, (int)value);
+	if (ret != PERIPHERAL_ERROR_NONE)
+		_E("Failed to write to the gpio pin, ret : %d", ret);
+
+	return ret;
 }

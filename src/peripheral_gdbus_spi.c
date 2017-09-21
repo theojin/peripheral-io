@@ -118,42 +118,14 @@ int peripheral_gdbus_spi_set_mode(peripheral_spi_h spi, peripheral_spi_mode_e mo
 	return ret;
 }
 
-int peripheral_gdbus_spi_get_mode(peripheral_spi_h spi, peripheral_spi_mode_e *mode)
-{
-	GError *error = NULL;
-	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
-	guchar value;
-
-	if (spi_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
-
-	if (peripheral_io_gdbus_spi_call_get_mode_sync(
-			spi_proxy,
-			spi->handle,
-			&value,
-			&ret,
-			NULL,
-			&error) == FALSE) {
-		_E("%s", error->message);
-		g_error_free(error);
-		return PERIPHERAL_ERROR_UNKNOWN;
-	}
-
-	if (value <= PERIPHERAL_SPI_MODE_3)
-		*mode = value;
-	else
-		_E("Invalid mode : %d", value);
-
-	return ret;
-}
-
-int peripheral_gdbus_spi_set_lsb_first(peripheral_spi_h spi, bool lsb)
+int peripheral_gdbus_spi_set_bit_order(peripheral_spi_h spi, bool lsb)
 {
 	GError *error = NULL;
 	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
 
 	if (spi_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
 
-	if (peripheral_io_gdbus_spi_call_set_lsb_first_sync(
+	if (peripheral_io_gdbus_spi_call_set_bit_order_sync(
 			spi_proxy,
 			spi->handle,
 			lsb,
@@ -168,39 +140,14 @@ int peripheral_gdbus_spi_set_lsb_first(peripheral_spi_h spi, bool lsb)
 	return ret;
 }
 
-int peripheral_gdbus_spi_get_lsb_first(peripheral_spi_h spi, bool *lsb)
-{
-	GError *error = NULL;
-	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
-	gboolean value;
-
-	if (spi_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
-
-	if (peripheral_io_gdbus_spi_call_get_lsb_first_sync(
-			spi_proxy,
-			spi->handle,
-			&value,
-			&ret,
-			NULL,
-			&error) == FALSE) {
-		_E("%s", error->message);
-		g_error_free(error);
-		return PERIPHERAL_ERROR_UNKNOWN;
-	}
-
-	*lsb = value ? true : false;
-
-	return ret;
-}
-
-int peripheral_gdbus_spi_set_bits(peripheral_spi_h spi, unsigned char bits)
+int peripheral_gdbus_spi_set_bits_per_word(peripheral_spi_h spi, unsigned char bits)
 {
 	GError *error = NULL;
 	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
 
 	if (spi_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
 
-	if (peripheral_io_gdbus_spi_call_set_bits_sync(
+	if (peripheral_io_gdbus_spi_call_set_bits_per_word_sync(
 			spi_proxy,
 			spi->handle,
 			bits,
@@ -215,32 +162,7 @@ int peripheral_gdbus_spi_set_bits(peripheral_spi_h spi, unsigned char bits)
 	return ret;
 }
 
-int peripheral_gdbus_spi_get_bits(peripheral_spi_h spi, unsigned char *bits)
-{
-	GError *error = NULL;
-	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
-	guchar value;
-
-	if (spi_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
-
-	if (peripheral_io_gdbus_spi_call_get_bits_sync(
-			spi_proxy,
-			spi->handle,
-			&value,
-			&ret,
-			NULL,
-			&error) == FALSE) {
-		_E("%s", error->message);
-		g_error_free(error);
-		return PERIPHERAL_ERROR_UNKNOWN;
-	}
-
-	*bits = (unsigned char)value;
-
-	return ret;
-}
-
-int peripheral_gdbus_spi_set_frequency(peripheral_spi_h spi, unsigned int freq)
+int peripheral_gdbus_spi_set_frequency(peripheral_spi_h spi, unsigned int freq_hz)
 {
 	GError *error = NULL;
 	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
@@ -250,7 +172,7 @@ int peripheral_gdbus_spi_set_frequency(peripheral_spi_h spi, unsigned int freq)
 	if (peripheral_io_gdbus_spi_call_set_frequency_sync(
 			spi_proxy,
 			spi->handle,
-			freq,
+			freq_hz,
 			&ret,
 			NULL,
 			&error) == FALSE) {
@@ -258,31 +180,6 @@ int peripheral_gdbus_spi_set_frequency(peripheral_spi_h spi, unsigned int freq)
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
-
-	return ret;
-}
-
-int peripheral_gdbus_spi_get_frequency(peripheral_spi_h spi, unsigned int *freq)
-{
-	GError *error = NULL;
-	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
-	guint value;
-
-	if (spi_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
-
-	if (peripheral_io_gdbus_spi_call_get_frequency_sync(
-			spi_proxy,
-			spi->handle,
-			&value,
-			&ret,
-			NULL,
-			&error) == FALSE) {
-		_E("%s", error->message);
-		g_error_free(error);
-		return PERIPHERAL_ERROR_UNKNOWN;
-	}
-
-	*freq = (unsigned int)value;
 
 	return ret;
 }
@@ -357,7 +254,7 @@ int peripheral_gdbus_spi_write(peripheral_spi_h spi, unsigned char *data, int le
 	return ret;
 }
 
-int peripheral_gdbus_spi_read_write(peripheral_spi_h spi, unsigned char *tx_data, unsigned char *rx_data, int length)
+int peripheral_gdbus_spi_transfer(peripheral_spi_h spi, unsigned char *tx_data, unsigned char *rx_data, int length)
 {
 	GError *error = NULL;
 	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
@@ -379,7 +276,7 @@ int peripheral_gdbus_spi_read_write(peripheral_spi_h spi, unsigned char *tx_data
 	tx_data_array = g_variant_new("a(y)", builder);
 	g_variant_builder_unref(builder);
 
-	if (peripheral_io_gdbus_spi_call_read_write_sync(
+	if (peripheral_io_gdbus_spi_call_transfer_sync(
 			spi_proxy,
 			spi->handle,
 			length,
