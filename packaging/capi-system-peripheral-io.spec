@@ -46,7 +46,6 @@ MAJORVER=`echo %{version} | awk 'BEGIN {FS="."}{print $1}'`
 %manifest %{name}.manifest
 %defattr(-,root,root,-)
 %{_libdir}/lib%{name}.so*
-%{_bindir}/peripheral-io-test
 %license LICENSE.APLv2
 
 %files devel
