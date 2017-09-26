@@ -1,6 +1,6 @@
 Name:       capi-system-peripheral-io
 Summary:    Tizen Peripheral Input & Output library
-Version:    0.0.5
+Version:    0.1.0
 Release:    0
 Group:      System & System Tools
 License:    Apache-2.0
@@ -46,7 +46,6 @@ MAJORVER=`echo %{version} | awk 'BEGIN {FS="."}{print $1}'`
 %manifest %{name}.manifest
 %defattr(-,root,root,-)
 %{_libdir}/lib%{name}.so*
-%{_bindir}/peripheral-io-test
 %license LICENSE.APLv2
 
 %files devel

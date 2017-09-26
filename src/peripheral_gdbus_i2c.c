@@ -23,7 +23,7 @@
 #include "peripheral_internal.h"
 #include "peripheral_io_gdbus.h"
 
-PeripheralIoGdbusI2c *i2c_proxy = NULL;
+static PeripheralIoGdbusI2c *i2c_proxy = NULL;
 
 void i2c_proxy_init(void)
 {

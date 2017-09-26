@@ -30,6 +30,7 @@ int peripheral_spi_open(int bus, int cs, peripheral_spi_h *spi)
 	peripheral_spi_h handle;
 	int ret = PERIPHERAL_ERROR_NONE;
 
+	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid spi handle");
 	RETVM_IF(bus < 0 || cs < 0, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
 
 	/* Initialize */
@@ -75,8 +76,7 @@ int peripheral_spi_set_mode(peripheral_spi_h spi, peripheral_spi_mode_e mode)
 	int ret;
 
 	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
-	RETVM_IF(mode > PERIPHERAL_SPI_MODE_3, PERIPHERAL_ERROR_INVALID_PARAMETER,
-		"Invalid spi mode parameter");
+	RETVM_IF((mode < PERIPHERAL_SPI_MODE_0) || (mode > PERIPHERAL_SPI_MODE_3), PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid spi mode parameter");
 
 	ret = peripheral_gdbus_spi_set_mode(spi, mode);
 	if (ret != PERIPHERAL_ERROR_NONE)
@@ -85,130 +85,83 @@ int peripheral_spi_set_mode(peripheral_spi_h spi, peripheral_spi_mode_e mode)
 	return ret;
 }
 
-int peripheral_spi_get_mode(peripheral_spi_h spi, peripheral_spi_mode_e *mode)
+int peripheral_spi_set_bit_order(peripheral_spi_h spi, peripheral_spi_bit_order_e bit_order)
 {
 	int ret;
 
 	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
+	RETVM_IF((bit_order < PERIPHERAL_SPI_BIT_ORDER_MSB) || (bit_order > PERIPHERAL_SPI_BIT_ORDER_LSB), PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid bit order parameter");
 
-	ret = peripheral_gdbus_spi_get_mode(spi, mode);
-	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("Failed to get spi mode, ret : %d", ret);
-
-	return ret;
-}
-
-int peripheral_spi_set_lsb_first(peripheral_spi_h spi, bool lsb)
-{
-	int ret;
-
-	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
-
-	ret = peripheral_gdbus_spi_set_lsb_first(spi, lsb);
+	bool lsb = (bit_order == PERIPHERAL_SPI_BIT_ORDER_LSB) ? true : false;
+	ret = peripheral_gdbus_spi_set_bit_order(spi, lsb);
 	if (ret != PERIPHERAL_ERROR_NONE)
 		_E("Failed to set lsb first, ret : %d", ret);
 
 	return ret;
 }
 
-int peripheral_spi_get_lsb_first(peripheral_spi_h spi, bool *lsb)
+int peripheral_spi_set_bits_per_word(peripheral_spi_h spi, uint8_t bits)
 {
 	int ret;
 
 	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
 
-	ret = peripheral_gdbus_spi_get_lsb_first(spi, lsb);
-	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("Failed to get lsb first, ret : %d", ret);
-
-	return ret;
-}
-
-int peripheral_spi_set_bits_per_word(peripheral_spi_h spi, unsigned char bits)
-{
-	int ret;
-
-	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
-
-	ret = peripheral_gdbus_spi_set_bits(spi, bits);
+	ret = peripheral_gdbus_spi_set_bits_per_word(spi, (unsigned char)bits);
 	if (ret != PERIPHERAL_ERROR_NONE)
 		_E("Failed to set bits per word, ret : %d", ret);
 
 	return ret;
 }
 
-int peripheral_spi_get_bits_per_word(peripheral_spi_h spi, unsigned char *bits)
+int peripheral_spi_set_frequency(peripheral_spi_h spi, uint32_t freq_hz)
 {
 	int ret;
 
 	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
 
-	ret = peripheral_gdbus_spi_get_bits(spi, bits);
-	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("Failed to get bits per word, ret : %d", ret);
-
-	return ret;
-}
-
-int peripheral_spi_set_frequency(peripheral_spi_h spi, unsigned int freq)
-{
-	int ret;
-
-	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
-
-	ret = peripheral_gdbus_spi_set_frequency(spi, freq);
+	ret = peripheral_gdbus_spi_set_frequency(spi, (unsigned int)freq_hz);
 	if (ret != PERIPHERAL_ERROR_NONE)
 		_E("Failed to set frequency, ret : %d", ret);
 
 	return ret;
 }
 
-int peripheral_spi_get_frequency(peripheral_spi_h spi, unsigned int *freq)
+int peripheral_spi_read(peripheral_spi_h spi, uint8_t *data, uint32_t length)
 {
 	int ret;
 
 	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
+	RETVM_IF(data == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
 
-	ret = peripheral_gdbus_spi_get_frequency(spi, freq);
-	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("Failed to get spi frequency, ret : %d", ret);
-
-	return ret;
-}
-
-int peripheral_spi_read(peripheral_spi_h spi, unsigned char *data, int length)
-{
-	int ret;
-
-	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
-
-	ret = peripheral_gdbus_spi_read(spi, data, length);
+	ret = peripheral_gdbus_spi_read(spi, data, (int)length);
 	if (ret != PERIPHERAL_ERROR_NONE)
 		_E("Failed to read from spi device, ret : %d", ret);
 
 	return ret;
 }
 
-int peripheral_spi_write(peripheral_spi_h spi, unsigned char *data, int length)
+int peripheral_spi_write(peripheral_spi_h spi, uint8_t *data, uint32_t length)
 {
 	int ret;
 
 	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
+	RETVM_IF(data == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
 
-	ret = peripheral_gdbus_spi_write(spi, data, length);
+	ret = peripheral_gdbus_spi_write(spi, data, (int)length);
 	if (ret != PERIPHERAL_ERROR_NONE)
 		_E("Failed to write to spi device, ret : %d", ret);
 
 	return ret;
 }
 
-int peripheral_spi_read_write(peripheral_spi_h spi, unsigned char *txdata, unsigned char *rxdata, int length)
+int peripheral_spi_transfer(peripheral_spi_h spi, uint8_t *txdata, uint8_t *rxdata, uint32_t length)
 {
 	int ret;
 
 	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
+	RETVM_IF(txdata == NULL || rxdata == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
 
-	ret = peripheral_gdbus_spi_read_write(spi, txdata, rxdata, length);
+	ret = peripheral_gdbus_spi_transfer(spi, txdata, rxdata, (int)length);
 	if (ret != PERIPHERAL_ERROR_NONE)
 		_E("Failed to read and write, ret : %d", ret);
 

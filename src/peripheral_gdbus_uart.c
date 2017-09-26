@@ -23,7 +23,7 @@
 #include "peripheral_internal.h"
 #include "peripheral_io_gdbus.h"
 
-PeripheralIoGdbusUart *uart_proxy = NULL;
+static PeripheralIoGdbusUart *uart_proxy = NULL;
 
 void uart_proxy_init(void)
 {
@@ -95,35 +95,14 @@ int peripheral_gdbus_uart_close(peripheral_uart_h uart)
 	return ret;
 }
 
-int peripheral_gdbus_uart_flush(peripheral_uart_h uart)
+int peripheral_gdbus_uart_set_baud_rate(peripheral_uart_h uart, peripheral_uart_baud_rate_e baud)
 {
 	GError *error = NULL;
 	gint32 ret = PERIPHERAL_ERROR_NONE;
 
 	if (uart_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
 
-	if (peripheral_io_gdbus_uart_call_flush_sync(
-			uart_proxy,
-			uart->handle,
-			&ret,
-			NULL,
-			&error) == FALSE) {
-		_E("Error in %s() : %s", __func__, error->message);
-		g_error_free(error);
-		return PERIPHERAL_ERROR_UNKNOWN;
-	}
-
-	return ret;
-}
-
-int peripheral_gdbus_uart_set_baudrate(peripheral_uart_h uart, peripheral_uart_baudrate_e baud)
-{
-	GError *error = NULL;
-	gint32 ret = PERIPHERAL_ERROR_NONE;
-
-	if (uart_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
-
-	if (peripheral_io_gdbus_uart_call_set_baudrate_sync(
+	if (peripheral_io_gdbus_uart_call_set_baud_rate_sync(
 			uart_proxy,
 			uart->handle,
 			baud,
@@ -138,19 +117,17 @@ int peripheral_gdbus_uart_set_baudrate(peripheral_uart_h uart, peripheral_uart_b
 	return ret;
 }
 
-int peripheral_gdbus_uart_set_mode(peripheral_uart_h uart, peripheral_uart_bytesize_e bytesize, peripheral_uart_parity_e parity, peripheral_uart_stopbits_e stopbits)
+int peripheral_gdbus_uart_set_byte_size(peripheral_uart_h uart, peripheral_uart_byte_size_e byte_size)
 {
 	GError *error = NULL;
 	gint32 ret = PERIPHERAL_ERROR_NONE;
 
 	if (uart_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
 
-	if (peripheral_io_gdbus_uart_call_set_mode_sync(
+	if (peripheral_io_gdbus_uart_call_set_byte_size_sync(
 			uart_proxy,
 			uart->handle,
-			bytesize,
-			parity,
-			stopbits,
+			byte_size,
 			&ret,
 			NULL,
 			&error) == FALSE) {
@@ -162,14 +139,58 @@ int peripheral_gdbus_uart_set_mode(peripheral_uart_h uart, peripheral_uart_bytes
 	return ret;
 }
 
-int peripheral_gdbus_uart_set_flowcontrol(peripheral_uart_h uart, bool xonxoff, bool rtscts)
+int peripheral_gdbus_uart_set_parity(peripheral_uart_h uart, peripheral_uart_parity_e parity)
 {
 	GError *error = NULL;
 	gint32 ret = PERIPHERAL_ERROR_NONE;
 
 	if (uart_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
 
-	if (peripheral_io_gdbus_uart_call_set_flowcontrol_sync(
+	if (peripheral_io_gdbus_uart_call_set_parity_sync(
+			uart_proxy,
+			uart->handle,
+			parity,
+			&ret,
+			NULL,
+			&error) == FALSE) {
+		_E("Error in %s() : %s", __func__, error->message);
+		g_error_free(error);
+		return PERIPHERAL_ERROR_UNKNOWN;
+	}
+
+	return ret;
+}
+
+int peripheral_gdbus_uart_set_stop_bits(peripheral_uart_h uart, peripheral_uart_stop_bits_e stop_bits)
+{
+	GError *error = NULL;
+	gint32 ret = PERIPHERAL_ERROR_NONE;
+
+	if (uart_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
+
+	if (peripheral_io_gdbus_uart_call_set_stop_bits_sync(
+			uart_proxy,
+			uart->handle,
+			stop_bits,
+			&ret,
+			NULL,
+			&error) == FALSE) {
+		_E("Error in %s() : %s", __func__, error->message);
+		g_error_free(error);
+		return PERIPHERAL_ERROR_UNKNOWN;
+	}
+
+	return ret;
+}
+
+int peripheral_gdbus_uart_set_flow_control(peripheral_uart_h uart, bool xonxoff, bool rtscts)
+{
+	GError *error = NULL;
+	gint32 ret = PERIPHERAL_ERROR_NONE;
+
+	if (uart_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
+
+	if (peripheral_io_gdbus_uart_call_set_flow_control_sync(
 			uart_proxy,
 			uart->handle,
 			xonxoff,

@@ -23,7 +23,7 @@
 #include "peripheral_internal.h"
 #include "peripheral_io_gdbus.h"
 
-PeripheralIoGdbusPwm *pwm_proxy = NULL;
+static PeripheralIoGdbusPwm *pwm_proxy = NULL;
 
 void pwm_proxy_init(void)
 {
@@ -52,7 +52,7 @@ void pwm_proxy_deinit()
 	}
 }
 
-int peripheral_gdbus_pwm_open(peripheral_pwm_h pwm, int device, int channel)
+int peripheral_gdbus_pwm_open(peripheral_pwm_h pwm, int chip, int pin)
 {
 	GError *error = NULL;
 	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
@@ -61,8 +61,8 @@ int peripheral_gdbus_pwm_open(peripheral_pwm_h pwm, int device, int channel)
 
 	if (peripheral_io_gdbus_pwm_call_open_sync(
 			pwm_proxy,
-			device,
-			channel,
+			chip,
+			pin,
 			&pwm->handle,
 			&ret,
 			NULL,
@@ -118,32 +118,7 @@ int peripheral_gdbus_pwm_set_period(peripheral_pwm_h pwm, int period)
 	return ret;
 }
 
-int peripheral_gdbus_pwm_get_period(peripheral_pwm_h pwm, int *period)
-{
-	GError *error = NULL;
-	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
-	gint value = 0;
-
-	if (pwm_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
-
-	if (peripheral_io_gdbus_pwm_call_get_period_sync(
-			pwm_proxy,
-			pwm->handle,
-			&value,
-			&ret,
-			NULL,
-			&error) == FALSE) {
-		_E("%s", error->message);
-		g_error_free(error);
-		return PERIPHERAL_ERROR_UNKNOWN;
-	}
-
-	*period = value;
-
-	return ret;
-}
-
-int peripheral_gdbus_pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle)
+int peripheral_gdbus_pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle_ns)
 {
 	GError *error = NULL;
 	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
@@ -153,7 +128,7 @@ int peripheral_gdbus_pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle)
 	if (peripheral_io_gdbus_pwm_call_set_duty_cycle_sync(
 			pwm_proxy,
 			pwm->handle,
-			duty_cycle,
+			duty_cycle_ns,
 			&ret,
 			NULL,
 			&error) == FALSE) {
@@ -161,31 +136,6 @@ int peripheral_gdbus_pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle)
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
-
-	return ret;
-}
-
-int peripheral_gdbus_pwm_get_duty_cycle(peripheral_pwm_h pwm, int *duty_cycle)
-{
-	GError *error = NULL;
-	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
-	gint value = 0;
-
-	if (pwm_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
-
-	if (peripheral_io_gdbus_pwm_call_get_duty_cycle_sync(
-			pwm_proxy,
-			pwm->handle,
-			&value,
-			&ret,
-			NULL,
-			&error) == FALSE) {
-		_E("%s", error->message);
-		g_error_free(error);
-		return PERIPHERAL_ERROR_UNKNOWN;
-	}
-
-	*duty_cycle = value;
 
 	return ret;
 }
@@ -212,34 +162,6 @@ int peripheral_gdbus_pwm_set_polarity(peripheral_pwm_h pwm, peripheral_pwm_polar
 	return ret;
 }
 
-int peripheral_gdbus_pwm_get_polarity(peripheral_pwm_h pwm, peripheral_pwm_polarity_e *polarity)
-{
-	GError *error = NULL;
-	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
-	gint value = 0;
-
-	if (pwm_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
-
-	if (peripheral_io_gdbus_pwm_call_get_polarity_sync(
-			pwm_proxy,
-			pwm->handle,
-			&value,
-			&ret,
-			NULL,
-			&error) == FALSE) {
-		_E("%s", error->message);
-		g_error_free(error);
-		return PERIPHERAL_ERROR_UNKNOWN;
-	}
-
-	if (!value)
-		*polarity = PERIPHERAL_PWM_POLARITY_NORMAL;
-	else
-		*polarity = PERIPHERAL_PWM_POLARITY_INVERSED;
-
-	return ret;
-}
-
 int peripheral_gdbus_pwm_set_enable(peripheral_pwm_h pwm, bool enable)
 {
 	GError *error = NULL;
@@ -261,32 +183,3 @@ int peripheral_gdbus_pwm_set_enable(peripheral_pwm_h pwm, bool enable)
 
 	return ret;
 }
-
-int peripheral_gdbus_pwm_get_enable(peripheral_pwm_h pwm, bool *enable)
-{
-	GError *error = NULL;
-	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
-	gboolean value = 0;
-
-	if (pwm_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
-
-	if (peripheral_io_gdbus_pwm_call_get_enable_sync(
-			pwm_proxy,
-			pwm->handle,
-			&value,
-			&ret,
-			NULL,
-			&error) == FALSE) {
-		_E("%s", error->message);
-		g_error_free(error);
-		return PERIPHERAL_ERROR_UNKNOWN;
-	}
-
-	if (!value)
-		*enable = false;
-	else
-		*enable = true;
-
-	return ret;
-}
-
