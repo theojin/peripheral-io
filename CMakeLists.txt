@@ -9,7 +9,7 @@ SET(fw_name "${project_prefix}-${service}-${submodule}")
 
 PROJECT(${fw_name})
 
-SET(dependents "dlog glib-2.0 gio-2.0 gio-unix-2.0 capi-base-common")
+SET(dependents "dlog glib-2.0 gio-2.0 gio-unix-2.0 capi-base-common capi-system-info")
 SET(pc_dependents "capi-base-common")
 
 SET(CMAKE_INSTALL_PREFIX ${prefix})

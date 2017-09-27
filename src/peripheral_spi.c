@@ -19,17 +19,39 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <system_info.h>
 
 #include "peripheral_io.h"
 #include "peripheral_gdbus_spi.h"
 #include "peripheral_common.h"
 #include "peripheral_internal.h"
 
+#define PERIPHERAL_IO_SPI_FEATURE "http://tizen.org/feature/peripheral_io.spi"
+
+#define SPI_FEATURE_UNKNOWN -1
+#define SPI_FEATURE_FALSE    0
+#define SPI_FEATURE_TRUE     1
+
+static int spi_feature = SPI_FEATURE_UNKNOWN;
+
+static bool __is_feature_supported()
+{
+	bool feature = false;
+
+	if (spi_feature == SPI_FEATURE_UNKNOWN) {
+		system_info_get_platform_bool(PERIPHERAL_IO_SPI_FEATURE, &feature);
+		spi_feature = (feature ? SPI_FEATURE_TRUE : SPI_FEATURE_FALSE);
+	}
+
+	return (spi_feature == SPI_FEATURE_TRUE ? true : false);
+}
+
 int peripheral_spi_open(int bus, int cs, peripheral_spi_h *spi)
 {
 	peripheral_spi_h handle;
 	int ret = PERIPHERAL_ERROR_NONE;
 
+	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "SPI feature is not supported");
 	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid spi handle");
 	RETVM_IF(bus < 0 || cs < 0, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
 
@@ -59,6 +81,7 @@ int peripheral_spi_close(peripheral_spi_h spi)
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
+	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "SPI feature is not supported");
 	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
 
 	ret = peripheral_gdbus_spi_close(spi);
@@ -75,6 +98,7 @@ int peripheral_spi_set_mode(peripheral_spi_h spi, peripheral_spi_mode_e mode)
 {
 	int ret;
 
+	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "SPI feature is not supported");
 	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
 	RETVM_IF((mode < PERIPHERAL_SPI_MODE_0) || (mode > PERIPHERAL_SPI_MODE_3), PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid spi mode parameter");
 
@@ -89,6 +113,7 @@ int peripheral_spi_set_bit_order(peripheral_spi_h spi, peripheral_spi_bit_order_
 {
 	int ret;
 
+	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "SPI feature is not supported");
 	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
 	RETVM_IF((bit_order < PERIPHERAL_SPI_BIT_ORDER_MSB) || (bit_order > PERIPHERAL_SPI_BIT_ORDER_LSB), PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid bit order parameter");
 
@@ -104,6 +129,7 @@ int peripheral_spi_set_bits_per_word(peripheral_spi_h spi, uint8_t bits)
 {
 	int ret;
 
+	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "SPI feature is not supported");
 	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
 
 	ret = peripheral_gdbus_spi_set_bits_per_word(spi, (unsigned char)bits);
@@ -117,6 +143,7 @@ int peripheral_spi_set_frequency(peripheral_spi_h spi, uint32_t freq_hz)
 {
 	int ret;
 
+	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "SPI feature is not supported");
 	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
 
 	ret = peripheral_gdbus_spi_set_frequency(spi, (unsigned int)freq_hz);
@@ -130,6 +157,7 @@ int peripheral_spi_read(peripheral_spi_h spi, uint8_t *data, uint32_t length)
 {
 	int ret;
 
+	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "SPI feature is not supported");
 	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
 	RETVM_IF(data == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
 
@@ -144,6 +172,7 @@ int peripheral_spi_write(peripheral_spi_h spi, uint8_t *data, uint32_t length)
 {
 	int ret;
 
+	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "SPI feature is not supported");
 	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
 	RETVM_IF(data == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
 
@@ -158,6 +187,7 @@ int peripheral_spi_transfer(peripheral_spi_h spi, uint8_t *txdata, uint8_t *rxda
 {
 	int ret;
 
+	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "SPI feature is not supported");
 	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
 	RETVM_IF(txdata == NULL || rxdata == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
 

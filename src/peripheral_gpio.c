@@ -18,12 +18,32 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <assert.h>
+#include <system_info.h>
 
 #include "peripheral_io.h"
 #include "peripheral_gdbus_gpio.h"
 #include "peripheral_common.h"
 #include "peripheral_internal.h"
 #include "peripheral_io_gdbus.h"
+
+#define PERIPHERAL_IO_GPIO_FEATURE "http://tizen.org/feature/peripheral_io.gpio"
+
+#define GPIO_FEATURE_UNKNOWN -1
+#define GPIO_FEATURE_FALSE    0
+#define GPIO_FEATURE_TRUE     1
+
+static int gpio_feature = GPIO_FEATURE_UNKNOWN;
+
+static bool __is_feature_supported()
+{
+	bool feature = false;
+
+	if (gpio_feature == GPIO_FEATURE_UNKNOWN) {
+		system_info_get_platform_bool(PERIPHERAL_IO_GPIO_FEATURE, &feature);
+		gpio_feature = (feature ? GPIO_FEATURE_TRUE : GPIO_FEATURE_FALSE);
+	}
+	return (gpio_feature == GPIO_FEATURE_TRUE ? true : false);
+}
 
 typedef struct {
 	peripheral_gpio_h handle;
@@ -114,6 +134,7 @@ int peripheral_gpio_open(int gpio_pin, peripheral_gpio_h *gpio)
 	int ret = PERIPHERAL_ERROR_NONE;
 	peripheral_gpio_h handle;
 
+	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "GPIO feature is not supported");
 	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid gpio handle");
 	RETVM_IF(gpio_pin < 0, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid gpio pin number");
 
@@ -149,6 +170,7 @@ int peripheral_gpio_close(peripheral_gpio_h gpio)
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
+	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "GPIO feature is not supported");
 	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
 
 	/* call gpio_close */
@@ -170,6 +192,7 @@ int peripheral_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_direct
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
+	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "GPIO feature is not supported");
 	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
 	RETVM_IF((direction < PERIPHERAL_GPIO_DIRECTION_IN) || (direction > PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_LOW), PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid direction input");
 
@@ -189,6 +212,7 @@ int peripheral_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
+	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "GPIO feature is not supported");
 	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
 	RETVM_IF((edge < PERIPHERAL_GPIO_EDGE_NONE) || (edge > PERIPHERAL_GPIO_EDGE_BOTH), PERIPHERAL_ERROR_INVALID_PARAMETER, "edge input is invalid");
 
@@ -207,6 +231,7 @@ int peripheral_gpio_set_interrupted_cb(peripheral_gpio_h gpio, peripheral_gpio_i
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
+	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "GPIO feature is not supported");
 	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
 	RETVM_IF(callback == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio interrupted callback is NULL");
 
@@ -231,6 +256,7 @@ int peripheral_gpio_unset_interrupted_cb(peripheral_gpio_h gpio)
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
+	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "GPIO feature is not supported");
 	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
 
 	ret = peripheral_gdbus_gpio_unset_interrupted_cb(gpio);
@@ -253,6 +279,7 @@ int peripheral_gpio_read(peripheral_gpio_h gpio, uint32_t *value)
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
+	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "GPIO feature is not supported");
 	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
 	RETVM_IF(value == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio read value is invalid");
 
@@ -271,6 +298,7 @@ int peripheral_gpio_write(peripheral_gpio_h gpio, uint32_t value)
 {
 	int ret = PERIPHERAL_ERROR_NONE;
 
+	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "GPIO feature is not supported");
 	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
 	RETVM_IF((value != 0) && (value != 1), PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio value is invalid");
 
