@@ -43,7 +43,7 @@
  * @section   CAPI_SYSTEM_PERIPHERAL_IO_GPIO_MODULE_FEATURE Realted Features
  *
  * This API is related with the following feature:\n
- * - http://tizen.org/feature/peripheralio.gpio\n
+ * - http://tizen.org/feature/peripheral_io.gpio\n
  *
  * It is recommended to use features in your application for reliability.\n
  *
@@ -72,7 +72,7 @@
  * @section   CAPI_SYSTEM_PERIPHERAL_IO_I2C_MODULE_FEATURE Realted Features
  *
  * This API is related with the following feature:\n
- * - http://tizen.org/feature/peripheralio.i2c\n
+ * - http://tizen.org/feature/peripheral_io.i2c\n
  *
  * It is recommended to use features in your application for reliability.\n
  *
@@ -101,7 +101,7 @@
  * @section   CAPI_SYSTEM_PERIPHERAL_IO_SPI_MODULE_FEATURE Realted Features
  *
  * This API is related with the following feature:\n
- * - http://tizen.org/feature/peripheralio.spi\n
+ * - http://tizen.org/feature/peripheral_io.spi\n
  *
  * It is recommended to use features in your application for reliability.\n
  *
@@ -130,7 +130,7 @@
  * @section   CAPI_SYSTEM_PERIPHERAL_IO_UART_MODULE_FEATURE Realted Features
  *
  * This API is related with the following feature:\n
- * - http://tizen.org/feature/peripheralio.uart\n
+ * - http://tizen.org/feature/peripheral_io.uart\n
  *
  * It is recommended to use features in your application for reliability.\n
  *
@@ -159,7 +159,7 @@
  * @section   CAPI_SYSTEM_PERIPHERAL_IO_PWM_MODULE_FEATURE Realted Features
  *
  * This API is related with the following feature:\n
- * - http://tizen.org/feature/peripheralio.pwm\n
+ * - http://tizen.org/feature/peripheral_io.pwm\n
  *
  * It is recommended to use features in your application for reliability.\n
  *
