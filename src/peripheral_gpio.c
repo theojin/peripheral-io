@@ -95,7 +95,7 @@ static int __interrupted_cb_info_list_append(peripheral_gpio_h gpio, peripheral_
 			return PERIPHERAL_ERROR_OUT_OF_MEMORY;
 		}
 
-		link = g_list_append(link, cb_info);
+		interrupted_cb_info_list = g_list_append(interrupted_cb_info_list, cb_info);
 	}
 
 	cb_info->handle = gpio;
