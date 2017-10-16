@@ -35,10 +35,13 @@ static int pwm_feature = PWM_FEATURE_UNKNOWN;
 
 static bool __is_feature_supported()
 {
+	int ret = SYSTEM_INFO_ERROR_NONE;
 	bool feature = false;
 
 	if (pwm_feature == PWM_FEATURE_UNKNOWN) {
-		system_info_get_platform_bool(PERIPHERAL_IO_PWM_FEATURE, &feature);
+		ret = system_info_get_platform_bool(PERIPHERAL_IO_PWM_FEATURE, &feature);
+		RETVM_IF(ret != SYSTEM_INFO_ERROR_NONE, false, "Failed to get system info");
+
 		pwm_feature = (feature ? PWM_FEATURE_TRUE : PWM_FEATURE_FALSE);
 	}
 

@@ -35,10 +35,13 @@ static int uart_feature = UART_FEATURE_UNKNOWN;
 
 static bool __is_feature_supported()
 {
+	int ret = SYSTEM_INFO_ERROR_NONE;
 	bool feature = false;
 
 	if (uart_feature == UART_FEATURE_UNKNOWN) {
-		system_info_get_platform_bool(PERIPHERAL_IO_UART_FEATURE, &feature);
+		ret = system_info_get_platform_bool(PERIPHERAL_IO_UART_FEATURE, &feature);
+		RETVM_IF(ret != SYSTEM_INFO_ERROR_NONE, false, "Failed to get system info");
+
 		uart_feature = (feature ? UART_FEATURE_TRUE : UART_FEATURE_FALSE);
 	}
 
