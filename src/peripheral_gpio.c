@@ -36,10 +36,13 @@ static int gpio_feature = GPIO_FEATURE_UNKNOWN;
 
 static bool __is_feature_supported()
 {
+	int ret = SYSTEM_INFO_ERROR_NONE;
 	bool feature = false;
 
 	if (gpio_feature == GPIO_FEATURE_UNKNOWN) {
-		system_info_get_platform_bool(PERIPHERAL_IO_GPIO_FEATURE, &feature);
+		ret = system_info_get_platform_bool(PERIPHERAL_IO_GPIO_FEATURE, &feature);
+		RETVM_IF(ret != SYSTEM_INFO_ERROR_NONE, false, "Failed to get system info");
+
 		gpio_feature = (feature ? GPIO_FEATURE_TRUE : GPIO_FEATURE_FALSE);
 	}
 	return (gpio_feature == GPIO_FEATURE_TRUE ? true : false);

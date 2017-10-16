@@ -45,10 +45,13 @@ static int i2c_feature = I2C_FEATURE_UNKNOWN;
 
 static bool __is_feature_supported()
 {
+	int ret = SYSTEM_INFO_ERROR_NONE;
 	bool feature = false;
 
 	if (i2c_feature == I2C_FEATURE_UNKNOWN) {
-		system_info_get_platform_bool(PERIPHERAL_IO_I2C_FEATURE, &feature);
+		ret = system_info_get_platform_bool(PERIPHERAL_IO_I2C_FEATURE, &feature);
+		RETVM_IF(ret != SYSTEM_INFO_ERROR_NONE, false, "Failed to get system info");
+
 		i2c_feature = (feature ? I2C_FEATURE_TRUE : I2C_FEATURE_FALSE);
 	}
 
