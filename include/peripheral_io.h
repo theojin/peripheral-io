@@ -491,7 +491,7 @@ int peripheral_i2c_write_register_word(peripheral_i2c_h i2c, uint8_t reg, uint16
  */
 
 /**
- * @brief The handle of the PWM device.
+ * @brief The handle of the PWM peripherals.
  * @since_tizen 4.0
  */
 typedef struct _peripheral_pwm_s *peripheral_pwm_h;
@@ -650,7 +650,7 @@ int peripheral_pwm_set_enabled(peripheral_pwm_h pwm, bool enabled);
  */
 
 /**
- * @brief The handle to the UART device.
+ * @brief The handle to the UART peripherals.
  * @since_tizen 4.0
  */
 typedef struct _peripheral_uart_s *peripheral_uart_h;
@@ -783,7 +783,7 @@ int peripheral_uart_close(peripheral_uart_h uart);
  * @privilege http://tizen.org/privilege/peripheralio
  *
  * @param[in] uart The UART handle
- * @param[in] baud Baud rate of the UART device
+ * @param[in] baud Baud rate of the UART slave device
  *
  * @return 0 on success, otherwise a negative error value
  * @retval #PERIPHERAL_ERROR_NONE Successful
@@ -806,7 +806,7 @@ int peripheral_uart_set_baud_rate(peripheral_uart_h uart, peripheral_uart_baud_r
  * @privilege http://tizen.org/privilege/peripheralio
  *
  * @param[in] uart The UART handle
- * @param[in] byte_size Byte size of the UART device
+ * @param[in] byte_size Byte size of the UART slave device
  *
  * @return 0 on success, otherwise a negative error value
  * @retval #PERIPHERAL_ERROR_NONE Successful
@@ -829,7 +829,7 @@ int peripheral_uart_set_byte_size(peripheral_uart_h uart, peripheral_uart_byte_s
  * @privilege http://tizen.org/privilege/peripheralio
  *
  * @param[in] uart The UART handle
- * @param[in] parity Parity bit of the UART device
+ * @param[in] parity Parity bit of the UART slave device
  *
  * @return 0 on success, otherwise a negative error value
  * @retval #PERIPHERAL_ERROR_NONE Successful
@@ -852,7 +852,7 @@ int peripheral_uart_set_parity(peripheral_uart_h uart, peripheral_uart_parity_e 
  * @privilege http://tizen.org/privilege/peripheralio
  *
  * @param[in] uart The UART handle
- * @param[in] stop_bits Stop bits of the UART device
+ * @param[in] stop_bits Stop bits of the UART slave device
  *
  * @return 0 on success, otherwise a negative error value
  * @retval #PERIPHERAL_ERROR_NONE Successful
@@ -952,7 +952,7 @@ int peripheral_uart_write(peripheral_uart_h uart, uint8_t *data, uint32_t length
  */
 
 /**
- * @brief The handle of a SPI device.
+ * @brief The handle of a SPI peripherals.
  * @since_tizen 4.0
  */
 typedef struct _peripheral_spi_s *peripheral_spi_h;
@@ -987,7 +987,7 @@ typedef enum {
  *
  * @param[in] bus The SPI bus number
  * @param[in] cs The SPI chip select number
- * @param[out] spi The SPI device handle
+ * @param[out] spi The SPI slave device handle
  *
  * @return 0 on success, otherwise a negative error value
  * @retval #PERIPHERAL_ERROR_NONE Successful
@@ -1011,7 +1011,7 @@ int peripheral_spi_open(int bus, int cs, peripheral_spi_h *spi);
  * @privlevel platform
  * @privilege http://tizen.org/privilege/peripheralio
  *
- * @param[in] spi The SPI device handle
+ * @param[in] spi The SPI slave device handle
  *
  * @return 0 on success, otherwise a negative error value
  * @retval #PERIPHERAL_ERROR_NONE Successful
@@ -1033,7 +1033,7 @@ int peripheral_spi_close(peripheral_spi_h spi);
  * @privlevel platform
  * @privilege http://tizen.org/privilege/peripheralio
  *
- * @param[in] spi The SPI device handle
+ * @param[in] spi The SPI slave device handle
  * @param[in] mode The SPI transfer mode
  *
  * @return 0 on success, otherwise a negative error value
@@ -1056,7 +1056,7 @@ int peripheral_spi_set_mode(peripheral_spi_h spi, peripheral_spi_mode_e mode);
  * @privlevel platform
  * @privilege http://tizen.org/privilege/peripheralio
  *
- * @param[in] spi The SPI device handle
+ * @param[in] spi The SPI slave device handle
  * @param[in] bit_order The transfer bit order
  *
  * @return 0 on success, otherwise a negative error value
@@ -1079,7 +1079,7 @@ int peripheral_spi_set_bit_order(peripheral_spi_h spi, peripheral_spi_bit_order_
  * @privlevel platform
  * @privilege http://tizen.org/privilege/peripheralio
  *
- * @param[in] spi The SPI device handle
+ * @param[in] spi The SPI slave device handle
  * @param[in] bits The number of bits per word (in bits)
  *
  * @return 0 on success, otherwise a negative error value
@@ -1101,7 +1101,7 @@ int peripheral_spi_set_bits_per_word(peripheral_spi_h spi, uint8_t bits);
  * @privilege http://tizen.org/privilege/peripheralio
  * @remarks The frequencies supported are board dependent.
  *
- * @param[in] spi The SPI device handle
+ * @param[in] spi The SPI slave device handle
  * @param[in] freq_hz Frequency to set (in Hz)
  *
  * @return 0 on success, otherwise a negative error value
@@ -1122,7 +1122,7 @@ int peripheral_spi_set_frequency(peripheral_spi_h spi, uint32_t freq_hz);
  * @privlevel platform
  * @privilege http://tizen.org/privilege/peripheralio
  *
- * @param[in] spi The SPI device handle
+ * @param[in] spi The SPI slave device handle
  * @param[out] data The data buffer to read
  * @param[in] length The size of data buffer (in bytes)
  *
@@ -1146,7 +1146,7 @@ int peripheral_spi_read(peripheral_spi_h spi, uint8_t *data, uint32_t length);
  * @privlevel platform
  * @privilege http://tizen.org/privilege/peripheralio
  *
- * @param[in] spi The SPI device handle
+ * @param[in] spi The SPI slave device handle
  * @param[in] data The data buffer to write
  * @param[in] length The size of data buffer (in bytes)
  *
@@ -1170,7 +1170,7 @@ int peripheral_spi_write(peripheral_spi_h spi, uint8_t *data, uint32_t length);
  * @privlevel platform
  * @privilege http://tizen.org/privilege/peripheralio
  *
- * @param[in] spi The SPI device handle
+ * @param[in] spi The SPI slave device handle
  * @param[in] txdata The data buffer to write
  * @param[out] rxdata The data buffer to read
  * @param[in] length The size of txdata and rxdata buffer (in bytes)
