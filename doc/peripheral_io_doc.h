@@ -17,7 +17,7 @@
 /**
  * @ingroup   CAPI_SYSTEM_FRAMEWORK
  * @defgroup  CAPI_SYSTEM_PERIPHERAL_IO_MODULE Peripheral IO
- * @brief     The @ref CAPI_SYSTEM_PERIPHERAL_IO_MODULE API provides functions to make use of peripherals in the device.
+ * @brief     The @ref CAPI_SYSTEM_PERIPHERAL_IO_MODULE API provides functions to make use of peripherals connected to the IoT device.
  *
  * @section   CAPI_SYSTEM_PERIPHERAL_IO_MODULE_HEADER Required Header
  *            \#include <peripheral_io.h>
@@ -31,14 +31,14 @@
 /**
  * @ingroup   CAPI_SYSTEM_PERIPHERAL_IO_MODULE
  * @defgroup  CAPI_SYSTEM_PERIPHERAL_IO_GPIO_MODULE GPIO
- * @brief     The @ref CAPI_SYSTEM_PERIPHERAL_IO_GPIO_MODULE API provides functions to control GPIO in the device.
+ * @brief     The @ref CAPI_SYSTEM_PERIPHERAL_IO_GPIO_MODULE API provides functions to control GPIO peripherals connected to the IoT device.
  *
  * @section   CAPI_SYSTEM_PERIPHERAL_IO_GPIO_MODULE_HEADER Required Header
  *            \#include <peripheral_io.h>
  *
  * @section   CAPI_SYSTEM_PERIPHERAL_IO_GPIO_MODULE_OVERVIEW Overview
  *
- * This @ref CAPI_SYSTEM_PERIPHERAL_IO_GPIO_MODULE API provides functions to control GPIO in the device.
+ * This @ref CAPI_SYSTEM_PERIPHERAL_IO_GPIO_MODULE API provides functions to control GPIO peripherals connected to the IoT device.
  *
  * @section   CAPI_SYSTEM_PERIPHERAL_IO_GPIO_MODULE_FEATURE Realted Features
  *
@@ -47,10 +47,10 @@
  *
  * It is recommended to use features in your application for reliability.\n
  *
- * You can check if a device supports the related features for this API \n
+ * You can check if a IoT device supports the related features for this API \n
  * by using @ref CAPI_SYSTEM_SYSTEM_INFO_MODULE, and control your application's actions accordingly.\n
  *
- * To ensure your application is only running on the device with specific features, \n
+ * To ensure your application is only running on the IoT device with specific features, \n
  * please define the features in your manifest file using the manifest editor in the SDK.\n
  *
  * More details on featuring your application can be found from <a href="https://developer.tizen.org/development/tizen-studio/native-tools/configuring-your-app/manifest-text-editor#feature"><b>Feature Element</b>.</a>
@@ -60,14 +60,14 @@
 /**
  * @ingroup   CAPI_SYSTEM_PERIPHERAL_IO_MODULE
  * @defgroup  CAPI_SYSTEM_PERIPHERAL_IO_I2C_MODULE I2C
- * @brief     The @ref CAPI_SYSTEM_PERIPHERAL_IO_I2C_MODULE API provides functions to control I2C in the device.
+ * @brief     The @ref CAPI_SYSTEM_PERIPHERAL_IO_I2C_MODULE API provides functions to control I2C peripherals connected to the IoT device.
  *
  * @section   CAPI_SYSTEM_PERIPHERAL_IO_I2C_MODULE_HEADER Required Header
  *            \#include <peripheral_io.h>
  *
  * @section   CAPI_SYSTEM_PERIPHERAL_IO_I2C_MODULE_OVERVIEW Overview
  *
- * This @ref CAPI_SYSTEM_PERIPHERAL_IO_I2C_MODULE API provides functions to control I2C in the device.
+ * This @ref CAPI_SYSTEM_PERIPHERAL_IO_I2C_MODULE API provides functions to control I2C peripherals connected to the IoT device.
  *
  * @section   CAPI_SYSTEM_PERIPHERAL_IO_I2C_MODULE_FEATURE Realted Features
  *
@@ -76,10 +76,10 @@
  *
  * It is recommended to use features in your application for reliability.\n
  *
- * You can check if a device supports the related features for this API \n
+ * You can check if a IoT device supports the related features for this API \n
  * by using @ref CAPI_SYSTEM_SYSTEM_INFO_MODULE, and control your application's actions accordingly.\n
  *
- * To ensure your application is only running on the device with specific features, \n
+ * To ensure your application is only running on the IoT device with specific features, \n
  * please define the features in your manifest file using the manifest editor in the SDK.\n
  *
  * More details on featuring your application can be found from <a href="https://developer.tizen.org/development/tizen-studio/native-tools/configuring-your-app/manifest-text-editor#feature"><b>Feature Element</b>.</a>
@@ -89,14 +89,14 @@
 /**
  * @ingroup   CAPI_SYSTEM_PERIPHERAL_IO_MODULE
  * @defgroup  CAPI_SYSTEM_PERIPHERAL_IO_SPI_MODULE SPI
- * @brief     The @ref CAPI_SYSTEM_PERIPHERAL_IO_SPI_MODULE API provides functions to control SPI in the device.
+ * @brief     The @ref CAPI_SYSTEM_PERIPHERAL_IO_SPI_MODULE API provides functions to control SPI peripherals connected to the IoT device.
  *
  * @section   CAPI_SYSTEM_PERIPHERAL_IO_SPI_MODULE_HEADER Required Header
  *            \#include <peripheral_io.h>
  *
  * @section   CAPI_SYSTEM_PERIPHERAL_IO_SPI_MODULE_OVERVIEW Overview
  *
- * This @ref CAPI_SYSTEM_PERIPHERAL_IO_SPI_MODULE API provides functions to control SPI in the device.
+ * This @ref CAPI_SYSTEM_PERIPHERAL_IO_SPI_MODULE API provides functions to control SPI peripherals connected to the IoT device.
  *
  * @section   CAPI_SYSTEM_PERIPHERAL_IO_SPI_MODULE_FEATURE Realted Features
  *
@@ -105,10 +105,10 @@
  *
  * It is recommended to use features in your application for reliability.\n
  *
- * You can check if a device supports the related features for this API \n
+ * You can check if a IoT device supports the related features for this API \n
  * by using @ref CAPI_SYSTEM_SYSTEM_INFO_MODULE, and control your application's actions accordingly.\n
  *
- * To ensure your application is only running on the device with specific features, \n
+ * To ensure your application is only running on the IoT device with specific features, \n
  * please define the features in your manifest file using the manifest editor in the SDK.\n
  *
  * More details on featuring your application can be found from <a href="https://developer.tizen.org/development/tizen-studio/native-tools/configuring-your-app/manifest-text-editor#feature"><b>Feature Element</b>.</a>
@@ -118,14 +118,14 @@
 /**
  * @ingroup   CAPI_SYSTEM_PERIPHERAL_IO_MODULE
  * @defgroup  CAPI_SYSTEM_PERIPHERAL_IO_UART_MODULE UART
- * @brief     The @ref CAPI_SYSTEM_PERIPHERAL_IO_UART_MODULE API provides functions to control UART in the device.
+ * @brief     The @ref CAPI_SYSTEM_PERIPHERAL_IO_UART_MODULE API provides functions to control UART peripherals connected to the IoT device.
  *
  * @section   CAPI_SYSTEM_PERIPHERAL_IO_UART_MODULE_HEADER Required Header
  *            \#include <peripheral_io.h>
  *
  * @section   CAPI_SYSTEM_PERIPHERAL_IO_UART_MODULE_OVERVIEW Overview
  *
- * This @ref CAPI_SYSTEM_PERIPHERAL_IO_UART_MODULE API provides functions to control UART in the device.
+ * This @ref CAPI_SYSTEM_PERIPHERAL_IO_UART_MODULE API provides functions to control UART peripherals connected to the IoT device.
  *
  * @section   CAPI_SYSTEM_PERIPHERAL_IO_UART_MODULE_FEATURE Realted Features
  *
@@ -134,10 +134,10 @@
  *
  * It is recommended to use features in your application for reliability.\n
  *
- * You can check if a device supports the related features for this API \n
+ * You can check if a IoT device supports the related features for this API \n
  * by using @ref CAPI_SYSTEM_SYSTEM_INFO_MODULE, and control your application's actions accordingly.\n
  *
- * To ensure your application is only running on the device with specific features, \n
+ * To ensure your application is only running on the IoT device with specific features, \n
  * please define the features in your manifest file using the manifest editor in the SDK.\n
  *
  * More details on featuring your application can be found from <a href="https://developer.tizen.org/development/tizen-studio/native-tools/configuring-your-app/manifest-text-editor#feature"><b>Feature Element</b>.</a>
@@ -147,14 +147,14 @@
 /**
  * @ingroup   CAPI_SYSTEM_PERIPHERAL_IO_MODULE
  * @defgroup  CAPI_SYSTEM_PERIPHERAL_IO_PWM_MODULE PWM
- * @brief     The @ref CAPI_SYSTEM_PERIPHERAL_IO_PWM_MODULE API provides functions to control PWM in the device.
+ * @brief     The @ref CAPI_SYSTEM_PERIPHERAL_IO_PWM_MODULE API provides functions to control PWM peripherals connected to the IoT device.
  *
  * @section   CAPI_SYSTEM_PERIPHERAL_IO_PWM_MODULE_HEADER Required Header
  *            \#include <peripheral_io.h>
  *
  * @section   CAPI_SYSTEM_PERIPHERAL_IO_PWM_MODULE_OVERVIEW Overview
  *
- * This @ref CAPI_SYSTEM_PERIPHERAL_IO_PWM_MODULE API provides functions to control PWM in the device.
+ * This @ref CAPI_SYSTEM_PERIPHERAL_IO_PWM_MODULE API provides functions to control PWM peripherals connected to the IoT device.
  *
  * @section   CAPI_SYSTEM_PERIPHERAL_IO_PWM_MODULE_FEATURE Realted Features
  *
@@ -163,10 +163,10 @@
  *
  * It is recommended to use features in your application for reliability.\n
  *
- * You can check if a device supports the related features for this API \n
+ * You can check if a IoT device supports the related features for this API \n
  * by using @ref CAPI_SYSTEM_SYSTEM_INFO_MODULE, and control your application's actions accordingly.\n
  *
- * To ensure your application is only running on the device with specific features, \n
+ * To ensure your application is only running on the IoT device with specific features, \n
  * please define the features in your manifest file using the manifest editor in the SDK.\n
  *
  * More details on featuring your application can be found from <a href="https://developer.tizen.org/development/tizen-studio/native-tools/configuring-your-app/manifest-text-editor#feature"><b>Feature Element</b>.</a>
