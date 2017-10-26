@@ -28,6 +28,14 @@ Requires:   %{name} = %{version}-%{release}
 %description devel
 Tizen Peripheral Input & Output library (devel)
 
+%package test
+Summary:    Tizen Peripheral Input & Output Test Programs (test)
+Group:      System & System Tools/Testing
+Requires:   %{name} = %{version}-%{release}
+
+%description test
+Tizen Peripheral Input & Output Test Programs (test)
+
 %prep
 %setup -q
 cp %{SOURCE1} ./%{name}.manifest
@@ -55,3 +63,9 @@ MAJORVER=`echo %{version} | awk 'BEGIN {FS="."}{print $1}'`
 %{_includedir}/*.h
 %{_libdir}/lib%{name}.so
 %{_libdir}/pkgconfig/%{name}.pc
+
+%files test
+%manifest %{name}.manifest
+%defattr(-,root,root,-)
+%{_bindir}/peripheral-io-test
+%license LICENSE.APLv2
