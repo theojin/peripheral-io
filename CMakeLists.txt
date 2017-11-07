@@ -52,8 +52,7 @@ SET(SOURCES src/peripheral_gpio.c
 			src/peripheral_gdbus_pwm.c
 			src/peripheral_gdbus_uart.c
 			src/peripheral_gdbus_spi.c
-			src/peripheral_io_gdbus.c
-			src/peripheral_spi.c)
+			src/peripheral_io_gdbus.c)
 
 ADD_LIBRARY(${fw_name} SHARED ${SOURCES})
 
