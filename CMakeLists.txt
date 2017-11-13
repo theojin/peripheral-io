@@ -27,6 +27,7 @@ EXEC_PROGRAM(${GDBUS_CODEGEN} ARGS
 
 SET(INC_DIR include)
 INCLUDE_DIRECTORIES(${INC_DIR})
+INCLUDE_DIRECTORIES(${INC_DIR}/interface)
 
 INCLUDE(FindPkgConfig)
 pkg_check_modules(${fw_name} REQUIRED ${dependents})
@@ -47,6 +48,11 @@ SET(SOURCES src/peripheral_gpio.c
 			src/peripheral_pwm.c
 			src/peripheral_uart.c
 			src/peripheral_spi.c
+			src/interface/gpio.c
+			src/interface/i2c.c
+			src/interface/pwm.c
+			src/interface/spi.c
+			src/interface/uart.c
 			src/peripheral_gdbus_gpio.c
 			src/peripheral_gdbus_i2c.c
 			src/peripheral_gdbus_pwm.c
