@@ -17,6 +17,8 @@
 #ifndef __PWM_H__
 #define __PWM_H__
 
+#include "peripheral_io.h"
+
 /**
  * @brief Enumeration for Polarity
  */
@@ -25,14 +27,6 @@ typedef enum {
 	PWM_POLARITY_INVERSED,
 } pwm_polarity_e;
 
-/**
-* @brief pwm_open() init pwm pin.
-*
-* @param[in] chip pwm chip number
-* @param[in] pin pwm pin number
-* @return On success, 0 is returned. On failure, a negative value is returned.
-*/
-int pwm_open(int chip, int pin);
 
 /**
 * @brief pwm_close() deinit pwm pin.
@@ -41,7 +35,7 @@ int pwm_open(int chip, int pin);
 * @param[in] pin pwm pin number
 * @return On success, 0 is returned. On failure, a negative value is returned.
 */
-int pwm_close(int chip, int pin);
+int pwm_close(peripheral_pwm_h pwm);
 
 /**
 * @brief pwm_set_period() sets the pwm period.
@@ -51,17 +45,7 @@ int pwm_close(int chip, int pin);
 * @param[in] period pwm period
 * @return On success, 0 is returned. On failure, a negative value is returned.
 */
-int pwm_set_period(int chip, int pin, int period);
-
-/**
-* @brief pwm_get_period() gets the pwm period.
-*
-* @param[in] chip pwm chip number
-* @param[in] pin pwm pin number
-* @param[out] period pwm period
-* @return On success, 0 is returned. On failure, a negative value is returned.
-*/
-int pwm_get_period(int chip, int pin, int *period);
+int pwm_set_period(peripheral_pwm_h pwm, int period);
 
 /**
 * @brief pwm_set_duty_cycle() sets the pwm duty cycle.
@@ -71,17 +55,7 @@ int pwm_get_period(int chip, int pin, int *period);
 * @param[in] duty_cycle pwm duty cycle
 * @return On success, 0 is returned. On failure, a negative value is returned.
 */
-int pwm_set_duty_cycle(int chip, int pin, int duty_cycle);
-
-/**
-* @brief pwm_get_duty_cycle() gets the pwm duty cycle.
-*
-* @param[in] chip pwm chip number
-* @param[in] pin pwm pin number
-* @param[out] duty_cycle pwm duty cycle
-* @return On success, 0 is returned. On failure, a negative value is returned.
-*/
-int pwm_get_duty_cycle(int chip, int pin, int *duty_cycle);
+int pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle);
 
 /**
 * @brief pwm_set_polarity() sets the pwm polarity.
@@ -91,16 +65,7 @@ int pwm_get_duty_cycle(int chip, int pin, int *duty_cycle);
 * @param[in] polarity pwm polarity
 * @return On success, 0 is returned. On failure, a negative value is returned.
 */
-int pwm_set_polarity(int chip, int pin, pwm_polarity_e polarity);
-/**
-* @brief pwm_get_polarity() gets the pwm polarity.
-*
-* @param[in] chip pwm chip number
-* @param[in] pin pwm pin number
-* @param[out] polarity pwm polarity
-* @return On success, 0 is returned. On failure, a negative value is returned.
-*/
-int pwm_get_polarity(int chip, int pin, pwm_polarity_e *polarity);
+int pwm_set_polarity(peripheral_pwm_h pwm, pwm_polarity_e polarity);
 
 /**
 * @brief pwm_set_enable() sets the pwm state.
@@ -110,16 +75,6 @@ int pwm_get_polarity(int chip, int pin, pwm_polarity_e *polarity);
 * @param[in] enable pwm enable/disabled state value
 * @return On success, 0 is returned. On failure, a negative value is returned.
 */
-int pwm_set_enable(int chip, int pin, bool enable);
-
-/**
-* @brief pwm_get_enable() checks if pwm state is enabled.
-*
-* @param[in] chip pwm chip number
-* @param[in] pin pwm pin number
-* @param[out] enable pwm enable/disabled state value
-* @return On success, 0 is returned. On failure, a negative value is returned.
-*/
-int pwm_get_enable(int chip, int pin, bool *enable);
+int pwm_set_enable(peripheral_pwm_h pwm, bool enable);
 
 #endif /* __PWM_H__ */

@@ -24,6 +24,7 @@
 
 #include "pwm.h"
 #include "peripheral_common.h"
+#include "peripheral_internal.h"
 
 #define SYSFS_PWM_PATH	"/sys/class/pwm"
 
@@ -31,304 +32,99 @@
 #define PWM_BUF_MAX	16
 #define MAX_ERR_LEN	255
 
-int pwm_open(int chip, int pin)
+int pwm_close(peripheral_pwm_h pwm)
 {
-	int fd, len, status;
-	char pwm_dev[PATH_BUF_MAX] = {0};
-	char pwm_buf[PWM_BUF_MAX] = {0};
+	int status;
 
-	_D("chip : %d, pin : %d", chip, pin);
-
-	snprintf(pwm_dev, PATH_BUF_MAX, SYSFS_PWM_PATH "/pwmchip%d/export", chip);
-	fd = open(pwm_dev, O_WRONLY);
-	if (fd < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Can't Open %s, errmsg : %s", pwm_dev, errmsg);
-		return -ENXIO;
-	}
-
-	len = snprintf(pwm_buf, sizeof(pwm_buf), "%d", pin);
-	status = write(fd, pwm_buf, len);
+	status = close(pwm->fd_period);
 	if (status < 0) {
-		_E("Failed to export pwmchip%d, pwm%d", chip, pin);
-		close(fd);
+		_E("Error: pwm period fd close error \n");
 		return -EIO;
 	}
-	close(fd);
+
+	status = close(pwm->fd_duty_cycle);
+	if (status < 0) {
+		_E("Error: pwm duty cycle fd close error \n");
+		return -EIO;
+	}
+
+	status = close(pwm->fd_polarity);
+	if (status < 0) {
+		_E("Error: pwm polarity fd close error \n");
+		return -EIO;
+	}
+
+	status = close(pwm->fd_enable);
+	if (status < 0) {
+		_E("Error: pwm enable fd close error \n");
+		return -EIO;
+	}
 
 	return 0;
 }
 
-int pwm_close(int chip, int pin)
+int pwm_set_period(peripheral_pwm_h pwm, int period)
 {
-	int fd, len, status;
-	char pwm_dev[PATH_BUF_MAX] = {0};
+	int len, status;
 	char pwm_buf[PWM_BUF_MAX] = {0};
-
-	_D("chip : %d, pin : %d", chip, pin);
-
-	snprintf(pwm_dev, PATH_BUF_MAX, SYSFS_PWM_PATH "/pwmchip%d/unexport", chip);
-	fd = open(pwm_dev, O_WRONLY);
-	if (fd < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Can't Open %s, errmsg : %s", pwm_dev, errmsg);
-		return -ENXIO;
-	}
-
-	len = snprintf(pwm_buf, sizeof(pwm_buf), "%d", pin);
-	status = write(fd, pwm_buf, len);
-	if (status < 0) {
-		_E("Failed to unexport pwmchip%d, pwm%", chip, pin);
-		close(fd);
-		return -EIO;
-	}
-	close(fd);
-
-	return 0;
-}
-
-int pwm_set_period(int chip, int pin, int period)
-{
-	int fd, len, status;
-	char pwm_buf[PWM_BUF_MAX] = {0};
-	char pwm_dev[PATH_BUF_MAX] = {0};
-
-	_D("chip : %d, pin : %d, period : %d", chip, pin, period);
-
-	snprintf(pwm_dev, PATH_BUF_MAX, SYSFS_PWM_PATH "/pwmchip%d/pwm%d/period", chip, pin);
-	fd = open(pwm_dev, O_WRONLY);
-	if (fd < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Can't Open %s, errmsg : %s", pwm_dev, errmsg);
-		return -ENXIO;
-	}
 
 	len = snprintf(pwm_buf, sizeof(pwm_buf), "%d", period);
-	status = write(fd, pwm_buf, len);
+	status = write(pwm->fd_period, pwm_buf, len);
 	if (status < 0) {
-		close(fd);
-		_E("Failed to set period, path : %s", pwm_dev);
+		_E("Failed to set period");
 		return -EIO;
 	}
-	close(fd);
 
 	return 0;
 }
 
-int pwm_get_period(int chip, int pin, int *period)
+int pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle)
 {
-	int fd, result, status;
+	int len, status;
 	char pwm_buf[PWM_BUF_MAX] = {0};
-	char pwm_dev[PATH_BUF_MAX] = {0};
-
-	snprintf(pwm_dev, PATH_BUF_MAX, SYSFS_PWM_PATH "/pwmchip%d/pwm%d/period", chip, pin);
-	fd = open(pwm_dev, O_RDONLY);
-	if (fd < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Can't Open %s, errmsg : %s", pwm_dev, errmsg);
-		return -ENXIO;
-	}
-
-	status = read(fd, pwm_buf, PWM_BUF_MAX);
-	if (status < 0) {
-		close(fd);
-		_E("Failed to get period, path : %s", pwm_dev);
-		return -EIO;
-	}
-	result = atoi(pwm_buf);
-	*period = result;
-	close(fd);
-
-	return 0;
-}
-
-int pwm_set_duty_cycle(int chip, int pin, int duty_cycle)
-{
-	int fd, len, status;
-	char pwm_buf[PWM_BUF_MAX] = {0};
-	char pwm_dev[PATH_BUF_MAX] = {0};
-
-	_D("chip : %d, pin : %d, duty_cycle : %d", chip, pin, duty_cycle);
-
-	snprintf(pwm_dev, PATH_BUF_MAX, SYSFS_PWM_PATH "/pwmchip%d/pwm%d/duty_cycle", chip, pin);
-	fd = open(pwm_dev, O_WRONLY);
-	if (fd < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Can't Open %s, errmsg : %s", pwm_dev, errmsg);
-		return -ENXIO;
-	}
 
 	len = snprintf(pwm_buf, sizeof(pwm_buf), "%d", duty_cycle);
-	status = write(fd, pwm_buf, len);
+	status = write(pwm->fd_duty_cycle, pwm_buf, len);
 	if (status < 0) {
-		close(fd);
-		_E("Failed to set duty cycle, path : %s", pwm_dev);
+		_E("Failed to set duty cycle");
 		return -EIO;
 	}
-	close(fd);
 
 	return 0;
 }
 
-int pwm_get_duty_cycle(int chip, int pin, int *duty_cycle)
+int pwm_set_polarity(peripheral_pwm_h pwm, pwm_polarity_e polarity)
 {
-	int fd, result, status;
-	char pwm_buf[PWM_BUF_MAX] = {0};
-	char pwm_dev[PATH_BUF_MAX] = {0};
-
-	snprintf(pwm_dev, PATH_BUF_MAX, SYSFS_PWM_PATH "/pwmchip%d/pwm%d/duty_cycle", chip, pin);
-	fd = open(pwm_dev, O_RDONLY);
-	if (fd < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Can't Open %s, errmsg : %s", pwm_dev, errmsg);
-		return -ENXIO;
-	}
-
-	status = read(fd, pwm_buf, PWM_BUF_MAX);
-	if (status < 0) {
-		close(fd);
-		_E("Failed to get duty cycle, path : %s", pwm_dev);
-		return -EIO;
-	}
-	result = atoi(pwm_buf);
-	*duty_cycle = result;
-	close(fd);
-
-	return 0;
-}
-
-int pwm_set_polarity(int chip, int pin, pwm_polarity_e polarity)
-{
-	int fd, status;
-	char pwm_dev[PATH_BUF_MAX] = {0};
-
-	_D("chip : %d, pin : %d, polarity : %d", chip, pin, polarity);
-
-	snprintf(pwm_dev, PATH_BUF_MAX, SYSFS_PWM_PATH "/pwmchip%d/pwm%d/polarity", chip, pin);
-	fd = open(pwm_dev, O_WRONLY);
-	if (fd < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Can't Open %s, errmsg : %s", pwm_dev, errmsg);
-		return -ENXIO;
-	}
+	int status;
 
 	if (polarity == PWM_POLARITY_NORMAL)
-		status = write(fd, "normal", strlen("normal")+1);
+		status = write(pwm->fd_polarity, "normal", strlen("normal")+1);
 	else if (polarity == PWM_POLARITY_INVERSED)
-		status = write(fd, "inversed", strlen("inversed")+1);
+		status = write(pwm->fd_polarity, "inversed", strlen("inversed")+1);
 	else {
 		_E("Invalid pwm polarity : %d", polarity);
-		close(fd);
 		return -EINVAL;
 	}
 
 	if (status <= 0) {
-		close(fd);
-		_E("Failed to set polarity, path : %s", pwm_dev);
+		_E("Failed to set polarity");
 		return -EIO;
 	}
-	close(fd);
 
 	return 0;
 }
 
-int pwm_get_polarity(int chip, int pin, pwm_polarity_e *polarity)
+int pwm_set_enable(peripheral_pwm_h pwm, bool enable)
 {
-	int fd, status;
+	int len, status;
 	char pwm_buf[PWM_BUF_MAX] = {0};
-	char pwm_dev[PATH_BUF_MAX] = {0};
-
-	snprintf(pwm_dev, PATH_BUF_MAX, SYSFS_PWM_PATH "/pwmchip%d/pwm%d/polarity", chip, pin);
-	fd = open(pwm_dev, O_RDONLY);
-	if (fd < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Can't Open %s, errmsg : %s", pwm_dev, errmsg);
-		return -ENXIO;
-	}
-
-	status = read(fd, pwm_buf, PWM_BUF_MAX);
-	if (status < 0) {
-		_E("Failed to get polarity, path : %s", pwm_dev);
-		close(fd);
-		return -EIO;
-	}
-
-	if (0 == strncmp(pwm_buf, "normal", strlen("normal")))
-		*polarity = PWM_POLARITY_NORMAL;
-	else if (0 == strncmp(pwm_buf, "inversed", strlen("inversed")))
-		*polarity = PWM_POLARITY_INVERSED;
-	else {
-		close(fd);
-		_E("Invalid pwm polarity : %d", pwm_buf);
-		return -EIO;
-	}
-	close(fd);
-
-	return 0;
-}
-
-int pwm_set_enable(int chip, int pin, bool enable)
-{
-	int fd, len, status;
-	char pwm_buf[PWM_BUF_MAX] = {0};
-	char pwm_dev[PATH_BUF_MAX] = {0};
-
-	_D("chip : %d, pin : %d, enable : %d", chip, pin, enable);
-
-	snprintf(pwm_dev, PATH_BUF_MAX, SYSFS_PWM_PATH "/pwmchip%d/pwm%d/enable", chip, pin);
-	fd = open(pwm_dev, O_WRONLY);
-	if (fd < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Can't Open %s, errmsg : %s", pwm_dev, errmsg);
-		return -ENXIO;
-	}
 
 	len = snprintf(pwm_buf, sizeof(pwm_buf), "%d", enable);
-	status = write(fd, pwm_buf, len);
+	status = write(pwm->fd_enable, pwm_buf, len);
 	if (status < 0) {
-		close(fd);
-		_E("Failed to set enable, path : %s", pwm_dev);
+		_E("Failed to set enable");
 		return -EIO;
 	}
-	close(fd);
 
 	return 0;
 }
-
-int pwm_get_enable(int chip, int pin, bool *enable)
-{
-	int fd, result, status;
-	char pwm_buf[PWM_BUF_MAX] = {0};
-	char pwm_dev[PATH_BUF_MAX] = {0};
-
-	snprintf(pwm_dev, PATH_BUF_MAX, SYSFS_PWM_PATH "/pwmchip%d/pwm%d/enable", chip, pin);
-	fd = open(pwm_dev, O_RDONLY);
-	if (fd < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Can't Open %s, errmsg : %s", pwm_dev, errmsg);
-		return -ENXIO;
-	}
-
-	status = read(fd, pwm_buf, PWM_BUF_MAX);
-	if (status < 0) {
-		close(fd);
-		_E("Failed to get enable, path : %s", pwm_dev);
-		return -EIO;
-	}
-	result = atoi(pwm_buf);
-	*enable = !!result;
-	close(fd);
-
-	return 0;
-}
-

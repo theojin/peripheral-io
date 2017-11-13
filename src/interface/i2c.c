@@ -24,111 +24,91 @@
 
 #include "i2c.h"
 #include "peripheral_common.h"
+#include "peripheral_internal.h"
 
 #define MAX_ERR_LEN 255
 
-int i2c_open(int bus, int *fd)
-{
-	int new_fd;
-	char i2c_dev[I2C_BUFFER_MAX] = {0,};
-
-	_D("bus : %d", bus);
-
-	snprintf(i2c_dev, sizeof(i2c_dev)-1, SYSFS_I2C_DIR"-%d", bus);
-	new_fd = open(i2c_dev, O_RDWR);
-	if (new_fd < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Can't Open %s : %s", i2c_dev, errmsg);
-		return -ENXIO;
-	}
-	_D("fd : %d", new_fd);
-	*fd = new_fd;
-
-	return 0;
-}
-
-int i2c_close(int fd)
+int i2c_close(peripheral_i2c_h i2c)
 {
 	int status;
 
-	_D("fd : %d", fd);
-	RETVM_IF(fd < 0, -EINVAL, "Invalid fd");
+	_D("fd : %d", i2c->fd);
+	RETVM_IF(i2c->fd < 0, -EINVAL, "Invalid fd");
 
-	status = close(fd);
+	status = close(i2c->fd);
 	if (status < 0) {
 		char errmsg[MAX_ERR_LEN];
 		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Failed to close fd : %d", fd);
+		_E("Failed to close fd : %d", i2c->fd);
 		return -EIO;
 	}
 
 	return 0;
 }
 
-int i2c_set_address(int fd, int address)
+int i2c_set_address(peripheral_i2c_h i2c, int address)
 {
 	int status;
 
-	_D("fd : %d, slave address : 0x%x", fd, address);
-	RETVM_IF(fd < 0, -EINVAL, "Invalid fd");
+	_D("fd : %d, slave address : 0x%x", i2c->fd, address);
+	RETVM_IF(i2c->fd < 0, -EINVAL, "Invalid fd");
 
-	status = ioctl(fd, I2C_SLAVE, address);
+	status = ioctl(i2c->fd, I2C_SLAVE, address);
 	if (status < 0) {
 		char errmsg[MAX_ERR_LEN];
 		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Failed to set slave address(%x), fd : %d, errmsg : %s", address, fd, errmsg);
+		_E("Failed to set slave address(%x), fd : %d, errmsg : %s", address, i2c->fd, errmsg);
 		return status;
 	}
 
 	return 0;
 }
 
-int i2c_read(int fd, unsigned char *data, int length)
+int i2c_read(peripheral_i2c_h i2c, unsigned char *data, int length)
 {
 	int status;
 
-	RETVM_IF(fd < 0, -EINVAL, "Invalid fd : %d", fd);
+	RETVM_IF(i2c->fd < 0, -EINVAL, "Invalid fd : %d", i2c->fd);
 
-	status = read(fd, data, length);
+	status = read(i2c->fd, data, length);
 	if (status != length) {
 		char errmsg[MAX_ERR_LEN];
 		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("i2c read failed, fd : %d, errmsg : %s", fd, errmsg);
+		_E("i2c read failed, fd : %d, errmsg : %s", i2c->fd, errmsg);
 		return -EIO;
 	}
 
 	return 0;
 }
 
-int i2c_write(int fd, const unsigned char *data, int length)
+int i2c_write(peripheral_i2c_h i2c, const unsigned char *data, int length)
 {
 	int status;
 
-	RETVM_IF(fd < 0, -EINVAL, "Invalid fd : %d", fd);
+	RETVM_IF(i2c->fd < 0, -EINVAL, "Invalid fd : %d", i2c->fd);
 
-	status = write(fd, data, length);
+	status = write(i2c->fd, data, length);
 	if (status != length) {
 		char errmsg[MAX_ERR_LEN];
 		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("i2c write failed fd : %d, errmsg : %s", fd, errmsg);
+		_E("i2c write failed fd : %d, errmsg : %s", i2c->fd, errmsg);
 		return -EIO;
 	}
 
 	return 0;
 }
 
-int i2c_smbus_ioctl(int fd, struct i2c_smbus_ioctl_data *data)
+int i2c_smbus_ioctl(peripheral_i2c_h i2c, struct i2c_smbus_ioctl_data *data)
 {
 	int status;
 
-	RETVM_IF(fd < 0, -EINVAL, "Invalid fd : %d", fd);
+	RETVM_IF(i2c->fd < 0, -EINVAL, "Invalid fd : %d", i2c->fd);
 
-	status = ioctl(fd, I2C_SMBUS, data);
+	status = ioctl(i2c->fd, I2C_SMBUS, data);
 	if (status < 0) {
 		char errmsg[MAX_ERR_LEN];
 		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("i2c transaction failed fd : %d, errmsg : %s", fd, errmsg);
+		_E("i2c transaction failed fd : %d, errmsg : %s", i2c->fd, errmsg);
 		return -EIO;
 	}
 

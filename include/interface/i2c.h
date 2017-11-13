@@ -19,6 +19,8 @@
 
 #include <stdint.h>
 
+#include "peripheral_io.h"
+
 #define SYSFS_I2C_DIR "/dev/i2c"
 #define I2C_BUFFER_MAX 64
 
@@ -55,11 +57,10 @@ struct i2c_smbus_ioctl_data {
 	union i2c_smbus_data *data;
 };
 
-int i2c_open(int bus, int *fd);
-int i2c_close(int fd);
-int i2c_set_address(int fd, int address);
-int i2c_read(int fd, unsigned char *data, int length);
-int i2c_write(int fd, const unsigned char *data, int length);
-int i2c_smbus_ioctl(int fd, struct i2c_smbus_ioctl_data *data);
+int i2c_close(peripheral_i2c_h i2c);
+int i2c_set_address(peripheral_i2c_h i2c, int address);
+int i2c_read(peripheral_i2c_h i2c, unsigned char *data, int length);
+int i2c_write(peripheral_i2c_h i2c, const unsigned char *data, int length);
+int i2c_smbus_ioctl(peripheral_i2c_h i2c, struct i2c_smbus_ioctl_data *data);
 
 #endif/* __I2C_H__ */

@@ -17,15 +17,15 @@
 #ifndef __SPI_H__
 #define __SPI_H__
 
-int spi_open(int bus, int cs, int *fd);
-int spi_close(int fd);
-int spi_set_mode(int fd, unsigned char mode);
-int spi_set_bit_order(int fd, unsigned char lsb);
-int spi_set_bits_per_word(int fd, unsigned char bits);
-int spi_set_frequency(int fd, unsigned int freq);
-int spi_get_buffer_size(int *bufsiz);
-int spi_read(int fd, unsigned char *rxbuf, int length);
-int spi_write(int fd, unsigned char *txbuf, int length);
-int spi_transfer(int fd, unsigned char *txbuf, unsigned char *rxbuf, int length);
+#include "peripheral_io.h"
+
+int spi_close(peripheral_spi_h spi);
+int spi_set_mode(peripheral_spi_h spi, unsigned char mode);
+int spi_set_bit_order(peripheral_spi_h spi, unsigned char lsb);
+int spi_set_bits_per_word(peripheral_spi_h spi, unsigned char bits);
+int spi_set_frequency(peripheral_spi_h spi, unsigned int freq);
+int spi_read(peripheral_spi_h spi, unsigned char *rxbuf, int length);
+int spi_write(peripheral_spi_h spi, unsigned char *txbuf, int length);
+int spi_transfer(peripheral_spi_h spi, unsigned char *txbuf, unsigned char *rxbuf, int length);
 
 #endif /* __SPI_H__ */

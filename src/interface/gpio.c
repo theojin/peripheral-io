@@ -24,252 +24,85 @@
 
 #include "gpio.h"
 #include "peripheral_common.h"
+#include "peripheral_internal.h"
 
 #define MAX_ERR_LEN 255
 
-int gpio_open(int gpiopin)
+int gpio_set_direction(peripheral_gpio_h gpio, gpio_direction_e dir)
 {
-	int fd, len, status;
-	char gpio_export[GPIO_BUFFER_MAX] = {0, };
-
-	_D("gpiopin : %d", gpiopin);
-
-	fd = open(SYSFS_GPIO_DIR "/export", O_WRONLY);
-	if (fd < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Can't Open /sys/class/gpio/export :%s\n", errmsg);
-		return -ENXIO;
-	}
-
-	len = snprintf(gpio_export, GPIO_BUFFER_MAX, "%d", gpiopin);
-	status = write(fd, gpio_export, len);
-
-	if (status != len) {
-		close(fd);
-		_E("Error: gpio open error \n");
-		return -EIO;
-	}
-
-	close(fd);
-
-	return 0;
-}
-
-int gpio_set_direction(int gpiopin, gpio_direction_e dir)
-{
-	int fd, status;
-	char gpio_dev[GPIO_BUFFER_MAX] = {0, };
-
-	_D("gpiopin : %d, dir : %d", gpiopin, dir);
-
-	snprintf(gpio_dev, GPIO_BUFFER_MAX, SYSFS_GPIO_DIR"/gpio%d/direction", gpiopin);
-	fd = open(gpio_dev, O_WRONLY);
-	if (fd < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Can't Open /sys/class/gpio/gpio%d/direction: %s\n", gpiopin, errmsg);
-		return -ENXIO;
-	}
+	int status;
 
 	if (dir == GPIO_DIRECTION_IN)
-		status = write(fd, "in", strlen("in")+1);
+		status = write(gpio->fd_direction, "in", strlen("in")+1);
 	else if (dir == GPIO_DIRECTION_OUT_HIGH)
-		status = write(fd, "high", strlen("high")+1);
+		status = write(gpio->fd_direction, "high", strlen("high")+1);
 	else if (dir == GPIO_DIRECTION_OUT_LOW)
-		status = write(fd, "low", strlen("low")+1);
+		status = write(gpio->fd_direction, "low", strlen("low")+1);
 	else {
-		close(fd);
 		_E("Error: gpio direction is wrong\n");
 		return -EIO;
 	}
 
 	if (status <= 0) {
-		close(fd);
 		_E("Error: gpio direction set error\n");
 		return -EIO;
 	}
 
-	close(fd);
-
 	return 0;
 }
 
-int gpio_get_direction(int gpiopin, gpio_direction_e *dir)
+int gpio_set_edge_mode(peripheral_gpio_h gpio, gpio_edge_e edge)
 {
-	int fd, len;
-	char gpio_dev[GPIO_BUFFER_MAX] = {0, };
-	char gpio_buf[GPIO_BUFFER_MAX] = {0, };
-
-	snprintf(gpio_dev, GPIO_BUFFER_MAX, SYSFS_GPIO_DIR"/gpio%d/direction", gpiopin);
-	fd = open(gpio_dev, O_RDONLY);
-
-	if (fd < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Can't Open /sys/class/gpio/gpio%d/direction: %s\n", gpiopin, errmsg);
-		return -ENXIO;
-	}
-
-	len = read(fd, &gpio_buf, GPIO_BUFFER_MAX);
-	if (len <= 0) {
-		close(fd);
-		_E("Error: gpio direction read error\n");
-		return -EIO;
-	}
-
-	if (0 == strncmp(gpio_buf, "in", strlen("in")))
-		*dir = GPIO_DIRECTION_IN;
-	else if (0 == strncmp(gpio_buf, "out", strlen("out")))
-		*dir = GPIO_DIRECTION_OUT_LOW;
-	else {
-		close(fd);
-		_E("Error: gpio direction is wrong\n");
-		return -EIO;
-	}
-
-	close(fd);
-
-	return 0;
-}
-
-int gpio_set_edge_mode(int gpiopin, gpio_edge_e edge)
-{
-	int fd, status;
-	char gpio_dev[GPIO_BUFFER_MAX] = {0, };
-
-	_D("gpiopin : %d, edge : %d", gpiopin, edge);
-
-	snprintf(gpio_dev, GPIO_BUFFER_MAX, SYSFS_GPIO_DIR"/gpio%d/edge", gpiopin);
-	fd = open(gpio_dev, O_WRONLY);
-	if (fd < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Can't Open /sys/class/gpio/gpio%d/edge: %s\n", gpiopin, errmsg);
-		return -ENXIO;
-	}
+	int status;
 
 	if (edge == GPIO_EDGE_NONE)
-		status = write(fd, "none", strlen("none")+1);
+		status = write(gpio->fd_edge, "none", strlen("none")+1);
 	else if (edge == GPIO_EDGE_RISING)
-		status = write(fd, "rising", strlen("rising")+1);
+		status = write(gpio->fd_edge, "rising", strlen("rising")+1);
 	else if (edge == GPIO_EDGE_FALLING)
-		status = write(fd, "falling", strlen("falling")+1);
+		status = write(gpio->fd_edge, "falling", strlen("falling")+1);
 	else if (edge == GPIO_EDGE_BOTH)
-		status = write(fd, "both", strlen("both")+1);
+		status = write(gpio->fd_edge, "both", strlen("both")+1);
 	else {
-		close(fd);
 		_E("Error: gpio edge is wrong\n");
 		return -EIO;
 	}
 
 	if (status <= 0) {
-		close(fd);
 		_E("Error: gpio edge set error\n");
 		return -EIO;
 	}
 
-	close(fd);
-
 	return 0;
 }
 
-int gpio_get_edge_mode(int gpiopin, gpio_edge_e *edge)
+int gpio_write(peripheral_gpio_h gpio, int value)
 {
-	int fd, len;
-	char gpio_dev[GPIO_BUFFER_MAX] = {0, };
-	char gpio_buf[GPIO_BUFFER_MAX] = {0, };
-
-	snprintf(gpio_dev, GPIO_BUFFER_MAX, SYSFS_GPIO_DIR"/gpio%d/edge", gpiopin);
-	fd = open(gpio_dev, O_RDONLY);
-
-	if (fd < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Can't Open /sys/class/gpio/gpio%d/edge: %s\n", gpiopin, errmsg);
-		return -ENXIO;
-	}
-
-	len = read(fd, &gpio_buf, GPIO_BUFFER_MAX);
-	if (len <= 0) {
-		close(fd);
-		_E("Error: gpio edge read error\n");
-		return -EIO;
-	}
-
-	if (0 == strncmp(gpio_buf, "none", strlen("none")))
-		*edge = GPIO_EDGE_NONE;
-	else if (0 == strncmp(gpio_buf, "both", strlen("both")))
-		*edge = GPIO_EDGE_BOTH;
-	else if (0 == strncmp(gpio_buf, "rising", strlen("rising")))
-		*edge = GPIO_EDGE_RISING;
-	else if (0 == strncmp(gpio_buf, "falling", strlen("falling")))
-		*edge = GPIO_EDGE_FALLING;
-	else {
-		close(fd);
-		_E("Error: gpio edge is wrong\n");
-		return -EIO;
-	}
-
-	close(fd);
-
-	return 0;
-}
-
-int gpio_write(int gpiopin, int value)
-{
-	int fd, status;
-	char gpio_dev[GPIO_BUFFER_MAX] = {0, };
-
-	snprintf(gpio_dev, GPIO_BUFFER_MAX, SYSFS_GPIO_DIR"/gpio%d/value", gpiopin);
-	fd = open(gpio_dev, O_WRONLY);
-
-	if (fd < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Can't Open /sys/class/gpio/gpio%d/value: %s\n", gpiopin, errmsg);
-		return -ENXIO;
-	}
+	int status;
 
 	if (value == 1)
-		status = write(fd, "1", strlen("1")+1);
+		status = write(gpio->fd_value, "1", strlen("1")+1);
 	else if (value == 0)
-		status = write(fd, "0", strlen("0")+1);
+		status = write(gpio->fd_value, "0", strlen("0")+1);
 	else {
-		close(fd);
 		_E("Error: gpio write value error \n");
 		return -EIO;
 	}
 
 	if (status <= 0) {
-		close(fd);
 		_E("Error: gpio write error\n");
 		return -EIO;
 	}
 
-	close(fd);
-
 	return 0;
 }
 
-int gpio_read(int gpiopin, int *value)
+int gpio_read(peripheral_gpio_h gpio, int *value)
 {
-	int fd, len;
-	char gpio_dev[GPIO_BUFFER_MAX] = {0, };
+	int len;
 	char gpio_buf[GPIO_BUFFER_MAX] = {0, };
 
-	snprintf(gpio_dev, GPIO_BUFFER_MAX, SYSFS_GPIO_DIR"/gpio%d/value", gpiopin);
-	fd = open(gpio_dev, O_RDONLY);
-	if (fd < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Can't Open /sys/class/gpio/gpio%d pin value: %s\n", gpiopin, errmsg);
-		return -ENXIO;
-	}
-
-	len = read(fd, &gpio_buf, 1);
-	close(fd);
-
+	len = read(gpio->fd_value, &gpio_buf, 1);
 	if (len <= 0) {
 		_E("Error: gpio read error \n");
 		return -EIO;
@@ -287,87 +120,58 @@ int gpio_read(int gpiopin, int *value)
 	return 0;
 }
 
-int gpio_close(int gpiopin)
+int gpio_close(peripheral_gpio_h gpio)
 {
-	int fd, len, status;
-	char gpio_unexport[GPIO_BUFFER_MAX] = {0, };
+	int status;
 
-	_D("gpiopin : %d", gpiopin);
-
-	fd = open(SYSFS_GPIO_DIR "/unexport", O_WRONLY);
-	if (fd < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Can't Open /sys/class/gpio/unexport %s\n", errmsg);
-		return -ENXIO;
-	}
-
-	len = snprintf(gpio_unexport, GPIO_BUFFER_MAX, "%d", gpiopin);
-	status = write(fd, gpio_unexport, len);
-
-	if (status != len) {
-		close(fd);
-		_E("Error: gpio close error \n");
+	status = close(gpio->fd_direction);
+	if (status < 0) {
+		_E("Error: gpio direction fd close error \n");
 		return -EIO;
 	}
 
-	close(fd);
+	status = close(gpio->fd_edge);
+	if (status < 0) {
+		_E("Error: gpio edge fd close error \n");
+		return -EIO;
+	}
+
+	status = close(gpio->fd_value);
+	if (status < 0) {
+		_E("Error: gpio value fd close error \n");
+		return -EIO;
+	}
 
 	return 0;
 }
 
-int gpio_open_isr(int gpiopin)
+int gpio_open_isr(peripheral_gpio_h gpio)
 {
-	int fd;
-	char gpio_dev[GPIO_BUFFER_MAX] = {0, };
+	// int fd;
+	// char gpio_dev[GPIO_BUFFER_MAX] = {0, };
 
-	snprintf(gpio_dev, sizeof(gpio_dev)-1, SYSFS_GPIO_DIR"/gpio%d/value", gpiopin);
+	// snprintf(gpio_dev, sizeof(gpio_dev)-1, SYSFS_GPIO_DIR"/gpio%d/value", gpiopin);
 
-	_D("open isr string [%s]", gpio_dev);
+	// _D("open isr string [%s]", gpio_dev);
 
-	fd = open(gpio_dev, O_RDONLY);
-	if (fd < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Can't Open /sys/class/gpio/gpio%d pin value: %s\n", gpiopin, errmsg);
-		return -ENXIO;
-	}
+	// fd = open(gpio_dev, O_RDONLY);
+	// if (fd < 0) {
+	// 	char errmsg[MAX_ERR_LEN];
+	// 	strerror_r(errno, errmsg, MAX_ERR_LEN);
+	// 	_E("Can't Open /sys/class/gpio/gpio%d pin value: %s\n", gpiopin, errmsg);
+	// 	return -ENXIO;
+	// }
 
-	return fd;
-}
-
-int gpio_close_isr(int fd)
-{
-	if (fd <= 0) return -EINVAL;
-
-	close(fd);
+	// return fd;
 
 	return 0;
 }
 
-int gpio_read_isr(void *fdset, char *rev_buf, int length)
+int gpio_close_isr(peripheral_gpio_h gpio)
 {
-	int poll_state = 0;
-	int len;
-	struct pollfd poll_events;
+// 	if (fd <= 0) return -EINVAL;
 
-	poll_events.fd = ((struct pollfd*)fdset)->fd;
-	poll_events.events = POLLPRI;
-	poll_events.revents = ((struct pollfd*)fdset)->revents;
+// 	close(fd);
 
-	poll_state = poll((struct pollfd*)&poll_events, 1, -1);  // 0 is going to return directly.
-
-	if (poll_state < 0) {
-		_E("poll() failed!\n");
-		return -EIO;
-	}
-
-	if (poll_events.revents & POLLPRI) {
-		lseek(poll_events.fd, 0, SEEK_SET);
-		len = read(poll_events.fd, rev_buf, length);
-		if (len == -1)
-			return -EIO;
-	}
-
-	return poll_state;
+	return 0;
 }

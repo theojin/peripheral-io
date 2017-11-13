@@ -17,6 +17,8 @@
 #ifndef __GPIO_H__
 #define __GPIO_H__
 
+#include "peripheral_io.h"
+
 #define SYSFS_GPIO_DIR "/sys/class/gpio"
 #define GPIO_BUFFER_MAX 64
 
@@ -33,16 +35,12 @@ typedef enum {
 	GPIO_EDGE_BOTH = 3,
 } gpio_edge_e;
 
-int gpio_open(int gpiopin);
-int gpio_close(int gpiopin);
-int gpio_set_edge_mode(int gpiopin, gpio_edge_e edge);
-int gpio_get_edge_mode(int gpiopin, gpio_edge_e *edge);
-int gpio_set_direction(int gpiopin, gpio_direction_e dir);
-int gpio_get_direction(int gpiopin, gpio_direction_e *dir);
-int gpio_write(int gpiopin, int value);
-int gpio_read(int gpiopin, int *value);
+int gpio_close(peripheral_gpio_h gpio);
+int gpio_set_edge_mode(peripheral_gpio_h gpio, gpio_edge_e edge);
+int gpio_set_direction(peripheral_gpio_h gpio, gpio_direction_e dir);
+int gpio_write(peripheral_gpio_h gpio, int value);
+int gpio_read(peripheral_gpio_h gpio, int *value);
 
-int gpio_open_isr(int gpiopin);
-int gpio_close_isr(int file_hndl);
-int gpio_read_isr(void *fdset, char *rev_buf, int length);
+int gpio_open_isr(peripheral_gpio_h gpio);
+int gpio_close_isr(peripheral_gpio_h gpio);
 #endif/*__GPIO_H__*/

@@ -26,6 +26,7 @@
 
 #include "uart.h"
 #include "peripheral_common.h"
+#include "peripheral_internal.h"
 
 #define PATH_BUF_MAX		64
 #define UART_BUF_MAX		16
@@ -52,69 +53,46 @@ static const int peripheral_uart_br[UART_BAUDRATE_SIZE] = {
 
 static const int byteinfo[4] = {CS5, CS6, CS7, CS8};
 
-int uart_open(int port, int *file_hndl)
-{
-	int i, fd;
-	char uart_dev[PATH_BUF_MAX] = {0};
-
-	_D("port : %d", port);
-
-	for (i = 0; i < ARRAY_SIZE(sysfs_uart_path); i++) {
-		snprintf(uart_dev, PATH_BUF_MAX, "%s%d", sysfs_uart_path[i], port);
-		if (access(uart_dev, F_OK) == 0)
-			break;
-	}
-	_D("uart_dev : %s", uart_dev);
-	if ((fd = open(uart_dev, O_RDWR | O_NOCTTY | O_NONBLOCK)) < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("can't open %s, errmsg : %s", uart_dev, errmsg);
-		return -ENXIO;
-	}
-	*file_hndl = fd;
-	return 0;
-}
-
-int uart_close(int file_hndl)
+int uart_close(peripheral_uart_h uart)
 {
 	int status;
 
-	_D("file_hndl : %d", file_hndl);
+	_D("file_hndl : %d", uart->fd);
 
-	if (file_hndl < 0) {
+	if (uart->fd < 0) {
 		_E("Invalid NULL parameter");
 		return -EINVAL;
 	}
 
-	status = uart_flush(file_hndl);
+	status = uart_flush(uart);
 	if (status < 0) {
 		char errmsg[MAX_ERR_LEN];
 		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Failed to close fd : %d, errmsg : %s", file_hndl, errmsg);
+		_E("Failed to close fd : %d, errmsg : %s", uart->fd, errmsg);
 		return -EIO;
 	}
 
-	status = close(file_hndl);
+	status = close(uart->fd);
 	if (status < 0) {
 		char errmsg[MAX_ERR_LEN];
 		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Failed to close fd : %d, errmsg : %s", file_hndl, errmsg);
+		_E("Failed to close fd : %d, errmsg : %s", uart->fd, errmsg);
 		return -EIO;
 	}
 
 	return 0;
 }
 
-int uart_flush(int file_hndl)
+int uart_flush(peripheral_uart_h uart)
 {
 	int ret;
 
-	if (!file_hndl) {
+	if (!uart->fd) {
 		_E("Invalid NULL parameter");
 		return -EINVAL;
 	}
 
-	ret = tcflush(file_hndl, TCIOFLUSH);
+	ret = tcflush(uart->fd, TCIOFLUSH);
 	if (ret < 0) {
 		char errmsg[MAX_ERR_LEN];
 		strerror_r(errno, errmsg, MAX_ERR_LEN);
@@ -125,15 +103,15 @@ int uart_flush(int file_hndl)
 	return 0;
 }
 
-int uart_set_baud_rate(int file_hndl, uart_baud_rate_e baud)
+int uart_set_baud_rate(peripheral_uart_h uart, uart_baud_rate_e baud)
 {
 	int ret;
 	struct termios tio;
 
-	_D("file_hndl : %d, baud : %d", file_hndl, baud);
+	_D("file_hndl : %d, baud : %d", uart->fd, baud);
 
 	memset(&tio, 0, sizeof(tio));
-	if (!file_hndl) {
+	if (!uart->fd) {
 		_E("Invalid NULL parameter");
 		return -EINVAL;
 	}
@@ -143,7 +121,7 @@ int uart_set_baud_rate(int file_hndl, uart_baud_rate_e baud)
 		return -EINVAL;
 	}
 
-	ret = tcgetattr(file_hndl, &tio);
+	ret = tcgetattr(uart->fd, &tio);
 	if (ret) {
 		char errmsg[MAX_ERR_LEN];
 		strerror_r(errno, errmsg, MAX_ERR_LEN);
@@ -157,8 +135,8 @@ int uart_set_baud_rate(int file_hndl, uart_baud_rate_e baud)
 	tio.c_cc[VMIN] = 1;
 	tio.c_cc[VTIME] = 0;
 
-	uart_flush(file_hndl);
-	ret = tcsetattr(file_hndl, TCSANOW, &tio);
+	uart_flush(uart);
+	ret = tcsetattr(uart->fd, TCSANOW, &tio);
 	if (ret) {
 		char errmsg[MAX_ERR_LEN];
 		strerror_r(errno, errmsg, MAX_ERR_LEN);
@@ -169,14 +147,14 @@ int uart_set_baud_rate(int file_hndl, uart_baud_rate_e baud)
 	return 0;
 }
 
-int uart_set_mode(int file_hndl, uart_byte_size_e byte_size, uart_parity_e parity, uart_stop_bits_e stop_bits)
+int uart_set_mode(peripheral_uart_h uart, uart_byte_size_e byte_size, uart_parity_e parity, uart_stop_bits_e stop_bits)
 {
 	int ret;
 	struct termios tio;
 
-	_D("file_hndl : %d, bytesize : %d, parity : %d, stopbits : %d", file_hndl, byte_size, parity, stop_bits);
+	_D("file_hndl : %d, bytesize : %d, parity : %d, stopbits : %d", uart->fd, byte_size, parity, stop_bits);
 
-	if (!file_hndl) {
+	if (!uart->fd) {
 		_E("Invalid NULL parameter");
 		return -EINVAL;
 	}
@@ -186,7 +164,7 @@ int uart_set_mode(int file_hndl, uart_byte_size_e byte_size, uart_parity_e parit
 		return -EINVAL;
 	}
 
-	ret = tcgetattr(file_hndl, &tio);
+	ret = tcgetattr(uart->fd, &tio);
 	if (ret) {
 		char errmsg[MAX_ERR_LEN];
 		strerror_r(errno, errmsg, MAX_ERR_LEN);
@@ -229,8 +207,8 @@ int uart_set_mode(int file_hndl, uart_byte_size_e byte_size, uart_parity_e parit
 		return -EINVAL;
 	}
 
-	uart_flush(file_hndl);
-	ret = tcsetattr(file_hndl, TCSANOW, &tio);
+	uart_flush(uart);
+	ret = tcsetattr(uart->fd, TCSANOW, &tio);
 	if (ret) {
 		char errmsg[MAX_ERR_LEN];
 		strerror_r(errno, errmsg, MAX_ERR_LEN);
@@ -241,14 +219,14 @@ int uart_set_mode(int file_hndl, uart_byte_size_e byte_size, uart_parity_e parit
 	return 0;
 }
 
-int uart_set_byte_size(int file_hndl, uart_byte_size_e byte_size)
+int uart_set_byte_size(peripheral_uart_h uart, uart_byte_size_e byte_size)
 {
 	int ret;
 	struct termios tio;
 
-	_D("file_hndl : %d, bytesize : %d", file_hndl, byte_size);
+	_D("file_hndl : %d, bytesize : %d", uart->fd, byte_size);
 
-	if (!file_hndl) {
+	if (!uart->fd) {
 		_E("Invalid NULL parameter");
 		return -EINVAL;
 	}
@@ -258,7 +236,7 @@ int uart_set_byte_size(int file_hndl, uart_byte_size_e byte_size)
 		return -EINVAL;
 	}
 
-	ret = tcgetattr(file_hndl, &tio);
+	ret = tcgetattr(uart->fd, &tio);
 	if (ret) {
 		char errmsg[MAX_ERR_LEN];
 		strerror_r(errno, errmsg, MAX_ERR_LEN);
@@ -271,8 +249,8 @@ int uart_set_byte_size(int file_hndl, uart_byte_size_e byte_size)
 	tio.c_cflag |= byteinfo[byte_size];
 	tio.c_cflag |= (CLOCAL | CREAD);
 
-	uart_flush(file_hndl);
-	ret = tcsetattr(file_hndl, TCSANOW, &tio);
+	uart_flush(uart);
+	ret = tcsetattr(uart->fd, TCSANOW, &tio);
 	if (ret) {
 		char errmsg[MAX_ERR_LEN];
 		strerror_r(errno, errmsg, MAX_ERR_LEN);
@@ -283,19 +261,19 @@ int uart_set_byte_size(int file_hndl, uart_byte_size_e byte_size)
 	return 0;
 }
 
-int uart_set_parity(int file_hndl, uart_parity_e parity)
+int uart_set_parity(peripheral_uart_h uart, uart_parity_e parity)
 {
 	int ret;
 	struct termios tio;
 
-	_D("file_hndl : %d, parity : %d", file_hndl, parity);
+	_D("file_hndl : %d, parity : %d", uart->fd, parity);
 
-	if (!file_hndl) {
+	if (!uart->fd) {
 		_E("Invalid NULL parameter");
 		return -EINVAL;
 	}
 
-	ret = tcgetattr(file_hndl, &tio);
+	ret = tcgetattr(uart->fd, &tio);
 	if (ret) {
 		char errmsg[MAX_ERR_LEN];
 		strerror_r(errno, errmsg, MAX_ERR_LEN);
@@ -320,8 +298,8 @@ int uart_set_parity(int file_hndl, uart_parity_e parity)
 		break;
 	}
 
-	uart_flush(file_hndl);
-	ret = tcsetattr(file_hndl, TCSANOW, &tio);
+	uart_flush(uart);
+	ret = tcsetattr(uart->fd, TCSANOW, &tio);
 	if (ret) {
 		char errmsg[MAX_ERR_LEN];
 		strerror_r(errno, errmsg, MAX_ERR_LEN);
@@ -332,19 +310,19 @@ int uart_set_parity(int file_hndl, uart_parity_e parity)
 	return 0;
 }
 
-int uart_set_stop_bits(int file_hndl, uart_stop_bits_e stop_bits)
+int uart_set_stop_bits(peripheral_uart_h uart, uart_stop_bits_e stop_bits)
 {
 	int ret;
 	struct termios tio;
 
-	_D("file_hndl : %d, stopbits : %d", file_hndl, stop_bits);
+	_D("file_hndl : %d, stopbits : %d", uart->fd, stop_bits);
 
-	if (!file_hndl) {
+	if (!uart->fd) {
 		_E("Invalid NULL parameter");
 		return -EINVAL;
 	}
 
-	ret = tcgetattr(file_hndl, &tio);
+	ret = tcgetattr(uart->fd, &tio);
 	if (ret) {
 		char errmsg[MAX_ERR_LEN];
 		strerror_r(errno, errmsg, MAX_ERR_LEN);
@@ -365,8 +343,8 @@ int uart_set_stop_bits(int file_hndl, uart_stop_bits_e stop_bits)
 		return -EINVAL;
 	}
 
-	uart_flush(file_hndl);
-	ret = tcsetattr(file_hndl, TCSANOW, &tio);
+	uart_flush(uart);
+	ret = tcsetattr(uart->fd, TCSANOW, &tio);
 	if (ret) {
 		char errmsg[MAX_ERR_LEN];
 		strerror_r(errno, errmsg, MAX_ERR_LEN);
@@ -377,19 +355,19 @@ int uart_set_stop_bits(int file_hndl, uart_stop_bits_e stop_bits)
 	return 0;
 }
 
-int uart_set_flow_control(int file_hndl, bool xonxoff, bool rtscts)
+int uart_set_flow_control(peripheral_uart_h uart, bool xonxoff, bool rtscts)
 {
 	int ret;
 	struct termios tio;
 
-	_D("file_hndl : %d, xonxoff : %d, rtscts : %d", file_hndl, xonxoff, rtscts);
+	_D("file_hndl : %d, xonxoff : %d, rtscts : %d", uart->fd, xonxoff, rtscts);
 
-	if (!file_hndl) {
+	if (!uart->fd) {
 		_E("Invalid NULL parameter");
 		return -EINVAL;
 	}
 
-	ret = tcgetattr(file_hndl, &tio);
+	ret = tcgetattr(uart->fd, &tio);
 	if (ret) {
 		char errmsg[MAX_ERR_LEN];
 		strerror_r(errno, errmsg, MAX_ERR_LEN);
@@ -409,7 +387,7 @@ int uart_set_flow_control(int file_hndl, bool xonxoff, bool rtscts)
 	else
 		tio.c_iflag &= ~(IXON | IXOFF | IXANY);
 
-	ret = tcsetattr(file_hndl, TCSANOW, &tio);
+	ret = tcsetattr(uart->fd, TCSANOW, &tio);
 	if (ret) {
 		char errmsg[MAX_ERR_LEN];
 		strerror_r(errno, errmsg, MAX_ERR_LEN);
@@ -420,16 +398,16 @@ int uart_set_flow_control(int file_hndl, bool xonxoff, bool rtscts)
 	return 0;
 }
 
-int uart_read(int file_hndl, uint8_t *buf, unsigned int length)
+int uart_read(peripheral_uart_h uart, uint8_t *buf, unsigned int length)
 {
 	int ret;
 
-	if (!file_hndl) {
+	if (!uart->fd) {
 		_E("Invalid NULL parameter");
 		return -EINVAL;
 	}
 
-	ret = read(file_hndl, (void *)buf, length);
+	ret = read(uart->fd, (void *)buf, length);
 	if (ret <= 0) {
 		if (errno == EAGAIN)
 			return -EAGAIN;
@@ -442,16 +420,16 @@ int uart_read(int file_hndl, uint8_t *buf, unsigned int length)
 	return ret;
 }
 
-int uart_write(int file_hndl, uint8_t *buf, unsigned int length)
+int uart_write(peripheral_uart_h uart, uint8_t *buf, unsigned int length)
 {
 	int ret;
 
-	if (!file_hndl) {
+	if (!uart->fd) {
 		_E("Invalid NULL parameter");
 		return -EINVAL;
 	}
 
-	ret = write(file_hndl, buf, length);
+	ret = write(uart->fd, buf, length);
 	if (ret <= 0) {
 		if (errno == EAGAIN)
 			return -EAGAIN;
