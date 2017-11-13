@@ -23,6 +23,9 @@
 struct _peripheral_gpio_s {
 	int pin;
 	uint handle;
+	int fd_direction;
+	int fd_edge;
+	int fd_value;
 };
 
 /**
@@ -30,6 +33,7 @@ struct _peripheral_gpio_s {
  */
 struct _peripheral_i2c_s {
 	uint handle;
+	int fd;
 };
 
 /**
@@ -37,6 +41,10 @@ struct _peripheral_i2c_s {
  */
 struct _peripheral_pwm_s {
 	uint handle;
+	int fd_period;
+	int fd_duty_cycle;
+	int fd_polarity;
+	int fd_enable;
 };
 
 /**
@@ -44,6 +52,7 @@ struct _peripheral_pwm_s {
  */
 struct _peripheral_uart_s {
 	uint handle;
+	int fd;
 };
 
 /**
@@ -51,6 +60,7 @@ struct _peripheral_uart_s {
  */
 struct _peripheral_spi_s {
 	uint handle;
+	int fd;
 };
 
 #endif /* __PERIPHERAL_INTERNAL_H__ */
