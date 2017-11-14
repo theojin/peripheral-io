@@ -22,13 +22,13 @@
 #include <fcntl.h>
 #include <poll.h>
 
-#include "gpio.h"
+#include "peripheral_interface_gpio.h"
 #include "peripheral_common.h"
 #include "peripheral_internal.h"
 
 #define MAX_ERR_LEN 255
 
-int gpio_set_direction(peripheral_gpio_h gpio, gpio_direction_e dir)
+int peripheral_interface_gpio_set_direction(peripheral_gpio_h gpio, gpio_direction_e dir)
 {
 	int status;
 
@@ -51,7 +51,7 @@ int gpio_set_direction(peripheral_gpio_h gpio, gpio_direction_e dir)
 	return 0;
 }
 
-int gpio_set_edge_mode(peripheral_gpio_h gpio, gpio_edge_e edge)
+int peripheral_interface_gpio_set_edge_mode(peripheral_gpio_h gpio, gpio_edge_e edge)
 {
 	int status;
 
@@ -76,7 +76,7 @@ int gpio_set_edge_mode(peripheral_gpio_h gpio, gpio_edge_e edge)
 	return 0;
 }
 
-int gpio_write(peripheral_gpio_h gpio, int value)
+int peripheral_interface_gpio_write(peripheral_gpio_h gpio, int value)
 {
 	int status;
 
@@ -97,7 +97,7 @@ int gpio_write(peripheral_gpio_h gpio, int value)
 	return 0;
 }
 
-int gpio_read(peripheral_gpio_h gpio, int *value)
+int peripheral_interface_gpio_read(peripheral_gpio_h gpio, int *value)
 {
 	int len;
 	char gpio_buf[GPIO_BUFFER_MAX] = {0, };
@@ -120,7 +120,7 @@ int gpio_read(peripheral_gpio_h gpio, int *value)
 	return 0;
 }
 
-int gpio_close(peripheral_gpio_h gpio)
+int peripheral_interface_gpio_close(peripheral_gpio_h gpio)
 {
 	int status;
 
@@ -145,33 +145,16 @@ int gpio_close(peripheral_gpio_h gpio)
 	return 0;
 }
 
-int gpio_open_isr(peripheral_gpio_h gpio)
+int peripheral_interface_gpio_open_isr(peripheral_gpio_h gpio)
 {
-	// int fd;
-	// char gpio_dev[GPIO_BUFFER_MAX] = {0, };
-
-	// snprintf(gpio_dev, sizeof(gpio_dev)-1, SYSFS_GPIO_DIR"/gpio%d/value", gpiopin);
-
-	// _D("open isr string [%s]", gpio_dev);
-
-	// fd = open(gpio_dev, O_RDONLY);
-	// if (fd < 0) {
-	// 	char errmsg[MAX_ERR_LEN];
-	// 	strerror_r(errno, errmsg, MAX_ERR_LEN);
-	// 	_E("Can't Open /sys/class/gpio/gpio%d pin value: %s\n", gpiopin, errmsg);
-	// 	return -ENXIO;
-	// }
-
-	// return fd;
+	// TODO: set interrupted callback function
 
 	return 0;
 }
 
-int gpio_close_isr(peripheral_gpio_h gpio)
+int peripheral_interface_gpio_close_isr(peripheral_gpio_h gpio)
 {
-// 	if (fd <= 0) return -EINVAL;
-
-// 	close(fd);
+	// TODO: unset interrupted callback function
 
 	return 0;
 }

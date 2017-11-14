@@ -24,7 +24,7 @@
 #include <stdbool.h>
 #include <sys/ioctl.h>
 
-#include "uart.h"
+#include "peripheral_interface_uart.h"
 #include "peripheral_common.h"
 #include "peripheral_internal.h"
 
@@ -53,7 +53,7 @@ static const int peripheral_uart_br[UART_BAUDRATE_SIZE] = {
 
 static const int byteinfo[4] = {CS5, CS6, CS7, CS8};
 
-int uart_close(peripheral_uart_h uart)
+int peripheral_interface_uart_close(peripheral_uart_h uart)
 {
 	int status;
 
@@ -64,7 +64,7 @@ int uart_close(peripheral_uart_h uart)
 		return -EINVAL;
 	}
 
-	status = uart_flush(uart);
+	status = peripheral_interface_uart_flush(uart);
 	if (status < 0) {
 		char errmsg[MAX_ERR_LEN];
 		strerror_r(errno, errmsg, MAX_ERR_LEN);
@@ -83,7 +83,7 @@ int uart_close(peripheral_uart_h uart)
 	return 0;
 }
 
-int uart_flush(peripheral_uart_h uart)
+int peripheral_interface_uart_flush(peripheral_uart_h uart)
 {
 	int ret;
 
@@ -103,7 +103,7 @@ int uart_flush(peripheral_uart_h uart)
 	return 0;
 }
 
-int uart_set_baud_rate(peripheral_uart_h uart, uart_baud_rate_e baud)
+int peripheral_interface_uart_set_baud_rate(peripheral_uart_h uart, uart_baud_rate_e baud)
 {
 	int ret;
 	struct termios tio;
@@ -135,7 +135,7 @@ int uart_set_baud_rate(peripheral_uart_h uart, uart_baud_rate_e baud)
 	tio.c_cc[VMIN] = 1;
 	tio.c_cc[VTIME] = 0;
 
-	uart_flush(uart);
+	peripheral_interface_uart_flush(uart);
 	ret = tcsetattr(uart->fd, TCSANOW, &tio);
 	if (ret) {
 		char errmsg[MAX_ERR_LEN];
@@ -147,7 +147,7 @@ int uart_set_baud_rate(peripheral_uart_h uart, uart_baud_rate_e baud)
 	return 0;
 }
 
-int uart_set_mode(peripheral_uart_h uart, uart_byte_size_e byte_size, uart_parity_e parity, uart_stop_bits_e stop_bits)
+int peripheral_interface_uart_set_mode(peripheral_uart_h uart, uart_byte_size_e byte_size, uart_parity_e parity, uart_stop_bits_e stop_bits)
 {
 	int ret;
 	struct termios tio;
@@ -207,7 +207,7 @@ int uart_set_mode(peripheral_uart_h uart, uart_byte_size_e byte_size, uart_parit
 		return -EINVAL;
 	}
 
-	uart_flush(uart);
+	peripheral_interface_uart_flush(uart);
 	ret = tcsetattr(uart->fd, TCSANOW, &tio);
 	if (ret) {
 		char errmsg[MAX_ERR_LEN];
@@ -219,7 +219,7 @@ int uart_set_mode(peripheral_uart_h uart, uart_byte_size_e byte_size, uart_parit
 	return 0;
 }
 
-int uart_set_byte_size(peripheral_uart_h uart, uart_byte_size_e byte_size)
+int peripheral_interface_uart_set_byte_size(peripheral_uart_h uart, uart_byte_size_e byte_size)
 {
 	int ret;
 	struct termios tio;
@@ -249,7 +249,7 @@ int uart_set_byte_size(peripheral_uart_h uart, uart_byte_size_e byte_size)
 	tio.c_cflag |= byteinfo[byte_size];
 	tio.c_cflag |= (CLOCAL | CREAD);
 
-	uart_flush(uart);
+	peripheral_interface_uart_flush(uart);
 	ret = tcsetattr(uart->fd, TCSANOW, &tio);
 	if (ret) {
 		char errmsg[MAX_ERR_LEN];
@@ -261,7 +261,7 @@ int uart_set_byte_size(peripheral_uart_h uart, uart_byte_size_e byte_size)
 	return 0;
 }
 
-int uart_set_parity(peripheral_uart_h uart, uart_parity_e parity)
+int peripheral_interface_uart_set_parity(peripheral_uart_h uart, uart_parity_e parity)
 {
 	int ret;
 	struct termios tio;
@@ -298,7 +298,7 @@ int uart_set_parity(peripheral_uart_h uart, uart_parity_e parity)
 		break;
 	}
 
-	uart_flush(uart);
+	peripheral_interface_uart_flush(uart);
 	ret = tcsetattr(uart->fd, TCSANOW, &tio);
 	if (ret) {
 		char errmsg[MAX_ERR_LEN];
@@ -310,7 +310,7 @@ int uart_set_parity(peripheral_uart_h uart, uart_parity_e parity)
 	return 0;
 }
 
-int uart_set_stop_bits(peripheral_uart_h uart, uart_stop_bits_e stop_bits)
+int peripheral_interface_uart_set_stop_bits(peripheral_uart_h uart, uart_stop_bits_e stop_bits)
 {
 	int ret;
 	struct termios tio;
@@ -343,7 +343,7 @@ int uart_set_stop_bits(peripheral_uart_h uart, uart_stop_bits_e stop_bits)
 		return -EINVAL;
 	}
 
-	uart_flush(uart);
+	peripheral_interface_uart_flush(uart);
 	ret = tcsetattr(uart->fd, TCSANOW, &tio);
 	if (ret) {
 		char errmsg[MAX_ERR_LEN];
@@ -355,7 +355,7 @@ int uart_set_stop_bits(peripheral_uart_h uart, uart_stop_bits_e stop_bits)
 	return 0;
 }
 
-int uart_set_flow_control(peripheral_uart_h uart, bool xonxoff, bool rtscts)
+int peripheral_interface_uart_set_flow_control(peripheral_uart_h uart, bool xonxoff, bool rtscts)
 {
 	int ret;
 	struct termios tio;
@@ -398,7 +398,7 @@ int uart_set_flow_control(peripheral_uart_h uart, bool xonxoff, bool rtscts)
 	return 0;
 }
 
-int uart_read(peripheral_uart_h uart, uint8_t *buf, unsigned int length)
+int peripheral_interface_uart_read(peripheral_uart_h uart, uint8_t *buf, unsigned int length)
 {
 	int ret;
 
@@ -420,7 +420,7 @@ int uart_read(peripheral_uart_h uart, uint8_t *buf, unsigned int length)
 	return ret;
 }
 
-int uart_write(peripheral_uart_h uart, uint8_t *buf, unsigned int length)
+int peripheral_interface_uart_write(peripheral_uart_h uart, uint8_t *buf, unsigned int length)
 {
 	int ret;
 

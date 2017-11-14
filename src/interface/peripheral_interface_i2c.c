@@ -22,13 +22,13 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 
-#include "i2c.h"
+#include "peripheral_interface_i2c.h"
 #include "peripheral_common.h"
 #include "peripheral_internal.h"
 
 #define MAX_ERR_LEN 255
 
-int i2c_close(peripheral_i2c_h i2c)
+int peripheral_interface_i2c_close(peripheral_i2c_h i2c)
 {
 	int status;
 
@@ -46,7 +46,7 @@ int i2c_close(peripheral_i2c_h i2c)
 	return 0;
 }
 
-int i2c_set_address(peripheral_i2c_h i2c, int address)
+int peripheral_interface_i2c_set_address(peripheral_i2c_h i2c, int address)
 {
 	int status;
 
@@ -64,7 +64,7 @@ int i2c_set_address(peripheral_i2c_h i2c, int address)
 	return 0;
 }
 
-int i2c_read(peripheral_i2c_h i2c, unsigned char *data, int length)
+int peripheral_interface_i2c_read(peripheral_i2c_h i2c, unsigned char *data, int length)
 {
 	int status;
 
@@ -81,7 +81,7 @@ int i2c_read(peripheral_i2c_h i2c, unsigned char *data, int length)
 	return 0;
 }
 
-int i2c_write(peripheral_i2c_h i2c, const unsigned char *data, int length)
+int peripheral_interface_i2c_write(peripheral_i2c_h i2c, const unsigned char *data, int length)
 {
 	int status;
 
@@ -98,7 +98,7 @@ int i2c_write(peripheral_i2c_h i2c, const unsigned char *data, int length)
 	return 0;
 }
 
-int i2c_smbus_ioctl(peripheral_i2c_h i2c, struct i2c_smbus_ioctl_data *data)
+int peripheral_interface_i2c_smbus_ioctl(peripheral_i2c_h i2c, struct i2c_smbus_ioctl_data *data)
 {
 	int status;
 

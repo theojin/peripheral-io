@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef __GPIO_H__
-#define __GPIO_H__
+#ifndef __PERIPHERAL_INTERFACE_GPIO_H__
+#define __PERIPHERAL_INTERFACE_GPIO_H__
 
 #include "peripheral_io.h"
 
@@ -35,12 +35,13 @@ typedef enum {
 	GPIO_EDGE_BOTH = 3,
 } gpio_edge_e;
 
-int gpio_close(peripheral_gpio_h gpio);
-int gpio_set_edge_mode(peripheral_gpio_h gpio, gpio_edge_e edge);
-int gpio_set_direction(peripheral_gpio_h gpio, gpio_direction_e dir);
-int gpio_write(peripheral_gpio_h gpio, int value);
-int gpio_read(peripheral_gpio_h gpio, int *value);
+int peripheral_interface_gpio_close(peripheral_gpio_h gpio);
+int peripheral_interface_gpio_set_edge_mode(peripheral_gpio_h gpio, gpio_edge_e edge);
+int peripheral_interface_gpio_set_direction(peripheral_gpio_h gpio, gpio_direction_e dir);
+int peripheral_interface_gpio_write(peripheral_gpio_h gpio, int value);
+int peripheral_interface_gpio_read(peripheral_gpio_h gpio, int *value);
 
-int gpio_open_isr(peripheral_gpio_h gpio);
-int gpio_close_isr(peripheral_gpio_h gpio);
-#endif/*__GPIO_H__*/
+int peripheral_interface_gpio_open_isr(peripheral_gpio_h gpio);
+int peripheral_interface_gpio_close_isr(peripheral_gpio_h gpio);
+
+#endif/*__PERIPHERAL_INTERFACE_GPIO_H__*/

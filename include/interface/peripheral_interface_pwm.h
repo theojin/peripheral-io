@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef __PWM_H__
-#define __PWM_H__
+#ifndef __PERIPHERAL_INTERFACE_PWM_H__
+#define __PERIPHERAL_INTERFACE_PWM_H__
 
 #include "peripheral_io.h"
 
@@ -35,7 +35,7 @@ typedef enum {
 * @param[in] pin pwm pin number
 * @return On success, 0 is returned. On failure, a negative value is returned.
 */
-int pwm_close(peripheral_pwm_h pwm);
+int peripheral_interface_pwm_close(peripheral_pwm_h pwm);
 
 /**
 * @brief pwm_set_period() sets the pwm period.
@@ -45,7 +45,7 @@ int pwm_close(peripheral_pwm_h pwm);
 * @param[in] period pwm period
 * @return On success, 0 is returned. On failure, a negative value is returned.
 */
-int pwm_set_period(peripheral_pwm_h pwm, int period);
+int peripheral_interface_pwm_set_period(peripheral_pwm_h pwm, int period);
 
 /**
 * @brief pwm_set_duty_cycle() sets the pwm duty cycle.
@@ -55,7 +55,7 @@ int pwm_set_period(peripheral_pwm_h pwm, int period);
 * @param[in] duty_cycle pwm duty cycle
 * @return On success, 0 is returned. On failure, a negative value is returned.
 */
-int pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle);
+int peripheral_interface_pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle);
 
 /**
 * @brief pwm_set_polarity() sets the pwm polarity.
@@ -65,7 +65,7 @@ int pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle);
 * @param[in] polarity pwm polarity
 * @return On success, 0 is returned. On failure, a negative value is returned.
 */
-int pwm_set_polarity(peripheral_pwm_h pwm, pwm_polarity_e polarity);
+int peripheral_interface_pwm_set_polarity(peripheral_pwm_h pwm, pwm_polarity_e polarity);
 
 /**
 * @brief pwm_set_enable() sets the pwm state.
@@ -75,6 +75,6 @@ int pwm_set_polarity(peripheral_pwm_h pwm, pwm_polarity_e polarity);
 * @param[in] enable pwm enable/disabled state value
 * @return On success, 0 is returned. On failure, a negative value is returned.
 */
-int pwm_set_enable(peripheral_pwm_h pwm, bool enable);
+int peripheral_interface_pwm_set_enable(peripheral_pwm_h pwm, bool enable);
 
-#endif /* __PWM_H__ */
+#endif /* __PERIPHERAL_INTERFACE_PWM_H__ */

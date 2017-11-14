@@ -23,7 +23,7 @@
 #include <sys/ioctl.h>
 #include <linux/spi/spidev.h>
 
-#include "spi.h"
+#include "peripheral_interface_spi.h"
 #include "peripheral_common.h"
 #include "peripheral_internal.h"
 
@@ -32,7 +32,7 @@
 #define SPI_BUFFER_MAX 64
 #define MAX_ERR_LEN 255
 
-int spi_close(peripheral_spi_h spi)
+int peripheral_interface_spi_close(peripheral_spi_h spi)
 {
 	int status;
 
@@ -50,7 +50,7 @@ int spi_close(peripheral_spi_h spi)
 	return 0;
 }
 
-int spi_set_mode(peripheral_spi_h spi, unsigned char mode)
+int peripheral_interface_spi_set_mode(peripheral_spi_h spi, unsigned char mode)
 {
 	int status;
 
@@ -68,7 +68,7 @@ int spi_set_mode(peripheral_spi_h spi, unsigned char mode)
 	return 0;
 }
 
-int spi_set_bit_order(peripheral_spi_h spi, unsigned char lsb)
+int peripheral_interface_spi_set_bit_order(peripheral_spi_h spi, unsigned char lsb)
 {
 	int status;
 
@@ -86,7 +86,7 @@ int spi_set_bit_order(peripheral_spi_h spi, unsigned char lsb)
 	return 0;
 }
 
-int spi_set_bits_per_word(peripheral_spi_h spi, unsigned char bits)
+int peripheral_interface_spi_set_bits_per_word(peripheral_spi_h spi, unsigned char bits)
 {
 	int status;
 
@@ -104,7 +104,7 @@ int spi_set_bits_per_word(peripheral_spi_h spi, unsigned char bits)
 	return 0;
 }
 
-int spi_set_frequency(peripheral_spi_h spi, unsigned int freq)
+int peripheral_interface_spi_set_frequency(peripheral_spi_h spi, unsigned int freq)
 {
 	int status;
 
@@ -122,7 +122,7 @@ int spi_set_frequency(peripheral_spi_h spi, unsigned int freq)
 	return 0;
 }
 
-int spi_read(peripheral_spi_h spi, unsigned char *rxbuf, int length)
+int peripheral_interface_spi_read(peripheral_spi_h spi, unsigned char *rxbuf, int length)
 {
 	int status;
 	struct spi_ioc_transfer xfer;
@@ -144,7 +144,7 @@ int spi_read(peripheral_spi_h spi, unsigned char *rxbuf, int length)
 	return 0;
 }
 
-int spi_write(peripheral_spi_h spi, unsigned char *txbuf, int length)
+int peripheral_interface_spi_write(peripheral_spi_h spi, unsigned char *txbuf, int length)
 {
 	int status;
 	struct spi_ioc_transfer xfer;
@@ -166,7 +166,7 @@ int spi_write(peripheral_spi_h spi, unsigned char *txbuf, int length)
 	return 0;
 }
 
-int spi_transfer(peripheral_spi_h spi, unsigned char *txbuf, unsigned char *rxbuf, int length)
+int peripheral_interface_spi_transfer(peripheral_spi_h spi, unsigned char *txbuf, unsigned char *rxbuf, int length)
 {
 	int status;
 	struct spi_ioc_transfer xfer;

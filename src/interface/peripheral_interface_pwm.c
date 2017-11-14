@@ -22,7 +22,7 @@
 #include <unistd.h>
 #include <stdbool.h>
 
-#include "pwm.h"
+#include "peripheral_interface_pwm.h"
 #include "peripheral_common.h"
 #include "peripheral_internal.h"
 
@@ -32,7 +32,7 @@
 #define PWM_BUF_MAX	16
 #define MAX_ERR_LEN	255
 
-int pwm_close(peripheral_pwm_h pwm)
+int peripheral_interface_pwm_close(peripheral_pwm_h pwm)
 {
 	int status;
 
@@ -63,7 +63,7 @@ int pwm_close(peripheral_pwm_h pwm)
 	return 0;
 }
 
-int pwm_set_period(peripheral_pwm_h pwm, int period)
+int peripheral_interface_pwm_set_period(peripheral_pwm_h pwm, int period)
 {
 	int len, status;
 	char pwm_buf[PWM_BUF_MAX] = {0};
@@ -78,7 +78,7 @@ int pwm_set_period(peripheral_pwm_h pwm, int period)
 	return 0;
 }
 
-int pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle)
+int peripheral_interface_pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle)
 {
 	int len, status;
 	char pwm_buf[PWM_BUF_MAX] = {0};
@@ -93,7 +93,7 @@ int pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle)
 	return 0;
 }
 
-int pwm_set_polarity(peripheral_pwm_h pwm, pwm_polarity_e polarity)
+int peripheral_interface_pwm_set_polarity(peripheral_pwm_h pwm, pwm_polarity_e polarity)
 {
 	int status;
 
@@ -114,7 +114,7 @@ int pwm_set_polarity(peripheral_pwm_h pwm, pwm_polarity_e polarity)
 	return 0;
 }
 
-int pwm_set_enable(peripheral_pwm_h pwm, bool enable)
+int peripheral_interface_pwm_set_enable(peripheral_pwm_h pwm, bool enable)
 {
 	int len, status;
 	char pwm_buf[PWM_BUF_MAX] = {0};

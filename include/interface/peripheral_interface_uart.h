@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef __UART_H__
-#define __UART_H__
+#ifndef __PERIPHERAL_INTERFACE_UART_H__
+#define __PERIPHERAL_INTERFACE_UART_H__
 
 #include "peripheral_io.h"
 
@@ -79,7 +79,7 @@ typedef enum {
 * @param[in] file_hndl handle of uart_context
 * @return On success, 0 is returned. On failure, a negative value is returned.
 */
-int uart_close(peripheral_uart_h uart);
+int peripheral_interface_uart_close(peripheral_uart_h uart);
 
 /**
 * @brief uart_flush() flushes uart buffer.
@@ -87,7 +87,7 @@ int uart_close(peripheral_uart_h uart);
 * @param[in] file_hndl handle of uart_context
 * @return On success, 0 is returned. On failure, a negative value is returned.
 */
-int uart_flush(peripheral_uart_h uart);
+int peripheral_interface_uart_flush(peripheral_uart_h uart);
 
 /**
 * @brief uart_set_baudrate() sets uart baud rate.
@@ -96,7 +96,7 @@ int uart_flush(peripheral_uart_h uart);
 * @param[in] baud uart baud rate
 * @return On success, 0 is returned. On failure, a negative value is returned.
 */
-int uart_set_baud_rate(peripheral_uart_h uart, uart_baud_rate_e baud);
+int peripheral_interface_uart_set_baud_rate(peripheral_uart_h uart, uart_baud_rate_e baud);
 
 /**
 * @brief uart_set_mode() sets byte size, parity bit and stop bits.
@@ -107,7 +107,7 @@ int uart_set_baud_rate(peripheral_uart_h uart, uart_baud_rate_e baud);
 * @param[in] stop_bits uart stop bits
 * @return On success, 0 is returned. On failure, a negative value is returned.
 */
-int uart_set_mode(peripheral_uart_h uart, uart_byte_size_e byte_size, uart_parity_e parity, uart_stop_bits_e stop_bits);
+int peripheral_interface_uart_set_mode(peripheral_uart_h uart, uart_byte_size_e byte_size, uart_parity_e parity, uart_stop_bits_e stop_bits);
 
 /**
 * @brief peripheral_bus_uart_set_byte_size() set byte size.
@@ -116,7 +116,7 @@ int uart_set_mode(peripheral_uart_h uart, uart_byte_size_e byte_size, uart_parit
 * @param[in] byte_size uart byte size
 * @return On success, 0 is returned. On failure, a negative value is returned.
 */
-int uart_set_byte_size(peripheral_uart_h uart, uart_byte_size_e byte_size);
+int peripheral_interface_uart_set_byte_size(peripheral_uart_h uart, uart_byte_size_e byte_size);
 
 /**
 * @brief peripheral_bus_uart_set_parity() set parity bit.
@@ -125,7 +125,7 @@ int uart_set_byte_size(peripheral_uart_h uart, uart_byte_size_e byte_size);
 * @param[in] parity uart parity type (even/odd/none)
 * @return On success, 0 is returned. On failure, a negative value is returned.
 */
-int uart_set_parity(peripheral_uart_h uart, uart_parity_e parity);
+int peripheral_interface_uart_set_parity(peripheral_uart_h uart, uart_parity_e parity);
 
 /**
 * @brief peripheral_bus_uart_set_stop_bits() set stop bits.
@@ -134,7 +134,7 @@ int uart_set_parity(peripheral_uart_h uart, uart_parity_e parity);
 * @param[in] stop_bits uart stop bits
 * @return On success, 0 is returned. On failure, a negative value is returned.
 */
-int uart_set_stop_bits(peripheral_uart_h uart, uart_stop_bits_e stop_bits);
+int peripheral_interface_uart_set_stop_bits(peripheral_uart_h uart, uart_stop_bits_e stop_bits);
 
 /**
 * @brief uart_set_flow_control() set flow control settings.
@@ -144,7 +144,7 @@ int uart_set_stop_bits(peripheral_uart_h uart, uart_stop_bits_e stop_bits);
 * @param[in] rtscts rts/cts
 * @return On success, 0 is returned. On failure, a negative value is returned.
 */
-int uart_set_flow_control(peripheral_uart_h uart, bool xonxoff, bool rtscts);
+int peripheral_interface_uart_set_flow_control(peripheral_uart_h uart, bool xonxoff, bool rtscts);
 
 /**
 * @brief uart_read() reads data over uart bus.
@@ -154,7 +154,7 @@ int uart_set_flow_control(peripheral_uart_h uart, bool xonxoff, bool rtscts);
 * @param[in] length size to read
 * @return On success, 0 is returned. On failure, a negative value is returned.
 */
-int uart_read(peripheral_uart_h uart, uint8_t *buf, unsigned int length);
+int peripheral_interface_uart_read(peripheral_uart_h uart, uint8_t *buf, unsigned int length);
 
 /**
 * @brief uart_write() writes data over uart bus.
@@ -164,7 +164,7 @@ int uart_read(peripheral_uart_h uart, uint8_t *buf, unsigned int length);
 * @param[in] length size to write
 * @return On success, 0 is returned. On failure, a negative value is returned.
 */
-int uart_write(peripheral_uart_h uart, uint8_t *buf, unsigned int length);
+int peripheral_interface_uart_write(peripheral_uart_h uart, uint8_t *buf, unsigned int length);
 
-#endif /* __UART_H__ */
+#endif /* __PERIPHERAL_INTERFACE_UART_H__ */
 
