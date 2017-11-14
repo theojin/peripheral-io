@@ -28,18 +28,7 @@
 #define GPIO_FD_INDEX_EDGE      1
 #define GPIO_FD_INDEX_VALUE     2
 
-extern int peripheral_gpio_interrupted_cb_handler(int pin, int value, unsigned long long timestamp, int err);
-
 static PeripheralIoGdbusGpio *gpio_proxy = NULL;
-
-static void __peripheral_gpio_interrupted_cb(PeripheralIoGdbusGpio *gpio, gint pin, gint value, guint64 timestamp, gpointer user_data)
-{
-	int err = PERIPHERAL_ERROR_NONE;
-	if (!gpio)
-		err = PERIPHERAL_ERROR_IO_ERROR;
-
-	peripheral_gpio_interrupted_cb_handler(pin, value, timestamp, err);
-}
 
 void gpio_proxy_init(void)
 {
@@ -62,11 +51,6 @@ void gpio_proxy_init(void)
 		g_error_free(error);
 		return;
 	}
-
-	g_signal_connect(gpio_proxy,
-			"interrupted-cb",
-			G_CALLBACK(__peripheral_gpio_interrupted_cb),
-			NULL);
 }
 
 void gpio_proxy_deinit()
@@ -136,136 +120,6 @@ int peripheral_gdbus_gpio_close(peripheral_gpio_h gpio)
 	if (peripheral_io_gdbus_gpio_call_close_sync(
 			gpio_proxy,
 			gpio->handle,
-			&ret,
-			NULL,
-			&error) == FALSE) {
-		_E("Error in %s() : %s", __func__, error->message);
-		g_error_free(error);
-		return PERIPHERAL_ERROR_UNKNOWN;
-	}
-
-	return ret;
-}
-
-int peripheral_gdbus_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_direction_e direction)
-{
-	GError *error = NULL;
-	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
-
-	if (gpio_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
-
-	if (peripheral_io_gdbus_gpio_call_set_direction_sync(
-			gpio_proxy,
-			gpio->handle,
-			direction,
-			&ret,
-			NULL,
-			&error) == FALSE) {
-		_E("Error in %s() : %s", __func__, error->message);
-		g_error_free(error);
-		return PERIPHERAL_ERROR_UNKNOWN;
-	}
-
-	return ret;
-}
-
-int peripheral_gdbus_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e edge)
-{
-	GError *error = NULL;
-	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
-
-	if (gpio_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
-
-	if (peripheral_io_gdbus_gpio_call_set_edge_mode_sync(
-			gpio_proxy,
-			gpio->handle,
-			edge,
-			&ret,
-			NULL,
-			&error) == FALSE) {
-		_E("Error in %s() : %s", __func__, error->message);
-		g_error_free(error);
-		return PERIPHERAL_ERROR_UNKNOWN;
-	}
-
-	return ret;
-}
-
-int peripheral_gdbus_gpio_set_interrupted_cb(peripheral_gpio_h gpio, peripheral_gpio_interrupted_cb callback, void *user_data)
-{
-	GError *error = NULL;
-	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
-
-	if (gpio_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
-
-	if (peripheral_io_gdbus_gpio_call_set_interrupted_cb_sync(
-			gpio_proxy,
-			gpio->handle,
-			&ret,
-			NULL,
-			&error) == FALSE) {
-		_E("Error in %s() : %s", __func__, error->message);
-		g_error_free(error);
-		return PERIPHERAL_ERROR_UNKNOWN;
-	}
-
-	return ret;
-}
-
-int peripheral_gdbus_gpio_unset_interrupted_cb(peripheral_gpio_h gpio)
-{
-	GError *error = NULL;
-	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
-
-	if (gpio_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
-
-	if (peripheral_io_gdbus_gpio_call_unset_interrupted_cb_sync(
-			gpio_proxy,
-			gpio->handle,
-			&ret,
-			NULL,
-			&error) == FALSE) {
-		_E("Error in %s() : %s", __func__, error->message);
-		g_error_free(error);
-		return PERIPHERAL_ERROR_UNKNOWN;
-	}
-
-	return ret;
-}
-
-int peripheral_gdbus_gpio_read(peripheral_gpio_h gpio, int *value)
-{
-	GError *error = NULL;
-	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
-
-	if (gpio_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
-
-	if (peripheral_io_gdbus_gpio_call_read_sync(
-			gpio_proxy,
-			gpio->handle,
-			value,
-			&ret,
-			NULL,
-			&error) == FALSE) {
-		_E("Error in %s() : %s", __func__, error->message);
-		g_error_free(error);
-		return PERIPHERAL_ERROR_UNKNOWN;
-	}
-
-	return ret;
-}
-
-int peripheral_gdbus_gpio_write(peripheral_gpio_h gpio, int value)
-{
-	GError *error = NULL;
-	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
-
-	if (gpio_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
-
-	if (peripheral_io_gdbus_gpio_call_write_sync(
-			gpio_proxy,
-			gpio->handle,
-			value,
 			&ret,
 			NULL,
 			&error) == FALSE) {

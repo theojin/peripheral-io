@@ -22,8 +22,5 @@ void i2c_proxy_deinit(void);
 
 int peripheral_gdbus_i2c_open(peripheral_i2c_h i2c, int bus, int address);
 int peripheral_gdbus_i2c_close(peripheral_i2c_h i2c);
-int peripheral_gdbus_i2c_read(peripheral_i2c_h i2c, uint8_t *data, int length);
-int peripheral_gdbus_i2c_write(peripheral_i2c_h i2c, uint8_t *data, int length);
-int peripheral_gdbus_i2c_smbus_ioctl(peripheral_i2c_h i2c, uint8_t read_write, uint8_t command, uint32_t size, uint16_t data_in, uint16_t *data_out);
 
 #endif /* __PERIPHERAL_GDBUS_I2C_H__ */

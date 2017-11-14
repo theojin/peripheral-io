@@ -48,87 +48,6 @@ static bool __is_feature_supported()
 	return (gpio_feature == GPIO_FEATURE_TRUE ? true : false);
 }
 
-typedef struct {
-	peripheral_gpio_h handle;
-	peripheral_gpio_interrupted_cb callback;
-	void *user_data;
-} interrupted_cb_info_s;
-
-static GList *interrupted_cb_info_list = NULL;
-
-int peripheral_gpio_interrupted_cb_handler(int pin, int value, unsigned long long timestamp, int error)
-{
-	GList *link;
-	interrupted_cb_info_s *cb_info;
-
-	link = interrupted_cb_info_list;
-	while (link) {
-		cb_info = (interrupted_cb_info_s*)link->data;
-		if (cb_info->handle->pin == pin) {
-			if (cb_info->callback)
-				cb_info->callback(cb_info->handle, error, cb_info->user_data);
-			return PERIPHERAL_ERROR_NONE;
-		}
-		link = g_list_next(link);
-	}
-
-	return PERIPHERAL_ERROR_NONE;
-}
-
-static int __interrupted_cb_info_list_append(peripheral_gpio_h gpio, peripheral_gpio_interrupted_cb callback, void *user_data)
-{
-	GList *link;
-	interrupted_cb_info_s *cb_info = NULL;
-
-	link = interrupted_cb_info_list;
-	while (link) {
-		interrupted_cb_info_s *tmp;
-		tmp = (interrupted_cb_info_s*)link->data;
-		if (tmp->handle == gpio) {
-			cb_info = tmp;
-			break;
-		}
-		link = g_list_next(link);
-	}
-
-	if (cb_info == NULL) {
-		cb_info = (interrupted_cb_info_s*)calloc(1, sizeof(interrupted_cb_info_s));
-		if (cb_info == NULL) {
-			_E("failed to allocate interrupted_cb_info_s");
-			return PERIPHERAL_ERROR_OUT_OF_MEMORY;
-		}
-
-		interrupted_cb_info_list = g_list_append(interrupted_cb_info_list, cb_info);
-	}
-
-	cb_info->handle = gpio;
-	cb_info->callback = callback;
-	cb_info->user_data = user_data;
-
-	return PERIPHERAL_ERROR_NONE;
-}
-
-static int __interrupted_cb_info_list_remove(peripheral_gpio_h gpio)
-{
-	GList *link;
-	interrupted_cb_info_s *cb_info;
-
-	link = interrupted_cb_info_list;
-	while (link) {
-		cb_info = (interrupted_cb_info_s*)link->data;
-
-		if (cb_info->handle == gpio) {
-			interrupted_cb_info_list = g_list_remove_link(interrupted_cb_info_list, link);
-			free(link->data);
-			g_list_free(link);
-			break;
-		}
-		link = g_list_next(link);
-	}
-
-	return PERIPHERAL_ERROR_NONE;
-}
-
 /**
  * @brief Initializes(export) gpio pin and creates gpio handle.
  */
@@ -200,9 +119,7 @@ int peripheral_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_direct
 	RETVM_IF((direction < PERIPHERAL_GPIO_DIRECTION_IN) || (direction > PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_LOW), PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid direction input");
 
 	/* call gpio_set_direction */
-	ret = peripheral_gdbus_gpio_set_direction(gpio, direction);
-	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("Failed to set gpio direction, ret : %d", ret);
+	// TODO : replace interface function
 
 	return ret;
 }
@@ -220,9 +137,7 @@ int peripheral_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e
 	RETVM_IF((edge < PERIPHERAL_GPIO_EDGE_NONE) || (edge > PERIPHERAL_GPIO_EDGE_BOTH), PERIPHERAL_ERROR_INVALID_PARAMETER, "edge input is invalid");
 
 	/* call gpio_set_edge_mode */
-	ret = peripheral_gdbus_gpio_set_edge_mode(gpio, edge);
-	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("Failed to set edge mode of the gpio pin, ret : %d", ret);
+	// TODO : replace interface function
 
 	return ret;
 }
@@ -238,16 +153,7 @@ int peripheral_gpio_set_interrupted_cb(peripheral_gpio_h gpio, peripheral_gpio_i
 	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
 	RETVM_IF(callback == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio interrupted callback is NULL");
 
-	ret = peripheral_gdbus_gpio_set_interrupted_cb(gpio, callback, user_data);
-	if (ret != PERIPHERAL_ERROR_NONE) {
-		_E("Failed to set gpio interrupted cb, ret : %d", ret);
-		return ret;
-	}
-
-	/* set isr */
-	ret = __interrupted_cb_info_list_append(gpio, callback, user_data);
-	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("Failed to append gpio interrupt callback info, ret : %d", ret);
+	// TODO : replace interface function
 
 	return ret;
 }
@@ -262,15 +168,7 @@ int peripheral_gpio_unset_interrupted_cb(peripheral_gpio_h gpio)
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "GPIO feature is not supported");
 	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
 
-	ret = peripheral_gdbus_gpio_unset_interrupted_cb(gpio);
-	if (ret != PERIPHERAL_ERROR_NONE) {
-		_E("Failed to unset gpio interrupt callback, ret : %d", ret);
-		return ret;
-	}
-
-	ret = __interrupted_cb_info_list_remove(gpio);
-	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("Failed to remove gpio interrupt callback info, ret : %d", ret);
+	// TODO : replace interface function
 
 	return ret;
 }
@@ -287,9 +185,7 @@ int peripheral_gpio_read(peripheral_gpio_h gpio, uint32_t *value)
 	RETVM_IF(value == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio read value is invalid");
 
 	/* call gpio_read */
-	ret = peripheral_gdbus_gpio_read(gpio, (int *)value);
-	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("Failed to read value of the gpio pin, ret : %d", ret);
+	// TODO : replace interface function
 
 	return ret;
 }
@@ -306,9 +202,7 @@ int peripheral_gpio_write(peripheral_gpio_h gpio, uint32_t value)
 	RETVM_IF((value != 0) && (value != 1), PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio value is invalid");
 
 	/* call gpio_write */
-	ret = peripheral_gdbus_gpio_write(gpio, (int)value);
-	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("Failed to write to the gpio pin, ret : %d", ret);
+	// TODO : replace interface function
 
 	return ret;
 }

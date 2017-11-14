@@ -90,7 +90,7 @@ int peripheral_i2c_open(int bus, int address, peripheral_i2c_h *i2c)
 
 int peripheral_i2c_close(peripheral_i2c_h i2c)
 {
-	int ret;
+	int ret = PERIPHERAL_ERROR_NONE;
 
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "I2C feature is not supported");
 	RETVM_IF(i2c == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "i2c handle is NULL");
@@ -108,96 +108,76 @@ int peripheral_i2c_close(peripheral_i2c_h i2c)
 
 int peripheral_i2c_read(peripheral_i2c_h i2c, uint8_t *data, uint32_t length)
 {
-	int ret;
+	int ret = PERIPHERAL_ERROR_NONE;
 
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "I2C feature is not supported");
 	RETVM_IF(i2c == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "i2c handle is NULL");
 	RETVM_IF(data == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
 
-	ret = peripheral_gdbus_i2c_read(i2c, data, (int)length);
-	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("Failed to read data from device, ret : %d", ret);
+	// TODO : replace interface function
 
 	return ret;
 }
 
 int peripheral_i2c_write(peripheral_i2c_h i2c, uint8_t *data, uint32_t length)
 {
-	int ret;
+	int ret = PERIPHERAL_ERROR_NONE;
 
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "I2C feature is not supported");
 	RETVM_IF(i2c == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "i2c handle is NULL");
 	RETVM_IF(data == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
 
-	ret = peripheral_gdbus_i2c_write(i2c, data, (int)length);
-	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("Failed to write data to device, ret : %d", ret);
+	// TODO : replace interface function
 
 	return ret;
 }
 
 int peripheral_i2c_read_register_byte(peripheral_i2c_h i2c, uint8_t reg, uint8_t *data)
 {
-	int ret;
-	uint16_t w_data, dummy = 0;
+	int ret = PERIPHERAL_ERROR_NONE;
 
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "I2C feature is not supported");
 	RETVM_IF(i2c == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "i2c handle is NULL");
 	RETVM_IF(data == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
 
-	ret = peripheral_gdbus_i2c_smbus_ioctl(i2c, I2C_SMBUS_READ, reg, I2C_SMBUS_BYTE_DATA, dummy, &w_data);
-	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("Smbus transaction failed, ret : %d", ret);
-
-	*data = (uint8_t)w_data;
+	// TODO : replace interface function
 
 	return ret;
 }
 
 int peripheral_i2c_write_register_byte(peripheral_i2c_h i2c, uint8_t reg, uint8_t data)
 {
-	int ret;
-	uint16_t dummy = 0;
+	int ret = PERIPHERAL_ERROR_NONE;
 
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "I2C feature is not supported");
 	RETVM_IF(i2c == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "i2c handle is NULL");
 
-	ret = peripheral_gdbus_i2c_smbus_ioctl(i2c, I2C_SMBUS_WRITE, reg, I2C_SMBUS_BYTE_DATA, (uint16_t)data, &dummy);
-	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("Smbus transaction failed, ret : %d", ret);
+	// TODO : replace interface function
 
 	return ret;
 }
 
 int peripheral_i2c_read_register_word(peripheral_i2c_h i2c, uint8_t reg, uint16_t *data)
 {
-	int ret;
-	uint16_t dummy = 0, data_out;
+	int ret = PERIPHERAL_ERROR_NONE;
 
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "I2C feature is not supported");
 	RETVM_IF(i2c == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "i2c handle is NULL");
 	RETVM_IF(data == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
 
-	ret = peripheral_gdbus_i2c_smbus_ioctl(i2c, I2C_SMBUS_READ, reg, I2C_SMBUS_WORD_DATA, dummy, &data_out);
-	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("Smbus transaction failed, ret : %d", ret);
-
-	*data = data_out;
+	// TODO : replace interface function
 
 	return ret;
 }
 
 int peripheral_i2c_write_register_word(peripheral_i2c_h i2c, uint8_t reg, uint16_t data)
 {
-	int ret;
-	uint16_t dummy = 0;
+	int ret = PERIPHERAL_ERROR_NONE;
 
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "I2C feature is not supported");
 	RETVM_IF(i2c == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "i2c handle is NULL");
 
-	ret = peripheral_gdbus_i2c_smbus_ioctl(i2c, I2C_SMBUS_WRITE, reg, I2C_SMBUS_WORD_DATA, data, &dummy);
-	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("Smbus transaction failed, ret : %d", ret);
+	// TODO : replace interface function
 
 	return ret;
 }

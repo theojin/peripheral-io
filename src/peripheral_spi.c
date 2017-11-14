@@ -99,104 +99,89 @@ int peripheral_spi_close(peripheral_spi_h spi)
 
 int peripheral_spi_set_mode(peripheral_spi_h spi, peripheral_spi_mode_e mode)
 {
-	int ret;
+	int ret = PERIPHERAL_ERROR_NONE;
 
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "SPI feature is not supported");
 	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
 	RETVM_IF((mode < PERIPHERAL_SPI_MODE_0) || (mode > PERIPHERAL_SPI_MODE_3), PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid spi mode parameter");
 
-	ret = peripheral_gdbus_spi_set_mode(spi, mode);
-	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("Failed to set mode, ret : %d", ret);
+	// TODO : replace interface function
 
 	return ret;
 }
 
 int peripheral_spi_set_bit_order(peripheral_spi_h spi, peripheral_spi_bit_order_e bit_order)
 {
-	int ret;
+	int ret = PERIPHERAL_ERROR_NONE;
 
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "SPI feature is not supported");
 	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
 	RETVM_IF((bit_order < PERIPHERAL_SPI_BIT_ORDER_MSB) || (bit_order > PERIPHERAL_SPI_BIT_ORDER_LSB), PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid bit order parameter");
 
-	bool lsb = (bit_order == PERIPHERAL_SPI_BIT_ORDER_LSB) ? true : false;
-	ret = peripheral_gdbus_spi_set_bit_order(spi, lsb);
-	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("Failed to set lsb first, ret : %d", ret);
+	// TODO : replace interface function
 
 	return ret;
 }
 
 int peripheral_spi_set_bits_per_word(peripheral_spi_h spi, uint8_t bits)
 {
-	int ret;
+	int ret = PERIPHERAL_ERROR_NONE;
 
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "SPI feature is not supported");
 	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
 
-	ret = peripheral_gdbus_spi_set_bits_per_word(spi, (unsigned char)bits);
-	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("Failed to set bits per word, ret : %d", ret);
+	// TODO : replace interface function
 
 	return ret;
 }
 
 int peripheral_spi_set_frequency(peripheral_spi_h spi, uint32_t freq_hz)
 {
-	int ret;
+	int ret = PERIPHERAL_ERROR_NONE;
 
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "SPI feature is not supported");
 	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
 
-	ret = peripheral_gdbus_spi_set_frequency(spi, (unsigned int)freq_hz);
-	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("Failed to set frequency, ret : %d", ret);
+	// TODO : replace interface function
 
 	return ret;
 }
 
 int peripheral_spi_read(peripheral_spi_h spi, uint8_t *data, uint32_t length)
 {
-	int ret;
+	int ret = PERIPHERAL_ERROR_NONE;
 
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "SPI feature is not supported");
 	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
 	RETVM_IF(data == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
 
-	ret = peripheral_gdbus_spi_read(spi, data, (int)length);
-	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("Failed to read from spi device, ret : %d", ret);
+	// TODO : replace interface function
 
 	return ret;
 }
 
 int peripheral_spi_write(peripheral_spi_h spi, uint8_t *data, uint32_t length)
 {
-	int ret;
+	int ret = PERIPHERAL_ERROR_NONE;
 
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "SPI feature is not supported");
 	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
 	RETVM_IF(data == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
 
-	ret = peripheral_gdbus_spi_write(spi, data, (int)length);
-	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("Failed to write to spi device, ret : %d", ret);
+	// TODO : replace interface function
 
 	return ret;
 }
 
 int peripheral_spi_transfer(peripheral_spi_h spi, uint8_t *txdata, uint8_t *rxdata, uint32_t length)
 {
-	int ret;
+	int ret = PERIPHERAL_ERROR_NONE;
 
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "SPI feature is not supported");
 	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
 	RETVM_IF(txdata == NULL || rxdata == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
 
-	ret = peripheral_gdbus_spi_transfer(spi, txdata, rxdata, (int)length);
-	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("Failed to read and write, ret : %d", ret);
+	// TODO : replace interface function
 
 	return ret;
 }

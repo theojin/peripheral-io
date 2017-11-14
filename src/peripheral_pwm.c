@@ -98,57 +98,49 @@ int peripheral_pwm_close(peripheral_pwm_h pwm)
 
 int peripheral_pwm_set_period(peripheral_pwm_h pwm, uint32_t period_ns)
 {
-	int ret;
+	int ret = PERIPHERAL_ERROR_NONE;
 
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "PWM feature is not supported");
 	RETVM_IF(pwm == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "pwm handle is NULL");
 
-	ret = peripheral_gdbus_pwm_set_period(pwm, (int)period_ns);
-	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("Failed to set period, ret : %d", ret);
+	// TODO : replace interface function
 
 	return ret;
 }
 
 int peripheral_pwm_set_duty_cycle(peripheral_pwm_h pwm, uint32_t duty_cycle_ns)
 {
-	int ret;
+	int ret = PERIPHERAL_ERROR_NONE;
 
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "PWM feature is not supported");
 	RETVM_IF(pwm == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "pwm handle is NULL");
 
-	ret = peripheral_gdbus_pwm_set_duty_cycle(pwm, (int)duty_cycle_ns);
-	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("Failed to set duty cycle, ret : %d", ret);
+	// TODO : replace interface function
 
 	return ret;
 }
 
 int peripheral_pwm_set_polarity(peripheral_pwm_h pwm, peripheral_pwm_polarity_e polarity)
 {
-	int ret;
+	int ret = PERIPHERAL_ERROR_NONE;
 
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "PWM feature is not supported");
 	RETVM_IF(pwm == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "pwm handle is NULL");
 	RETVM_IF((polarity < PERIPHERAL_PWM_POLARITY_ACTIVE_HIGH) || (polarity > PERIPHERAL_PWM_POLARITY_ACTIVE_LOW), PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid polarity parameter");
 
-	ret = peripheral_gdbus_pwm_set_polarity(pwm, polarity);
-	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("Failed to set polarity, ret : %d", ret);
+	// TODO : replace interface function
 
 	return ret;
 }
 
 int peripheral_pwm_set_enabled(peripheral_pwm_h pwm, bool enable)
 {
-	int ret;
+	int ret = PERIPHERAL_ERROR_NONE;
 
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "PWM feature is not supported");
 	RETVM_IF(pwm == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "pwm handle is NULL");
 
-	ret = peripheral_gdbus_pwm_set_enable(pwm, enable);
-	if (ret != PERIPHERAL_ERROR_NONE)
-		_E("Failed to set enable, ret : %d", ret);
+	// TODO : replace interface function
 
 	return ret;
 }

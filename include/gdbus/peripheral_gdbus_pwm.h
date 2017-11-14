@@ -22,9 +22,5 @@ void pwm_proxy_deinit(void);
 
 int peripheral_gdbus_pwm_open(peripheral_pwm_h pwm, int chip, int pin);
 int peripheral_gdbus_pwm_close(peripheral_pwm_h pwm);
-int peripheral_gdbus_pwm_set_period(peripheral_pwm_h pwm, int period);
-int peripheral_gdbus_pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle_ns);
-int peripheral_gdbus_pwm_set_polarity(peripheral_pwm_h pwm, peripheral_pwm_polarity_e polarity);
-int peripheral_gdbus_pwm_set_enable(peripheral_pwm_h pwm, bool enable);
 
 #endif /* __PERIPHERAL_GDBUS_PWM_H__ */
