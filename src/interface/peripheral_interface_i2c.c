@@ -46,24 +46,6 @@ int peripheral_interface_i2c_close(peripheral_i2c_h i2c)
 	return 0;
 }
 
-int peripheral_interface_i2c_set_address(peripheral_i2c_h i2c, int address)
-{
-	int status;
-
-	_D("fd : %d, slave address : 0x%x", i2c->fd, address);
-	RETVM_IF(i2c->fd < 0, -EINVAL, "Invalid fd");
-
-	status = ioctl(i2c->fd, I2C_SLAVE, address);
-	if (status < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Failed to set slave address(%x), fd : %d, errmsg : %s", address, i2c->fd, errmsg);
-		return status;
-	}
-
-	return 0;
-}
-
 int peripheral_interface_i2c_read(peripheral_i2c_h i2c, uint8_t *data, uint32_t length)
 {
 	int status;
