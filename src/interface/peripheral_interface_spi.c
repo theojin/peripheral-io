@@ -23,6 +23,7 @@
 #include <sys/ioctl.h>
 #include <linux/spi/spidev.h>
 
+#include "peripheral_interface_common.h"
 #include "peripheral_interface_spi.h"
 #include "peripheral_common.h"
 #include "peripheral_internal.h"
@@ -40,12 +41,7 @@ int peripheral_interface_spi_close(peripheral_spi_h spi)
 	RETVM_IF(spi->fd < 0, -EINVAL, "Invalid fd");
 
 	status = close(spi->fd);
-	if (status < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Failed to close fd : %d", spi->fd);
-		return -EIO;
-	}
+	CHECK_ERROR(status);
 
 	return 0;
 }
@@ -58,12 +54,7 @@ int peripheral_interface_spi_set_mode(peripheral_spi_h spi, peripheral_spi_mode_
 	RETVM_IF(spi->fd < 0, -EINVAL, "Invalid fd");
 
 	status = ioctl(spi->fd, SPI_IOC_WR_MODE, &mode);
-	if (status < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Failed to set mode(%d) : %s", mode, errmsg);
-		return -EIO;
-	}
+	CHECK_ERROR(status);
 
 	return 0;
 }
@@ -76,12 +67,7 @@ int peripheral_interface_spi_set_bit_order(peripheral_spi_h spi, peripheral_spi_
 	RETVM_IF(spi->fd < 0, -EINVAL, "Invalid fd");
 
 	status = ioctl(spi->fd, SPI_IOC_WR_LSB_FIRST, &bit_order);
-	if (status < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Failed to set lsb first(%d), fd : %d, errmsg : %s", bit_order, spi->fd, errmsg);
-		return -EIO;
-	}
+	CHECK_ERROR(status);
 
 	return 0;
 }
@@ -94,12 +80,7 @@ int peripheral_interface_spi_set_bits_per_word(peripheral_spi_h spi, uint8_t bit
 	RETVM_IF(spi->fd < 0, -EINVAL, "Invalid fd");
 
 	status = ioctl(spi->fd, SPI_IOC_WR_BITS_PER_WORD, &bits);
-	if (status < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Failed to set bits(%d), fd : %d, errmsg : %s", bits, spi->fd, errmsg);
-		return -EIO;
-	}
+	CHECK_ERROR(status);
 
 	return 0;
 }
@@ -112,12 +93,7 @@ int peripheral_interface_spi_set_frequency(peripheral_spi_h spi, uint32_t freq)
 	RETVM_IF(spi->fd < 0, -EINVAL, "Invalid fd");
 
 	status = ioctl(spi->fd, SPI_IOC_WR_MAX_SPEED_HZ, &freq);
-	if (status < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Failed to set frequency(%d), fd : %d, errmsg : %s", freq, spi->fd, errmsg);
-		return -EIO;
-	}
+	CHECK_ERROR(status);
 
 	return 0;
 }
@@ -134,12 +110,7 @@ int peripheral_interface_spi_read(peripheral_spi_h spi, uint8_t *rxbuf, uint32_t
 	xfer.len = length;
 
 	status = ioctl(spi->fd, SPI_IOC_MESSAGE(1), &xfer);
-	if (status < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Failed to read data, fd : %d, length : %d, errmsg : %s", spi->fd, length, errmsg);
-		return -EIO;
-	}
+	CHECK_ERROR(status);
 
 	return 0;
 }
@@ -156,12 +127,7 @@ int peripheral_interface_spi_write(peripheral_spi_h spi, uint8_t *txbuf, uint32_
 	xfer.len = length;
 
 	status = ioctl(spi->fd, SPI_IOC_MESSAGE(1), &xfer);
-	if (status < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Failed to write data(%d) : %s", length, errmsg);
-		return -EIO;
-	}
+	CHECK_ERROR(status);
 
 	return 0;
 }
@@ -181,12 +147,7 @@ int peripheral_interface_spi_transfer(peripheral_spi_h spi, uint8_t *txbuf, uint
 	xfer.len = length;
 
 	status = ioctl(spi->fd, SPI_IOC_MESSAGE(1), &xfer);
-	if (status < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Failed to exchange data(%d) : %s", length, errmsg);
-		return -EIO;
-	}
+	CHECK_ERROR(status);
 
 	return 0;
 }

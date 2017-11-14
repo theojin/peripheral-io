@@ -24,6 +24,7 @@
 #include <stdbool.h>
 #include <sys/ioctl.h>
 
+#include "peripheral_interface_common.h"
 #include "peripheral_interface_uart.h"
 #include "peripheral_common.h"
 #include "peripheral_internal.h"
@@ -65,20 +66,10 @@ int peripheral_interface_uart_close(peripheral_uart_h uart)
 	}
 
 	status = peripheral_interface_uart_flush(uart);
-	if (status < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Failed to close fd : %d, errmsg : %s", uart->fd, errmsg);
-		return -EIO;
-	}
+	CHECK_ERROR(status);
 
 	status = close(uart->fd);
-	if (status < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Failed to close fd : %d, errmsg : %s", uart->fd, errmsg);
-		return -EIO;
-	}
+	CHECK_ERROR(status);
 
 	return 0;
 }
@@ -93,12 +84,7 @@ int peripheral_interface_uart_flush(peripheral_uart_h uart)
 	}
 
 	ret = tcflush(uart->fd, TCIOFLUSH);
-	if (ret < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("tcflush failed, errmsg : %s", errmsg);
-		return -1;
-	}
+	CHECK_ERROR(ret);
 
 	return 0;
 }
@@ -122,12 +108,8 @@ int peripheral_interface_uart_set_baud_rate(peripheral_uart_h uart, peripheral_u
 	}
 
 	ret = tcgetattr(uart->fd, &tio);
-	if (ret) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("tcgetattr failed, errmsg : %s", errmsg);
-		return -1;
-	}
+	CHECK_ERROR(ret);
+
 	tio.c_cflag = peripheral_uart_br[baud];
 	tio.c_iflag = IGNPAR;
 	tio.c_oflag = 0;
@@ -137,12 +119,7 @@ int peripheral_interface_uart_set_baud_rate(peripheral_uart_h uart, peripheral_u
 
 	peripheral_interface_uart_flush(uart);
 	ret = tcsetattr(uart->fd, TCSANOW, &tio);
-	if (ret) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("tcsetattr failed, errmsg: %s", errmsg);
-		return -1;
-	}
+	CHECK_ERROR(ret);
 
 	return 0;
 }
@@ -165,12 +142,8 @@ int peripheral_interface_uart_set_byte_size(peripheral_uart_h uart, peripheral_u
 	}
 
 	ret = tcgetattr(uart->fd, &tio);
-	if (ret) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("tcgetattr failed, errmsg: %s", errmsg);
-		return -1;
-	}
+	CHECK_ERROR(ret);
+
 
 	/* set byte size */
 	tio.c_cflag &= ~CSIZE;
@@ -179,12 +152,7 @@ int peripheral_interface_uart_set_byte_size(peripheral_uart_h uart, peripheral_u
 
 	peripheral_interface_uart_flush(uart);
 	ret = tcsetattr(uart->fd, TCSANOW, &tio);
-	if (ret) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("tcsetattr failed, errmsg : %s", errmsg);
-		return -1;
-	}
+	CHECK_ERROR(ret);
 
 	return 0;
 }
@@ -202,12 +170,7 @@ int peripheral_interface_uart_set_parity(peripheral_uart_h uart, peripheral_uart
 	}
 
 	ret = tcgetattr(uart->fd, &tio);
-	if (ret) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("tcgetattr failed, errmsg: %s", errmsg);
-		return -1;
-	}
+	CHECK_ERROR(ret);
 
 	/* set parity info */
 	switch (parity) {
@@ -228,12 +191,7 @@ int peripheral_interface_uart_set_parity(peripheral_uart_h uart, peripheral_uart
 
 	peripheral_interface_uart_flush(uart);
 	ret = tcsetattr(uart->fd, TCSANOW, &tio);
-	if (ret) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("tcsetattr failed, errmsg : %s", errmsg);
-		return -1;
-	}
+	CHECK_ERROR(ret);
 
 	return 0;
 }
@@ -251,12 +209,7 @@ int peripheral_interface_uart_set_stop_bits(peripheral_uart_h uart, peripheral_u
 	}
 
 	ret = tcgetattr(uart->fd, &tio);
-	if (ret) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("tcgetattr failed, errmsg: %s", errmsg);
-		return -1;
-	}
+	CHECK_ERROR(ret);
 
 	/* set stop bit */
 	switch (stop_bits) {
@@ -273,12 +226,7 @@ int peripheral_interface_uart_set_stop_bits(peripheral_uart_h uart, peripheral_u
 
 	peripheral_interface_uart_flush(uart);
 	ret = tcsetattr(uart->fd, TCSANOW, &tio);
-	if (ret) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("tcsetattr failed, errmsg : %s", errmsg);
-		return -1;
-	}
+	CHECK_ERROR(ret);
 
 	return 0;
 }
@@ -296,12 +244,7 @@ int peripheral_interface_uart_set_flow_control(peripheral_uart_h uart, periphera
 	}
 
 	ret = tcgetattr(uart->fd, &tio);
-	if (ret) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("tcgetattr failed, errmsg : %s", errmsg);
-		return -1;
-	}
+	CHECK_ERROR(ret);
 
 	if (rtscts == PERIPHERAL_UART_HARDWARE_FLOW_CONTROL_AUTO_RTSCTS)
 		tio.c_cflag |= CRTSCTS;
@@ -318,12 +261,7 @@ int peripheral_interface_uart_set_flow_control(peripheral_uart_h uart, periphera
 		return -EINVAL;
 
 	ret = tcsetattr(uart->fd, TCSANOW, &tio);
-	if (ret) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("tcsetattr failed, errmsg : %s", errmsg);
-		return -1;
-	}
+	CHECK_ERROR(ret);
 
 	return 0;
 }
@@ -338,14 +276,7 @@ int peripheral_interface_uart_read(peripheral_uart_h uart, uint8_t *buf, uint32_
 	}
 
 	ret = read(uart->fd, (void *)buf, length);
-	if (ret <= 0) {
-		if (errno == EAGAIN)
-			return -EAGAIN;
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("read failed, errmsg : %s", errmsg);
-		return -EIO;
-	}
+	CHECK_ERROR(ret);
 
 	return ret;
 }
@@ -360,14 +291,7 @@ int peripheral_interface_uart_write(peripheral_uart_h uart, uint8_t *buf, uint32
 	}
 
 	ret = write(uart->fd, buf, length);
-	if (ret <= 0) {
-		if (errno == EAGAIN)
-			return -EAGAIN;
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("write failed, errmsg : %s", errmsg);
-		return -EIO;
-	}
+	CHECK_ERROR(ret);
 
 	return ret;
 }

@@ -22,6 +22,7 @@
 #include <unistd.h>
 #include <stdbool.h>
 
+#include "peripheral_interface_common.h"
 #include "peripheral_interface_pwm.h"
 #include "peripheral_common.h"
 #include "peripheral_internal.h"
@@ -37,28 +38,16 @@ int peripheral_interface_pwm_close(peripheral_pwm_h pwm)
 	int status;
 
 	status = close(pwm->fd_period);
-	if (status < 0) {
-		_E("Error: pwm period fd close error \n");
-		return -EIO;
-	}
+	CHECK_ERROR(status);
 
 	status = close(pwm->fd_duty_cycle);
-	if (status < 0) {
-		_E("Error: pwm duty cycle fd close error \n");
-		return -EIO;
-	}
+	CHECK_ERROR(status);
 
 	status = close(pwm->fd_polarity);
-	if (status < 0) {
-		_E("Error: pwm polarity fd close error \n");
-		return -EIO;
-	}
+	CHECK_ERROR(status);
 
 	status = close(pwm->fd_enable);
-	if (status < 0) {
-		_E("Error: pwm enable fd close error \n");
-		return -EIO;
-	}
+	CHECK_ERROR(status);
 
 	return 0;
 }
@@ -70,10 +59,7 @@ int peripheral_interface_pwm_set_period(peripheral_pwm_h pwm, uint32_t period)
 
 	len = snprintf(pwm_buf, sizeof(pwm_buf), "%d", period);
 	status = write(pwm->fd_period, pwm_buf, len);
-	if (status < 0) {
-		_E("Failed to set period");
-		return -EIO;
-	}
+	CHECK_ERROR(status);
 
 	return 0;
 }
@@ -85,10 +71,7 @@ int peripheral_interface_pwm_set_duty_cycle(peripheral_pwm_h pwm, uint32_t duty_
 
 	len = snprintf(pwm_buf, sizeof(pwm_buf), "%d", duty_cycle);
 	status = write(pwm->fd_duty_cycle, pwm_buf, len);
-	if (status < 0) {
-		_E("Failed to set duty cycle");
-		return -EIO;
-	}
+	CHECK_ERROR(status);
 
 	return 0;
 }
@@ -106,10 +89,7 @@ int peripheral_interface_pwm_set_polarity(peripheral_pwm_h pwm, peripheral_pwm_p
 		return -EINVAL;
 	}
 
-	if (status <= 0) {
-		_E("Failed to set polarity");
-		return -EIO;
-	}
+	CHECK_ERROR(status);
 
 	return 0;
 }
@@ -121,10 +101,7 @@ int peripheral_interface_pwm_set_enable(peripheral_pwm_h pwm, bool enable)
 
 	len = snprintf(pwm_buf, sizeof(pwm_buf), "%d", enable);
 	status = write(pwm->fd_enable, pwm_buf, len);
-	if (status < 0) {
-		_E("Failed to set enable");
-		return -EIO;
-	}
+	CHECK_ERROR(status);
 
 	return 0;
 }

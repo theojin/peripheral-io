@@ -22,6 +22,7 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 
+#include "peripheral_interface_common.h"
 #include "peripheral_interface_i2c.h"
 #include "peripheral_common.h"
 #include "peripheral_internal.h"
@@ -36,12 +37,7 @@ int peripheral_interface_i2c_close(peripheral_i2c_h i2c)
 	RETVM_IF(i2c->fd < 0, -EINVAL, "Invalid fd");
 
 	status = close(i2c->fd);
-	if (status < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Failed to close fd : %d", i2c->fd);
-		return -EIO;
-	}
+	CHECK_ERROR(status);
 
 	return 0;
 }
@@ -53,12 +49,7 @@ int peripheral_interface_i2c_read(peripheral_i2c_h i2c, uint8_t *data, uint32_t 
 	RETVM_IF(i2c->fd < 0, -EINVAL, "Invalid fd : %d", i2c->fd);
 
 	status = read(i2c->fd, data, length);
-	if (status != length) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("i2c read failed, fd : %d, errmsg : %s", i2c->fd, errmsg);
-		return -EIO;
-	}
+	CHECK_ERROR(status);
 
 	return 0;
 }
@@ -70,12 +61,7 @@ int peripheral_interface_i2c_write(peripheral_i2c_h i2c, uint8_t *data, uint32_t
 	RETVM_IF(i2c->fd < 0, -EINVAL, "Invalid fd : %d", i2c->fd);
 
 	status = write(i2c->fd, data, length);
-	if (status != length) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("i2c write failed fd : %d, errmsg : %s", i2c->fd, errmsg);
-		return -EIO;
-	}
+	CHECK_ERROR(status);
 
 	return 0;
 }
@@ -87,12 +73,7 @@ int peripheral_interface_i2c_smbus_ioctl(peripheral_i2c_h i2c, struct i2c_smbus_
 	RETVM_IF(i2c->fd < 0, -EINVAL, "Invalid fd : %d", i2c->fd);
 
 	status = ioctl(i2c->fd, I2C_SMBUS, data);
-	if (status < 0) {
-		char errmsg[MAX_ERR_LEN];
-		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("i2c transaction failed fd : %d, errmsg : %s", i2c->fd, errmsg);
-		return -EIO;
-	}
+	CHECK_ERROR(status);
 
 	return 0;
 }

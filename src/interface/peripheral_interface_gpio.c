@@ -22,6 +22,7 @@
 #include <fcntl.h>
 #include <poll.h>
 
+#include "peripheral_interface_common.h"
 #include "peripheral_interface_gpio.h"
 #include "peripheral_common.h"
 #include "peripheral_internal.h"
@@ -43,10 +44,7 @@ int peripheral_interface_gpio_set_direction(peripheral_gpio_h gpio, peripheral_g
 		return -EIO;
 	}
 
-	if (status <= 0) {
-		_E("Error: gpio direction set error\n");
-		return -EIO;
-	}
+	CHECK_ERROR(status);
 
 	return 0;
 }
@@ -68,10 +66,7 @@ int peripheral_interface_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_g
 		return -EIO;
 	}
 
-	if (status <= 0) {
-		_E("Error: gpio edge set error\n");
-		return -EIO;
-	}
+	CHECK_ERROR(status);
 
 	return 0;
 }
@@ -89,10 +84,7 @@ int peripheral_interface_gpio_write(peripheral_gpio_h gpio, uint32_t value)
 		return -EIO;
 	}
 
-	if (status <= 0) {
-		_E("Error: gpio write error\n");
-		return -EIO;
-	}
+	CHECK_ERROR(status);
 
 	return 0;
 }
@@ -103,10 +95,7 @@ int peripheral_interface_gpio_read(peripheral_gpio_h gpio, uint32_t *value)
 	char gpio_buf[GPIO_BUFFER_MAX] = {0, };
 
 	len = read(gpio->fd_value, &gpio_buf, 1);
-	if (len <= 0) {
-		_E("Error: gpio read error \n");
-		return -EIO;
-	}
+	CHECK_ERROR(len);
 
 	if (0 == strncmp(gpio_buf, "1", strlen("1")))
 		*value = 1;
@@ -125,22 +114,13 @@ int peripheral_interface_gpio_close(peripheral_gpio_h gpio)
 	int status;
 
 	status = close(gpio->fd_direction);
-	if (status < 0) {
-		_E("Error: gpio direction fd close error \n");
-		return -EIO;
-	}
+	CHECK_ERROR(status);
 
 	status = close(gpio->fd_edge);
-	if (status < 0) {
-		_E("Error: gpio edge fd close error \n");
-		return -EIO;
-	}
+	CHECK_ERROR(status);
 
 	status = close(gpio->fd_value);
-	if (status < 0) {
-		_E("Error: gpio value fd close error \n");
-		return -EIO;
-	}
+	CHECK_ERROR(status);
 
 	return 0;
 }
