@@ -36,7 +36,7 @@ int peripheral_interface_pwm_close(peripheral_pwm_h pwm);
 * @param[in] period pwm period
 * @return On success, 0 is returned. On failure, a negative value is returned.
 */
-int peripheral_interface_pwm_set_period(peripheral_pwm_h pwm, int period);
+int peripheral_interface_pwm_set_period(peripheral_pwm_h pwm, uint32_t period);
 
 /**
 * @brief pwm_set_duty_cycle() sets the pwm duty cycle.
@@ -46,7 +46,7 @@ int peripheral_interface_pwm_set_period(peripheral_pwm_h pwm, int period);
 * @param[in] duty_cycle pwm duty cycle
 * @return On success, 0 is returned. On failure, a negative value is returned.
 */
-int peripheral_interface_pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle);
+int peripheral_interface_pwm_set_duty_cycle(peripheral_pwm_h pwm, uint32_t duty_cycle);
 
 /**
 * @brief pwm_set_polarity() sets the pwm polarity.

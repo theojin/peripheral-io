@@ -86,7 +86,7 @@ int peripheral_interface_spi_set_bit_order(peripheral_spi_h spi, peripheral_spi_
 	return 0;
 }
 
-int peripheral_interface_spi_set_bits_per_word(peripheral_spi_h spi, unsigned char bits)
+int peripheral_interface_spi_set_bits_per_word(peripheral_spi_h spi, uint8_t bits)
 {
 	int status;
 
@@ -104,7 +104,7 @@ int peripheral_interface_spi_set_bits_per_word(peripheral_spi_h spi, unsigned ch
 	return 0;
 }
 
-int peripheral_interface_spi_set_frequency(peripheral_spi_h spi, unsigned int freq)
+int peripheral_interface_spi_set_frequency(peripheral_spi_h spi, uint32_t freq)
 {
 	int status;
 
@@ -122,7 +122,7 @@ int peripheral_interface_spi_set_frequency(peripheral_spi_h spi, unsigned int fr
 	return 0;
 }
 
-int peripheral_interface_spi_read(peripheral_spi_h spi, unsigned char *rxbuf, int length)
+int peripheral_interface_spi_read(peripheral_spi_h spi, uint8_t *rxbuf, uint32_t length)
 {
 	int status;
 	struct spi_ioc_transfer xfer;
@@ -144,7 +144,7 @@ int peripheral_interface_spi_read(peripheral_spi_h spi, unsigned char *rxbuf, in
 	return 0;
 }
 
-int peripheral_interface_spi_write(peripheral_spi_h spi, unsigned char *txbuf, int length)
+int peripheral_interface_spi_write(peripheral_spi_h spi, uint8_t *txbuf, uint32_t length)
 {
 	int status;
 	struct spi_ioc_transfer xfer;
@@ -166,14 +166,14 @@ int peripheral_interface_spi_write(peripheral_spi_h spi, unsigned char *txbuf, i
 	return 0;
 }
 
-int peripheral_interface_spi_transfer(peripheral_spi_h spi, unsigned char *txbuf, unsigned char *rxbuf, int length)
+int peripheral_interface_spi_transfer(peripheral_spi_h spi, uint8_t *txbuf, uint8_t *rxbuf, uint32_t length)
 {
 	int status;
 	struct spi_ioc_transfer xfer;
 
 	RETVM_IF(spi->fd < 0, -EINVAL, "Invalid fd : %d", spi->fd);
 
-	if (!txbuf || !rxbuf || length < 0) return -EINVAL;
+	if (!txbuf || !rxbuf) return -EINVAL;
 
 	memset(&xfer, 0, sizeof(xfer));
 	xfer.tx_buf = (unsigned long)txbuf;

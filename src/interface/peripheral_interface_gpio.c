@@ -76,7 +76,7 @@ int peripheral_interface_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_g
 	return 0;
 }
 
-int peripheral_interface_gpio_write(peripheral_gpio_h gpio, int value)
+int peripheral_interface_gpio_write(peripheral_gpio_h gpio, uint32_t value)
 {
 	int status;
 
@@ -97,7 +97,7 @@ int peripheral_interface_gpio_write(peripheral_gpio_h gpio, int value)
 	return 0;
 }
 
-int peripheral_interface_gpio_read(peripheral_gpio_h gpio, int *value)
+int peripheral_interface_gpio_read(peripheral_gpio_h gpio, uint32_t *value)
 {
 	int len;
 	char gpio_buf[GPIO_BUFFER_MAX] = {0, };

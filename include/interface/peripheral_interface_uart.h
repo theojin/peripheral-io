@@ -91,7 +91,7 @@ int peripheral_interface_uart_set_flow_control(peripheral_uart_h uart, periphera
 * @param[in] length size to read
 * @return On success, 0 is returned. On failure, a negative value is returned.
 */
-int peripheral_interface_uart_read(peripheral_uart_h uart, uint8_t *buf, unsigned int length);
+int peripheral_interface_uart_read(peripheral_uart_h uart, uint8_t *buf, uint32_t length);
 
 /**
 * @brief uart_write() writes data over uart bus.
@@ -101,7 +101,7 @@ int peripheral_interface_uart_read(peripheral_uart_h uart, uint8_t *buf, unsigne
 * @param[in] length size to write
 * @return On success, 0 is returned. On failure, a negative value is returned.
 */
-int peripheral_interface_uart_write(peripheral_uart_h uart, uint8_t *buf, unsigned int length);
+int peripheral_interface_uart_write(peripheral_uart_h uart, uint8_t *buf, uint32_t length);
 
 #endif /* __PERIPHERAL_INTERFACE_UART_H__ */
 

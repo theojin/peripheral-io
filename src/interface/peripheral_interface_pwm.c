@@ -63,7 +63,7 @@ int peripheral_interface_pwm_close(peripheral_pwm_h pwm)
 	return 0;
 }
 
-int peripheral_interface_pwm_set_period(peripheral_pwm_h pwm, int period)
+int peripheral_interface_pwm_set_period(peripheral_pwm_h pwm, uint32_t period)
 {
 	int len, status;
 	char pwm_buf[PWM_BUF_MAX] = {0};
@@ -78,7 +78,7 @@ int peripheral_interface_pwm_set_period(peripheral_pwm_h pwm, int period)
 	return 0;
 }
 
-int peripheral_interface_pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle)
+int peripheral_interface_pwm_set_duty_cycle(peripheral_pwm_h pwm, uint32_t duty_cycle)
 {
 	int len, status;
 	char pwm_buf[PWM_BUF_MAX] = {0};

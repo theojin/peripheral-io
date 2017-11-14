@@ -328,7 +328,7 @@ int peripheral_interface_uart_set_flow_control(peripheral_uart_h uart, periphera
 	return 0;
 }
 
-int peripheral_interface_uart_read(peripheral_uart_h uart, uint8_t *buf, unsigned int length)
+int peripheral_interface_uart_read(peripheral_uart_h uart, uint8_t *buf, uint32_t length)
 {
 	int ret;
 
@@ -350,7 +350,7 @@ int peripheral_interface_uart_read(peripheral_uart_h uart, uint8_t *buf, unsigne
 	return ret;
 }
 
-int peripheral_interface_uart_write(peripheral_uart_h uart, uint8_t *buf, unsigned int length)
+int peripheral_interface_uart_write(peripheral_uart_h uart, uint8_t *buf, uint32_t length)
 {
 	int ret;
 

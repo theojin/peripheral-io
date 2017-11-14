@@ -64,7 +64,7 @@ int peripheral_interface_i2c_set_address(peripheral_i2c_h i2c, int address)
 	return 0;
 }
 
-int peripheral_interface_i2c_read(peripheral_i2c_h i2c, unsigned char *data, int length)
+int peripheral_interface_i2c_read(peripheral_i2c_h i2c, uint8_t *data, uint32_t length)
 {
 	int status;
 
@@ -81,7 +81,7 @@ int peripheral_interface_i2c_read(peripheral_i2c_h i2c, unsigned char *data, int
 	return 0;
 }
 
-int peripheral_interface_i2c_write(peripheral_i2c_h i2c, const unsigned char *data, int length)
+int peripheral_interface_i2c_write(peripheral_i2c_h i2c, uint8_t *data, uint32_t length)
 {
 	int status;
 

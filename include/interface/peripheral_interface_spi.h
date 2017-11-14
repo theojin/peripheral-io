@@ -22,10 +22,10 @@
 int peripheral_interface_spi_close(peripheral_spi_h spi);
 int peripheral_interface_spi_set_mode(peripheral_spi_h spi, peripheral_spi_mode_e mode);
 int peripheral_interface_spi_set_bit_order(peripheral_spi_h spi, peripheral_spi_bit_order_e bit_order);
-int peripheral_interface_spi_set_bits_per_word(peripheral_spi_h spi, unsigned char bits);
-int peripheral_interface_spi_set_frequency(peripheral_spi_h spi, unsigned int freq);
-int peripheral_interface_spi_read(peripheral_spi_h spi, unsigned char *rxbuf, int length);
-int peripheral_interface_spi_write(peripheral_spi_h spi, unsigned char *txbuf, int length);
-int peripheral_interface_spi_transfer(peripheral_spi_h spi, unsigned char *txbuf, unsigned char *rxbuf, int length);
+int peripheral_interface_spi_set_bits_per_word(peripheral_spi_h spi, uint8_t bits);
+int peripheral_interface_spi_set_frequency(peripheral_spi_h spi, uint32_t freq);
+int peripheral_interface_spi_read(peripheral_spi_h spi, uint8_t *rxbuf, uint32_t length);
+int peripheral_interface_spi_write(peripheral_spi_h spi, uint8_t *txbuf, uint32_t length);
+int peripheral_interface_spi_transfer(peripheral_spi_h spi, uint8_t *txbuf, uint8_t *rxbuf, uint32_t length);
 
 #endif /* __PERIPHERAL_INTERFACE_SPI_H__ */
