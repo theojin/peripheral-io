@@ -68,8 +68,8 @@ static void __gpio_proxy_deinit()
 
 int peripheral_gdbus_gpio_open(peripheral_gpio_h gpio)
 {
+	int ret;
 	GError *error = NULL;
-	gint32 ret = PERIPHERAL_ERROR_NONE;
 	GUnixFDList *fd_list = NULL;
 
 	ret = __gpio_proxy_init();
@@ -85,10 +85,14 @@ int peripheral_gdbus_gpio_open(peripheral_gpio_h gpio)
 			&fd_list,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s", __func__, error->message);
+		_E("Failed to request daemon to gpio open : %s", error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
+
+	// TODO : If ret is not PERIPHERAL_ERROR_NONE, fd list it NULL from daemon.
+	if (ret != PERIPHERAL_ERROR_NONE)
+		return ret;
 
 	gpio->fd_direction = g_unix_fd_list_get(fd_list, GPIO_FD_INDEX_DIRECTION, &error);
 	if (gpio->fd_direction < 0) {
@@ -118,8 +122,8 @@ int peripheral_gdbus_gpio_open(peripheral_gpio_h gpio)
 
 int peripheral_gdbus_gpio_close(peripheral_gpio_h gpio)
 {
+	int ret;
 	GError *error = NULL;
-	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
 
 	if (gpio_proxy == NULL) {
 		_E("Can't try to gpio close because gpio proxy is NULL.");
@@ -132,12 +136,14 @@ int peripheral_gdbus_gpio_close(peripheral_gpio_h gpio)
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s", __func__, error->message);
+		_E("Failed to request daemon to gpio close : %s", error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
 
-	__gpio_proxy_deinit();
+	// TODO : If the return value is not PERIPHERAL_ERROR_NONE, the daemon returns status before close request.
+	if (ret == PERIPHERAL_ERROR_NONE)
+		__gpio_proxy_deinit();
 
 	return ret;
 }

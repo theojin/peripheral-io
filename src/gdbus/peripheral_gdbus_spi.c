@@ -66,8 +66,8 @@ static void __spi_proxy_deinit()
 
 int peripheral_gdbus_spi_open(peripheral_spi_h spi, int bus, int cs)
 {
+	int ret;
 	GError *error = NULL;
-	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
 	GUnixFDList *fd_list = NULL;
 
 	ret = __spi_proxy_init();
@@ -84,10 +84,14 @@ int peripheral_gdbus_spi_open(peripheral_spi_h spi, int bus, int cs)
 			&fd_list,
 			NULL,
 			&error) == FALSE) {
-		_E("%s", error->message);
+		_E("Failed to request daemon to spi open : %s", error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
+
+	// TODO : If ret is not PERIPHERAL_ERROR_NONE, fd list it NULL from daemon.
+	if (ret != PERIPHERAL_ERROR_NONE)
+		return ret;
 
 	spi->fd = g_unix_fd_list_get(fd_list, SPI_FD_INDEX, &error);
 	if (spi->fd < 0) {
@@ -103,8 +107,8 @@ int peripheral_gdbus_spi_open(peripheral_spi_h spi, int bus, int cs)
 
 int peripheral_gdbus_spi_close(peripheral_spi_h spi)
 {
+	int ret;
 	GError *error = NULL;
-	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
 
 	if (spi_proxy == NULL) {
 		_E("Can't try to spi close because spi proxy is NULL.");
@@ -117,12 +121,14 @@ int peripheral_gdbus_spi_close(peripheral_spi_h spi)
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("%s", error->message);
+		_E("Failed to request daemon to spi close : %s", error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
 
-	__spi_proxy_deinit();
+	// TODO : If the return value is not PERIPHERAL_ERROR_NONE, the daemon returns status before close request.
+	if (ret == PERIPHERAL_ERROR_NONE)
+		__spi_proxy_deinit();
 
 	return ret;
 }

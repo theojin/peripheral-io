@@ -69,8 +69,8 @@ static void __pwm_proxy_deinit()
 
 int peripheral_gdbus_pwm_open(peripheral_pwm_h pwm, int chip, int pin)
 {
+	int ret;
 	GError *error = NULL;
-	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
 	GUnixFDList *fd_list = NULL;
 
 	ret = __pwm_proxy_init();
@@ -87,10 +87,14 @@ int peripheral_gdbus_pwm_open(peripheral_pwm_h pwm, int chip, int pin)
 			&fd_list,
 			NULL,
 			&error) == FALSE) {
-		_E("%s", error->message);
+		_E("Failed to request daemon to pwm open : %s", error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
+
+	// TODO : If ret is not PERIPHERAL_ERROR_NONE, fd list it NULL from daemon.
+	if (ret != PERIPHERAL_ERROR_NONE)
+		return ret;
 
 	pwm->fd_period = g_unix_fd_list_get(fd_list, PWM_FD_INDEX_PERIOD, &error);
 	if (pwm->fd_period < 0) {
@@ -127,8 +131,8 @@ int peripheral_gdbus_pwm_open(peripheral_pwm_h pwm, int chip, int pin)
 
 int peripheral_gdbus_pwm_close(peripheral_pwm_h pwm)
 {
+	int ret;
 	GError *error = NULL;
-	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
 
 	if (pwm_proxy == NULL) {
 		_E("Can't try to pwm close because pwm proxy is NULL.");
@@ -141,12 +145,14 @@ int peripheral_gdbus_pwm_close(peripheral_pwm_h pwm)
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("%s", error->message);
+		_E("Failed to request daemon to pwm close : %s", error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
 
-	__pwm_proxy_deinit();
+	// TODO : If the return value is not PERIPHERAL_ERROR_NONE, the daemon returns status before close request.
+	if (ret == PERIPHERAL_ERROR_NONE)
+		__pwm_proxy_deinit();
 
 	return ret;
 }

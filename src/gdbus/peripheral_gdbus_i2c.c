@@ -66,8 +66,8 @@ static void __i2c_proxy_deinit()
 
 int peripheral_gdbus_i2c_open(peripheral_i2c_h i2c, int bus, int address)
 {
+	int ret;
 	GError *error = NULL;
-	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
 	GUnixFDList *fd_list = NULL;
 
 	ret = __i2c_proxy_init();
@@ -84,16 +84,19 @@ int peripheral_gdbus_i2c_open(peripheral_i2c_h i2c, int bus, int address)
 			&fd_list,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s", __func__, error->message);
+		_E("Failed to request daemon to i2c open : %s", error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
+
+	// TODO : If ret is not PERIPHERAL_ERROR_NONE, fd list it NULL from daemon.
+	if (ret != PERIPHERAL_ERROR_NONE)
+		return ret;
 
 	i2c->fd = g_unix_fd_list_get(fd_list, I2C_FD_INDEX, &error);
 	if (i2c->fd < 0) {
 		_E("Failed to get fd for i2c : %s", error->message);
 		g_error_free(error);
-		ret = PERIPHERAL_ERROR_UNKNOWN;
 	}
 
 	g_object_unref(fd_list);
@@ -103,8 +106,8 @@ int peripheral_gdbus_i2c_open(peripheral_i2c_h i2c, int bus, int address)
 
 int peripheral_gdbus_i2c_close(peripheral_i2c_h i2c)
 {
+	int ret;
 	GError *error = NULL;
-	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
 
 	if (i2c_proxy == NULL) {
 		_E("Can't try to i2c close because i2c proxy is NULL.");
@@ -117,12 +120,14 @@ int peripheral_gdbus_i2c_close(peripheral_i2c_h i2c)
 			&ret,
 			NULL,
 			&error) == FALSE) {
-		_E("Error in %s() : %s", __func__, error->message);
+		_E("Failed to request daemon to i2c close : %s", error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
 
-	__i2c_proxy_deinit();
+	// TODO : If the return value is not PERIPHERAL_ERROR_NONE, the daemon returns status before close request.
+	if (ret == PERIPHERAL_ERROR_NONE)
+		__i2c_proxy_deinit();
 
 	return ret;
 }
