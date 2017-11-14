@@ -19,14 +19,15 @@ SET(VERSION ${version})
 FIND_PROGRAM(GDBUS_CODEGEN NAMES gdbus-codegen)
 EXEC_PROGRAM(${GDBUS_CODEGEN} ARGS
                 " \\
-                --generate-c-code ${CMAKE_SOURCE_DIR}/src/peripheral_io_gdbus \\
+                --generate-c-code ${CMAKE_SOURCE_DIR}/src/gdbus/peripheral_io_gdbus \\
                 --c-namespace PeripheralIoGdbus \\
                 --interface-prefix org.tizen.peripheral_io. \\
-                ${CMAKE_SOURCE_DIR}/src/peripheral_io.xml \\
+                ${CMAKE_SOURCE_DIR}/src/gdbus/peripheral_io.xml \\
                 ")
 
 SET(INC_DIR include)
 INCLUDE_DIRECTORIES(${INC_DIR})
+INCLUDE_DIRECTORIES(${INC_DIR}/gdbus)
 INCLUDE_DIRECTORIES(${INC_DIR}/interface)
 
 INCLUDE(FindPkgConfig)
@@ -53,12 +54,12 @@ SET(SOURCES src/peripheral_gpio.c
 			src/interface/peripheral_interface_pwm.c
 			src/interface/peripheral_interface_spi.c
 			src/interface/peripheral_interface_uart.c
-			src/peripheral_gdbus_gpio.c
-			src/peripheral_gdbus_i2c.c
-			src/peripheral_gdbus_pwm.c
-			src/peripheral_gdbus_uart.c
-			src/peripheral_gdbus_spi.c
-			src/peripheral_io_gdbus.c)
+			src/gdbus/peripheral_gdbus_gpio.c
+			src/gdbus/peripheral_gdbus_i2c.c
+			src/gdbus/peripheral_gdbus_pwm.c
+			src/gdbus/peripheral_gdbus_uart.c
+			src/gdbus/peripheral_gdbus_spi.c
+			src/gdbus/peripheral_io_gdbus.c)
 
 ADD_LIBRARY(${fw_name} SHARED ${SOURCES})
 

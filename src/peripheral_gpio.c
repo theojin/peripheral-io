@@ -19,12 +19,12 @@
 #include <unistd.h>
 #include <assert.h>
 #include <system_info.h>
+#include <glib.h>
 
 #include "peripheral_io.h"
 #include "peripheral_gdbus_gpio.h"
 #include "peripheral_common.h"
 #include "peripheral_internal.h"
-#include "peripheral_io_gdbus.h"
 
 #define PERIPHERAL_IO_GPIO_FEATURE "http://tizen.org/feature/peripheral_io.gpio"
 
