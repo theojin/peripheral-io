@@ -99,17 +99,6 @@ int peripheral_interface_uart_flush(peripheral_uart_h uart);
 int peripheral_interface_uart_set_baud_rate(peripheral_uart_h uart, uart_baud_rate_e baud);
 
 /**
-* @brief uart_set_mode() sets byte size, parity bit and stop bits.
-*
-* @param[in] file_hndl handle of uart_context
-* @param[in] byte_size uart byte size
-* @param[in] parity uart parity type (even/odd/none)
-* @param[in] stop_bits uart stop bits
-* @return On success, 0 is returned. On failure, a negative value is returned.
-*/
-int peripheral_interface_uart_set_mode(peripheral_uart_h uart, uart_byte_size_e byte_size, uart_parity_e parity, uart_stop_bits_e stop_bits);
-
-/**
 * @brief peripheral_bus_uart_set_byte_size() set byte size.
 *
 * @param[in] file_hndl handle of uart_context
