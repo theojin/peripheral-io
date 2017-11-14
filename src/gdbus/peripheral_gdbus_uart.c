@@ -16,12 +16,15 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <gio/gunixfdlist.h>
 
 #include "peripheral_io.h"
 #include "peripheral_gdbus.h"
 #include "peripheral_common.h"
 #include "peripheral_internal.h"
 #include "peripheral_io_gdbus.h"
+
+#define UART_FD_INDEX 0
 
 static PeripheralIoGdbusUart *uart_proxy = NULL;
 
@@ -56,20 +59,32 @@ int peripheral_gdbus_uart_open(peripheral_uart_h uart, int port)
 {
 	GError *error = NULL;
 	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
+	GUnixFDList *fd_list = NULL;
 
 	if (uart_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
 
 	if (peripheral_io_gdbus_uart_call_open_sync(
 			uart_proxy,
 			port,
+			NULL,
 			&uart->handle,
 			&ret,
+			&fd_list,
 			NULL,
 			&error) == FALSE) {
 		_E("Error in %s() : %s", __func__, error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
+
+	uart->fd = g_unix_fd_list_get(fd_list, UART_FD_INDEX, &error);
+	if (uart->fd < 0) {
+		_E("Failed to get fd for uart : %s", error->message);
+		g_error_free(error);
+		ret = PERIPHERAL_ERROR_UNKNOWN;
+	}
+
+	g_object_unref(fd_list);
 
 	return ret;
 }

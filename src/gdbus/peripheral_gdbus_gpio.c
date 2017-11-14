@@ -16,12 +16,17 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <gio/gunixfdlist.h>
 
 #include "peripheral_io.h"
 #include "peripheral_gdbus.h"
 #include "peripheral_common.h"
 #include "peripheral_internal.h"
 #include "peripheral_io_gdbus.h"
+
+#define GPIO_FD_INDEX_DIRECTION 0
+#define GPIO_FD_INDEX_EDGE      1
+#define GPIO_FD_INDEX_VALUE     2
 
 extern int peripheral_gpio_interrupted_cb_handler(int pin, int value, unsigned long long timestamp, int err);
 
@@ -77,20 +82,46 @@ int peripheral_gdbus_gpio_open(peripheral_gpio_h gpio)
 {
 	GError *error = NULL;
 	gint32 ret = PERIPHERAL_ERROR_NONE;
+	GUnixFDList *fd_list = NULL;
 
 	if (gpio_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
 
 	if (peripheral_io_gdbus_gpio_call_open_sync(
 			gpio_proxy,
 			gpio->pin,
+			NULL,
 			&gpio->handle,
 			&ret,
+			&fd_list,
 			NULL,
 			&error) == FALSE) {
 		_E("Error in %s() : %s", __func__, error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
+
+	gpio->fd_direction = g_unix_fd_list_get(fd_list, GPIO_FD_INDEX_DIRECTION, &error);
+	if (gpio->fd_direction < 0) {
+		_E("Failed to get fd for gpio direction : %s", error->message);
+		g_error_free(error);
+		ret = PERIPHERAL_ERROR_UNKNOWN;
+	}
+
+	gpio->fd_edge = g_unix_fd_list_get(fd_list, GPIO_FD_INDEX_EDGE, &error);
+	if (gpio->fd_edge < 0) {
+		_E("Failed to get fd for gpio edge : %s", error->message);
+		g_error_free(error);
+		ret = PERIPHERAL_ERROR_UNKNOWN;
+	}
+
+	gpio->fd_value = g_unix_fd_list_get(fd_list, GPIO_FD_INDEX_VALUE, &error);
+	if (gpio->fd_value < 0) {
+		_E("Failed to get fd for gpio value : %s", error->message);
+		g_error_free(error);
+		ret = PERIPHERAL_ERROR_UNKNOWN;
+	}
+
+	g_object_unref(fd_list);
 
 	return ret;
 }

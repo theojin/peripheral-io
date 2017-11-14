@@ -2,6 +2,7 @@
 <node>
 	<interface name="org.tizen.peripheral_io.gpio">
 		<method name="Open">
+			<annotation name="org.gtk.GDBus.C.UnixFD" value="true"/>
 			<arg type="i" name="pin" direction="in"/>
 			<arg type="u" name="handle" direction="out"/>
 			<arg type="i" name="result" direction="out"/>
@@ -46,6 +47,7 @@
 	</interface>
 	<interface name="org.tizen.peripheral_io.i2c">
 		<method name="Open">
+			<annotation name="org.gtk.GDBus.C.UnixFD" value="true"/>
 			<arg type="i" name="bus" direction="in"/>
 			<arg type="i" name="address" direction="in"/>
 			<arg type="u" name="handle" direction="out"/>
@@ -83,6 +85,7 @@
 	</interface>
 	<interface name="org.tizen.peripheral_io.pwm">
 		<method name="Open">
+			<annotation name="org.gtk.GDBus.C.UnixFD" value="true"/>
 			<arg type="i" name="chip" direction="in"/>
 			<arg type="i" name="pin" direction="in"/>
 			<arg type="u" name="handle" direction="out"/>
@@ -115,6 +118,7 @@
 	</interface>
 	<interface name="org.tizen.peripheral_io.uart">
 		<method name="Open">
+			<annotation name="org.gtk.GDBus.C.UnixFD" value="true"/>
 			<arg type="i" name="port" direction="in"/>
 			<arg type="u" name="handle" direction="out"/>
 			<arg type="i" name="result" direction="out"/>
@@ -168,6 +172,7 @@
 	</interface>
 	<interface name="org.tizen.peripheral_io.spi">
 		<method name="Open">
+			<annotation name="org.gtk.GDBus.C.UnixFD" value="true"/>
 			<arg type="i" name="bus" direction="in"/>
 			<arg type="i" name="cs" direction="in"/>
 			<arg type="u" name="handle" direction="out"/>

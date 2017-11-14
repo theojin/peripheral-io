@@ -16,12 +16,15 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <gio/gunixfdlist.h>
 
 #include "peripheral_io.h"
 #include "peripheral_gdbus.h"
 #include "peripheral_common.h"
 #include "peripheral_internal.h"
 #include "peripheral_io_gdbus.h"
+
+#define I2C_FD_INDEX 0
 
 static PeripheralIoGdbusI2c *i2c_proxy = NULL;
 
@@ -56,6 +59,7 @@ int peripheral_gdbus_i2c_open(peripheral_i2c_h i2c, int bus, int address)
 {
 	GError *error = NULL;
 	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
+	GUnixFDList *fd_list = NULL;
 
 	if (i2c_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
 
@@ -63,14 +67,25 @@ int peripheral_gdbus_i2c_open(peripheral_i2c_h i2c, int bus, int address)
 			i2c_proxy,
 			bus,
 			address,
+			NULL,
 			&i2c->handle,
 			&ret,
+			&fd_list,
 			NULL,
 			&error) == FALSE) {
 		_E("Error in %s() : %s", __func__, error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
+
+	i2c->fd = g_unix_fd_list_get(fd_list, I2C_FD_INDEX, &error);
+	if (i2c->fd < 0) {
+		_E("Failed to get fd for i2c : %s", error->message);
+		g_error_free(error);
+		ret = PERIPHERAL_ERROR_UNKNOWN;
+	}
+
+	g_object_unref(fd_list);
 
 	return ret;
 }

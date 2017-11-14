@@ -16,12 +16,18 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <gio/gunixfdlist.h>
 
 #include "peripheral_io.h"
 #include "peripheral_gdbus.h"
 #include "peripheral_common.h"
 #include "peripheral_internal.h"
 #include "peripheral_io_gdbus.h"
+
+#define PWM_FD_INDEX_PERIOD      0
+#define PWM_FD_INDEX_DUTY_CYCLE  1
+#define PWM_FD_INDEX_POLARITY    2
+#define PWM_FD_INDEX_ENABLE      3
 
 static PeripheralIoGdbusPwm *pwm_proxy = NULL;
 
@@ -56,6 +62,7 @@ int peripheral_gdbus_pwm_open(peripheral_pwm_h pwm, int chip, int pin)
 {
 	GError *error = NULL;
 	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
+	GUnixFDList *fd_list = NULL;
 
 	if (pwm_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
 
@@ -63,14 +70,46 @@ int peripheral_gdbus_pwm_open(peripheral_pwm_h pwm, int chip, int pin)
 			pwm_proxy,
 			chip,
 			pin,
+			NULL,
 			&pwm->handle,
 			&ret,
+			&fd_list,
 			NULL,
 			&error) == FALSE) {
 		_E("%s", error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
+
+	pwm->fd_period = g_unix_fd_list_get(fd_list, PWM_FD_INDEX_PERIOD, &error);
+	if (pwm->fd_period < 0) {
+		_E("Failed to get fd for pwm period : %s", error->message);
+		g_error_free(error);
+		ret = PERIPHERAL_ERROR_UNKNOWN;
+	}
+
+	pwm->fd_duty_cycle = g_unix_fd_list_get(fd_list, PWM_FD_INDEX_DUTY_CYCLE, &error);
+	if (pwm->fd_duty_cycle < 0) {
+		_E("Failed to get fd for pwm duty cycle : %s", error->message);
+		g_error_free(error);
+		ret = PERIPHERAL_ERROR_UNKNOWN;
+	}
+
+	pwm->fd_polarity = g_unix_fd_list_get(fd_list, PWM_FD_INDEX_POLARITY, &error);
+	if (pwm->fd_polarity < 0) {
+		_E("Failed to get fd for pwm polarity : %s", error->message);
+		g_error_free(error);
+		ret = PERIPHERAL_ERROR_UNKNOWN;
+	}
+
+	pwm->fd_enable = g_unix_fd_list_get(fd_list, PWM_FD_INDEX_ENABLE, &error);
+	if (pwm->fd_enable < 0) {
+		_E("Failed to get fd for pwm enable : %s", error->message);
+		g_error_free(error);
+		ret = PERIPHERAL_ERROR_UNKNOWN;
+	}
+
+	g_object_unref(fd_list);
 
 	return ret;
 }

@@ -16,12 +16,15 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <gio/gunixfdlist.h>
 
 #include "peripheral_io.h"
 #include "peripheral_gdbus.h"
 #include "peripheral_common.h"
 #include "peripheral_internal.h"
 #include "peripheral_io_gdbus.h"
+
+#define SPI_FD_INDEX 0
 
 static PeripheralIoGdbusSpi *spi_proxy = NULL;
 
@@ -56,6 +59,7 @@ int peripheral_gdbus_spi_open(peripheral_spi_h spi, int bus, int cs)
 {
 	GError *error = NULL;
 	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
+	GUnixFDList *fd_list = NULL;
 
 	if (spi_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
 
@@ -63,14 +67,25 @@ int peripheral_gdbus_spi_open(peripheral_spi_h spi, int bus, int cs)
 			spi_proxy,
 			bus,
 			cs,
+			NULL,
 			&spi->handle,
 			&ret,
+			&fd_list,
 			NULL,
 			&error) == FALSE) {
 		_E("%s", error->message);
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
+
+	spi->fd = g_unix_fd_list_get(fd_list, SPI_FD_INDEX, &error);
+	if (spi->fd < 0) {
+		_E("Failed to get fd for spi : %s", error->message);
+		g_error_free(error);
+		ret = PERIPHERAL_ERROR_UNKNOWN;
+	}
+
+	g_object_unref(fd_list);
 
 	return ret;
 }
