@@ -28,13 +28,14 @@
 
 static PeripheralIoGdbusSpi *spi_proxy = NULL;
 
-void spi_proxy_init(void)
+static int __spi_proxy_init()
 {
 	GError *error = NULL;
 
 	if (spi_proxy != NULL) {
+		_E("Spi proxy is already created");
 		g_object_ref(spi_proxy);
-		return;
+		return PERIPHERAL_ERROR_NONE;
 	}
 
 	spi_proxy = peripheral_io_gdbus_spi_proxy_new_for_bus_sync(
@@ -44,9 +45,17 @@ void spi_proxy_init(void)
 		PERIPHERAL_GDBUS_SPI_PATH,
 		NULL,
 		&error);
+
+	if (spi_proxy == NULL) {
+		_E("Failed to create spi proxy : %s", error->message);
+		g_error_free(error);
+		return PERIPHERAL_ERROR_UNKNOWN;
+	}
+
+	return PERIPHERAL_ERROR_NONE;
 }
 
-void spi_proxy_deinit()
+static void __spi_proxy_deinit()
 {
 	if (spi_proxy) {
 		g_object_unref(spi_proxy);
@@ -61,7 +70,9 @@ int peripheral_gdbus_spi_open(peripheral_spi_h spi, int bus, int cs)
 	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
 	GUnixFDList *fd_list = NULL;
 
-	if (spi_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
+	ret = __spi_proxy_init();
+	if (ret != PERIPHERAL_ERROR_NONE)
+		return ret;
 
 	if (peripheral_io_gdbus_spi_call_open_sync(
 			spi_proxy,
@@ -95,7 +106,10 @@ int peripheral_gdbus_spi_close(peripheral_spi_h spi)
 	GError *error = NULL;
 	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
 
-	if (spi_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
+	if (spi_proxy == NULL) {
+		_E("Can't try to spi close because spi proxy is NULL.");
+		return PERIPHERAL_ERROR_UNKNOWN;
+	}
 
 	if (peripheral_io_gdbus_spi_call_close_sync(
 			spi_proxy,
@@ -107,6 +121,8 @@ int peripheral_gdbus_spi_close(peripheral_spi_h spi)
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
+
+	__spi_proxy_deinit();
 
 	return ret;
 }

@@ -28,13 +28,14 @@
 
 static PeripheralIoGdbusUart *uart_proxy = NULL;
 
-void uart_proxy_init(void)
+static int __uart_proxy_init()
 {
 	GError *error = NULL;
 
 	if (uart_proxy != NULL) {
+		_E("Uart proxy is already created");
 		g_object_ref(uart_proxy);
-		return;
+		return PERIPHERAL_ERROR_NONE;
 	}
 
 	uart_proxy = peripheral_io_gdbus_uart_proxy_new_for_bus_sync(
@@ -44,9 +45,17 @@ void uart_proxy_init(void)
 		PERIPHERAL_GDBUS_UART_PATH,
 		NULL,
 		&error);
+
+	if (uart_proxy == NULL) {
+		_E("Failed to create uart proxy : %s", error->message);
+		g_error_free(error);
+		return PERIPHERAL_ERROR_UNKNOWN;
+	}
+
+	return PERIPHERAL_ERROR_NONE;
 }
 
-void uart_proxy_deinit()
+static void __uart_proxy_deinit()
 {
 	if (uart_proxy) {
 		g_object_unref(uart_proxy);
@@ -61,7 +70,9 @@ int peripheral_gdbus_uart_open(peripheral_uart_h uart, int port)
 	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
 	GUnixFDList *fd_list = NULL;
 
-	if (uart_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
+	ret = __uart_proxy_init();
+	if (ret != PERIPHERAL_ERROR_NONE)
+		return ret;
 
 	if (peripheral_io_gdbus_uart_call_open_sync(
 			uart_proxy,
@@ -94,8 +105,10 @@ int peripheral_gdbus_uart_close(peripheral_uart_h uart)
 	GError *error = NULL;
 	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
 
-	if (uart_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
-
+	if (uart_proxy == NULL) {
+		_E("Can't try to uart close because uart proxy is NULL.");
+		return PERIPHERAL_ERROR_UNKNOWN;
+	}
 	if (peripheral_io_gdbus_uart_call_close_sync(
 			uart_proxy,
 			uart->handle,
@@ -106,6 +119,8 @@ int peripheral_gdbus_uart_close(peripheral_uart_h uart)
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
+
+	__uart_proxy_deinit();
 
 	return ret;
 }

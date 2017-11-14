@@ -17,9 +17,6 @@
 #ifndef __PERIPHERAL_GDBUS_GPIO_H__
 #define __PERIPHERAL_GDBUS_GPIO_H__
 
-void gpio_proxy_init(void);
-void gpio_proxy_deinit(void);
-
 int peripheral_gdbus_gpio_open(peripheral_gpio_h gpio);
 int peripheral_gdbus_gpio_close(peripheral_gpio_h gpio);
 

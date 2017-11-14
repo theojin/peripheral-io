@@ -16,9 +16,6 @@
 #ifndef __PERIPHERAL_GDBUS_SPI_H_
 #define __PERIPHERAL_GDBUS_SPI_H_
 
-void spi_proxy_init(void);
-void spi_proxy_deinit();
-
 int peripheral_gdbus_spi_open(peripheral_spi_h spi, int bus, int cs);
 int peripheral_gdbus_spi_close(peripheral_spi_h spi);
 

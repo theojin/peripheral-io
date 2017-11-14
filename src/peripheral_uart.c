@@ -67,8 +67,6 @@ int peripheral_uart_open(int port, peripheral_uart_h *uart)
 		return PERIPHERAL_ERROR_OUT_OF_MEMORY;
 	}
 
-	uart_proxy_init();
-
 	ret = peripheral_gdbus_uart_open(handle, port);
 
 	if (ret != PERIPHERAL_ERROR_NONE) {
@@ -94,7 +92,6 @@ int peripheral_uart_close(peripheral_uart_h uart)
 	ret = peripheral_gdbus_uart_close(uart);
 	if (ret < PERIPHERAL_ERROR_NONE)
 		_E("Failed to close uart communication, continuing anyway, ret : %d", ret);
-	uart_proxy_deinit();
 
 	free(uart);
 	uart = NULL;

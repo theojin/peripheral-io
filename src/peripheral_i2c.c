@@ -74,8 +74,6 @@ int peripheral_i2c_open(int bus, int address, peripheral_i2c_h *i2c)
 		return PERIPHERAL_ERROR_OUT_OF_MEMORY;
 	}
 
-	i2c_proxy_init();
-
 	ret = peripheral_gdbus_i2c_open(handle, bus, address);
 
 	if (ret != PERIPHERAL_ERROR_NONE) {
@@ -98,7 +96,6 @@ int peripheral_i2c_close(peripheral_i2c_h i2c)
 	ret = peripheral_gdbus_i2c_close(i2c);
 	if (ret != PERIPHERAL_ERROR_NONE)
 		_E("Failed to close i2c communcation, ret : %d", ret);
-	i2c_proxy_deinit();
 
 	free(i2c);
 	i2c = NULL;

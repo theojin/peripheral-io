@@ -28,13 +28,14 @@
 
 static PeripheralIoGdbusI2c *i2c_proxy = NULL;
 
-void i2c_proxy_init(void)
+static int __i2c_proxy_init()
 {
 	GError *error = NULL;
 
 	if (i2c_proxy != NULL) {
+		_E("I2c proxy is already created");
 		g_object_ref(i2c_proxy);
-		return;
+		return PERIPHERAL_ERROR_NONE;
 	}
 
 	i2c_proxy = peripheral_io_gdbus_i2c_proxy_new_for_bus_sync(
@@ -44,9 +45,17 @@ void i2c_proxy_init(void)
 		PERIPHERAL_GDBUS_I2C_PATH,
 		NULL,
 		&error);
+
+	if (i2c_proxy == NULL) {
+		_E("Failed to create i2c proxy : %s", error->message);
+		g_error_free(error);
+		return PERIPHERAL_ERROR_UNKNOWN;
+	}
+
+	return PERIPHERAL_ERROR_NONE;
 }
 
-void i2c_proxy_deinit()
+static void __i2c_proxy_deinit()
 {
 	if (i2c_proxy) {
 		g_object_unref(i2c_proxy);
@@ -61,7 +70,9 @@ int peripheral_gdbus_i2c_open(peripheral_i2c_h i2c, int bus, int address)
 	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
 	GUnixFDList *fd_list = NULL;
 
-	if (i2c_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
+	ret = __i2c_proxy_init();
+	if (ret != PERIPHERAL_ERROR_NONE)
+		return ret;
 
 	if (peripheral_io_gdbus_i2c_call_open_sync(
 			i2c_proxy,
@@ -95,7 +106,10 @@ int peripheral_gdbus_i2c_close(peripheral_i2c_h i2c)
 	GError *error = NULL;
 	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
 
-	if (i2c_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
+	if (i2c_proxy == NULL) {
+		_E("Can't try to i2c close because i2c proxy is NULL.");
+		return PERIPHERAL_ERROR_UNKNOWN;
+	}
 
 	if (peripheral_io_gdbus_i2c_call_close_sync(
 			i2c_proxy,
@@ -107,6 +121,8 @@ int peripheral_gdbus_i2c_close(peripheral_i2c_h i2c)
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
+
+	__i2c_proxy_deinit();
 
 	return ret;
 }

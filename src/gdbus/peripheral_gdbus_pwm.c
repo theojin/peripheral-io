@@ -31,13 +31,14 @@
 
 static PeripheralIoGdbusPwm *pwm_proxy = NULL;
 
-void pwm_proxy_init(void)
+static int __pwm_proxy_init()
 {
 	GError *error = NULL;
 
 	if (pwm_proxy != NULL) {
+		_E("Pwm proxy is already created");
 		g_object_ref(pwm_proxy);
-		return;
+		return PERIPHERAL_ERROR_NONE;
 	}
 
 	pwm_proxy = peripheral_io_gdbus_pwm_proxy_new_for_bus_sync(
@@ -47,9 +48,17 @@ void pwm_proxy_init(void)
 		PERIPHERAL_GDBUS_PWM_PATH,
 		NULL,
 		&error);
+
+	if (pwm_proxy == NULL) {
+		_E("Failed to create pwm proxy : %s", error->message);
+		g_error_free(error);
+		return PERIPHERAL_ERROR_UNKNOWN;
+	}
+
+	return PERIPHERAL_ERROR_NONE;
 }
 
-void pwm_proxy_deinit()
+static void __pwm_proxy_deinit()
 {
 	if (pwm_proxy) {
 		g_object_unref(pwm_proxy);
@@ -64,7 +73,9 @@ int peripheral_gdbus_pwm_open(peripheral_pwm_h pwm, int chip, int pin)
 	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
 	GUnixFDList *fd_list = NULL;
 
-	if (pwm_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
+	ret = __pwm_proxy_init();
+	if (ret != PERIPHERAL_ERROR_NONE)
+		return ret;
 
 	if (peripheral_io_gdbus_pwm_call_open_sync(
 			pwm_proxy,
@@ -119,7 +130,10 @@ int peripheral_gdbus_pwm_close(peripheral_pwm_h pwm)
 	GError *error = NULL;
 	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
 
-	if (pwm_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
+	if (pwm_proxy == NULL) {
+		_E("Can't try to pwm close because pwm proxy is NULL.");
+		return PERIPHERAL_ERROR_UNKNOWN;
+	}
 
 	if (peripheral_io_gdbus_pwm_call_close_sync(
 			pwm_proxy,
@@ -131,6 +145,8 @@ int peripheral_gdbus_pwm_close(peripheral_pwm_h pwm)
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
+
+	__pwm_proxy_deinit();
 
 	return ret;
 }

@@ -30,13 +30,14 @@
 
 static PeripheralIoGdbusGpio *gpio_proxy = NULL;
 
-void gpio_proxy_init(void)
+static int __gpio_proxy_init()
 {
 	GError *error = NULL;
 
 	if (gpio_proxy != NULL) {
+		_E("Gpio proxy is already created");
 		g_object_ref(gpio_proxy);
-		return;
+		return PERIPHERAL_ERROR_NONE;
 	}
 
 	gpio_proxy = peripheral_io_gdbus_gpio_proxy_new_for_bus_sync(
@@ -46,16 +47,19 @@ void gpio_proxy_init(void)
 		PERIPHERAL_GDBUS_GPIO_PATH,
 		NULL,
 		&error);
+
 	if (gpio_proxy == NULL) {
-		_E("Can not create gpio proxy : %s", error->message);
+		_E("Failed to create gpio proxy : %s", error->message);
 		g_error_free(error);
-		return;
+		return PERIPHERAL_ERROR_UNKNOWN;
 	}
+
+	return PERIPHERAL_ERROR_NONE;
 }
 
-void gpio_proxy_deinit()
+static void __gpio_proxy_deinit()
 {
-	if (gpio_proxy) {
+	if (gpio_proxy != NULL) {
 		g_object_unref(gpio_proxy);
 		if (!G_IS_OBJECT(gpio_proxy))
 			gpio_proxy = NULL;
@@ -68,7 +72,9 @@ int peripheral_gdbus_gpio_open(peripheral_gpio_h gpio)
 	gint32 ret = PERIPHERAL_ERROR_NONE;
 	GUnixFDList *fd_list = NULL;
 
-	if (gpio_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
+	ret = __gpio_proxy_init();
+	if (ret != PERIPHERAL_ERROR_NONE)
+		return ret;
 
 	if (peripheral_io_gdbus_gpio_call_open_sync(
 			gpio_proxy,
@@ -115,7 +121,10 @@ int peripheral_gdbus_gpio_close(peripheral_gpio_h gpio)
 	GError *error = NULL;
 	peripheral_error_e ret = PERIPHERAL_ERROR_NONE;
 
-	if (gpio_proxy == NULL) return PERIPHERAL_ERROR_UNKNOWN;
+	if (gpio_proxy == NULL) {
+		_E("Can't try to gpio close because gpio proxy is NULL.");
+		return PERIPHERAL_ERROR_UNKNOWN;
+	}
 
 	if (peripheral_io_gdbus_gpio_call_close_sync(
 			gpio_proxy,
@@ -127,6 +136,8 @@ int peripheral_gdbus_gpio_close(peripheral_gpio_h gpio)
 		g_error_free(error);
 		return PERIPHERAL_ERROR_UNKNOWN;
 	}
+
+	__gpio_proxy_deinit();
 
 	return ret;
 }

@@ -66,8 +66,6 @@ int peripheral_spi_open(int bus, int cs, peripheral_spi_h *spi)
 		return PERIPHERAL_ERROR_OUT_OF_MEMORY;
 	}
 
-	spi_proxy_init();
-
 	ret = peripheral_gdbus_spi_open(handle, bus, cs);
 
 	if (ret != PERIPHERAL_ERROR_NONE) {
@@ -91,7 +89,6 @@ int peripheral_spi_close(peripheral_spi_h spi)
 	if (ret < PERIPHERAL_ERROR_NONE)
 		_E("Failed to close SPI device, continuing anyway, ret : %d", ret);
 
-	spi_proxy_deinit();
 	free(spi);
 
 	return ret;

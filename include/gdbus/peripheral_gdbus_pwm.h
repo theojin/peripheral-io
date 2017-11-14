@@ -17,9 +17,6 @@
 #ifndef __PERIPHERAL_GDBUS_PWM_H__
 #define __PERIPHERAL_GDBUS_PWM_H__
 
-void pwm_proxy_init(void);
-void pwm_proxy_deinit(void);
-
 int peripheral_gdbus_pwm_open(peripheral_pwm_h pwm, int chip, int pin);
 int peripheral_gdbus_pwm_close(peripheral_pwm_h pwm);
 

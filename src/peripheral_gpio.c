@@ -69,8 +69,6 @@ int peripheral_gpio_open(int gpio_pin, peripheral_gpio_h *gpio)
 	}
 	handle->pin = gpio_pin;
 
-	gpio_proxy_init();
-
 	ret = peripheral_gdbus_gpio_open(handle);
 
 	if (ret != PERIPHERAL_ERROR_NONE) {
@@ -99,7 +97,6 @@ int peripheral_gpio_close(peripheral_gpio_h gpio)
 	ret = peripheral_gdbus_gpio_close(gpio);
 	if (ret != PERIPHERAL_ERROR_NONE)
 		_E("Failed to close the gpio pin, ret : %d", ret);
-	gpio_proxy_deinit();
 
 	free(gpio);
 	gpio = NULL;
@@ -123,7 +120,6 @@ int peripheral_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_direct
 
 	return ret;
 }
-
 
 /**
  * @brief Sets the edge mode of the gpio pin.

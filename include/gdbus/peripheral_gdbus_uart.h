@@ -16,9 +16,6 @@
 #ifndef __PERIPHERAL_GDBUS_UART_H_
 #define __PERIPHERAL_GDBUS_UART_H_
 
-void uart_proxy_init(void);
-void uart_proxy_deinit();
-
 int peripheral_gdbus_uart_open(peripheral_uart_h uart, int port);
 int peripheral_gdbus_uart_close(peripheral_uart_h uart);
 

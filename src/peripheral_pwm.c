@@ -66,8 +66,6 @@ int peripheral_pwm_open(int chip, int pin, peripheral_pwm_h *pwm)
 		return PERIPHERAL_ERROR_OUT_OF_MEMORY;
 	}
 
-	pwm_proxy_init();
-
 	ret = peripheral_gdbus_pwm_open(handle, chip, pin);
 
 	if (ret != PERIPHERAL_ERROR_NONE) {
@@ -90,7 +88,6 @@ int peripheral_pwm_close(peripheral_pwm_h pwm)
 	if ((ret = peripheral_gdbus_pwm_close(pwm)) < 0)
 		_E("Failed to close PWM chip, continuing anyway, ret : %d", ret);
 
-	pwm_proxy_deinit();
 	free(pwm);
 
 	return ret;
