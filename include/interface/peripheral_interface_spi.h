@@ -20,8 +20,8 @@
 #include "peripheral_io.h"
 
 int peripheral_interface_spi_close(peripheral_spi_h spi);
-int peripheral_interface_spi_set_mode(peripheral_spi_h spi, unsigned char mode);
-int peripheral_interface_spi_set_bit_order(peripheral_spi_h spi, unsigned char lsb);
+int peripheral_interface_spi_set_mode(peripheral_spi_h spi, peripheral_spi_mode_e mode);
+int peripheral_interface_spi_set_bit_order(peripheral_spi_h spi, peripheral_spi_bit_order_e bit_order);
 int peripheral_interface_spi_set_bits_per_word(peripheral_spi_h spi, unsigned char bits);
 int peripheral_interface_spi_set_frequency(peripheral_spi_h spi, unsigned int freq);
 int peripheral_interface_spi_read(peripheral_spi_h spi, unsigned char *rxbuf, int length);

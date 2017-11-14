@@ -93,13 +93,13 @@ int peripheral_interface_pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle
 	return 0;
 }
 
-int peripheral_interface_pwm_set_polarity(peripheral_pwm_h pwm, pwm_polarity_e polarity)
+int peripheral_interface_pwm_set_polarity(peripheral_pwm_h pwm, peripheral_pwm_polarity_e polarity)
 {
 	int status;
 
-	if (polarity == PWM_POLARITY_NORMAL)
+	if (polarity == PERIPHERAL_PWM_POLARITY_ACTIVE_HIGH)
 		status = write(pwm->fd_polarity, "normal", strlen("normal")+1);
-	else if (polarity == PWM_POLARITY_INVERSED)
+	else if (polarity == PERIPHERAL_PWM_POLARITY_ACTIVE_LOW)
 		status = write(pwm->fd_polarity, "inversed", strlen("inversed")+1);
 	else {
 		_E("Invalid pwm polarity : %d", polarity);

@@ -28,15 +28,15 @@
 
 #define MAX_ERR_LEN 255
 
-int peripheral_interface_gpio_set_direction(peripheral_gpio_h gpio, gpio_direction_e dir)
+int peripheral_interface_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_direction_e direction)
 {
 	int status;
 
-	if (dir == GPIO_DIRECTION_IN)
+	if (direction == PERIPHERAL_GPIO_DIRECTION_IN)
 		status = write(gpio->fd_direction, "in", strlen("in")+1);
-	else if (dir == GPIO_DIRECTION_OUT_HIGH)
+	else if (direction == PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_HIGH)
 		status = write(gpio->fd_direction, "high", strlen("high")+1);
-	else if (dir == GPIO_DIRECTION_OUT_LOW)
+	else if (direction == PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_LOW)
 		status = write(gpio->fd_direction, "low", strlen("low")+1);
 	else {
 		_E("Error: gpio direction is wrong\n");
@@ -51,17 +51,17 @@ int peripheral_interface_gpio_set_direction(peripheral_gpio_h gpio, gpio_directi
 	return 0;
 }
 
-int peripheral_interface_gpio_set_edge_mode(peripheral_gpio_h gpio, gpio_edge_e edge)
+int peripheral_interface_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e edge)
 {
 	int status;
 
-	if (edge == GPIO_EDGE_NONE)
+	if (edge == PERIPHERAL_GPIO_EDGE_NONE)
 		status = write(gpio->fd_edge, "none", strlen("none")+1);
-	else if (edge == GPIO_EDGE_RISING)
+	else if (edge == PERIPHERAL_GPIO_EDGE_RISING)
 		status = write(gpio->fd_edge, "rising", strlen("rising")+1);
-	else if (edge == GPIO_EDGE_FALLING)
+	else if (edge == PERIPHERAL_GPIO_EDGE_FALLING)
 		status = write(gpio->fd_edge, "falling", strlen("falling")+1);
-	else if (edge == GPIO_EDGE_BOTH)
+	else if (edge == PERIPHERAL_GPIO_EDGE_BOTH)
 		status = write(gpio->fd_edge, "both", strlen("both")+1);
 	else {
 		_E("Error: gpio edge is wrong\n");

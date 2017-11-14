@@ -50,7 +50,7 @@ int peripheral_interface_spi_close(peripheral_spi_h spi)
 	return 0;
 }
 
-int peripheral_interface_spi_set_mode(peripheral_spi_h spi, unsigned char mode)
+int peripheral_interface_spi_set_mode(peripheral_spi_h spi, peripheral_spi_mode_e mode)
 {
 	int status;
 
@@ -68,18 +68,18 @@ int peripheral_interface_spi_set_mode(peripheral_spi_h spi, unsigned char mode)
 	return 0;
 }
 
-int peripheral_interface_spi_set_bit_order(peripheral_spi_h spi, unsigned char lsb)
+int peripheral_interface_spi_set_bit_order(peripheral_spi_h spi, peripheral_spi_bit_order_e bit_order)
 {
 	int status;
 
-	_D("fd : %d, lsb : %d", spi->fd, lsb);
+	_D("fd : %d, lsb : %d", spi->fd, bit_order);
 	RETVM_IF(spi->fd < 0, -EINVAL, "Invalid fd");
 
-	status = ioctl(spi->fd, SPI_IOC_WR_LSB_FIRST, &lsb);
+	status = ioctl(spi->fd, SPI_IOC_WR_LSB_FIRST, &bit_order);
 	if (status < 0) {
 		char errmsg[MAX_ERR_LEN];
 		strerror_r(errno, errmsg, MAX_ERR_LEN);
-		_E("Failed to set lsb first(%d), fd : %d, errmsg : %s", lsb, spi->fd, errmsg);
+		_E("Failed to set lsb first(%d), fd : %d, errmsg : %s", bit_order, spi->fd, errmsg);
 		return -EIO;
 	}
 

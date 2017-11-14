@@ -22,22 +22,9 @@
 #define SYSFS_GPIO_DIR "/sys/class/gpio"
 #define GPIO_BUFFER_MAX 64
 
-typedef enum {
-	GPIO_DIRECTION_IN = 0,
-	GPIO_DIRECTION_OUT_HIGH = 1,
-	GPIO_DIRECTION_OUT_LOW = 2,
-} gpio_direction_e;
-
-typedef enum {
-	GPIO_EDGE_NONE = 0,
-	GPIO_EDGE_RISING = 1,
-	GPIO_EDGE_FALLING = 2,
-	GPIO_EDGE_BOTH = 3,
-} gpio_edge_e;
-
 int peripheral_interface_gpio_close(peripheral_gpio_h gpio);
-int peripheral_interface_gpio_set_edge_mode(peripheral_gpio_h gpio, gpio_edge_e edge);
-int peripheral_interface_gpio_set_direction(peripheral_gpio_h gpio, gpio_direction_e dir);
+int peripheral_interface_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e edge);
+int peripheral_interface_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_direction_e direction);
 int peripheral_interface_gpio_write(peripheral_gpio_h gpio, int value);
 int peripheral_interface_gpio_read(peripheral_gpio_h gpio, int *value);
 

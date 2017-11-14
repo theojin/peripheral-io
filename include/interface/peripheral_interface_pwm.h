@@ -20,15 +20,6 @@
 #include "peripheral_io.h"
 
 /**
- * @brief Enumeration for Polarity
- */
-typedef enum {
-	PWM_POLARITY_NORMAL = 0,
-	PWM_POLARITY_INVERSED,
-} pwm_polarity_e;
-
-
-/**
 * @brief pwm_close() deinit pwm pin.
 *
 * @param[in] chip pwm chip number
@@ -65,7 +56,7 @@ int peripheral_interface_pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle
 * @param[in] polarity pwm polarity
 * @return On success, 0 is returned. On failure, a negative value is returned.
 */
-int peripheral_interface_pwm_set_polarity(peripheral_pwm_h pwm, pwm_polarity_e polarity);
+int peripheral_interface_pwm_set_polarity(peripheral_pwm_h pwm, peripheral_pwm_polarity_e polarity);
 
 /**
 * @brief pwm_set_enable() sets the pwm state.

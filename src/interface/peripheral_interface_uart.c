@@ -103,7 +103,7 @@ int peripheral_interface_uart_flush(peripheral_uart_h uart)
 	return 0;
 }
 
-int peripheral_interface_uart_set_baud_rate(peripheral_uart_h uart, uart_baud_rate_e baud)
+int peripheral_interface_uart_set_baud_rate(peripheral_uart_h uart, peripheral_uart_baud_rate_e baud)
 {
 	int ret;
 	struct termios tio;
@@ -116,7 +116,7 @@ int peripheral_interface_uart_set_baud_rate(peripheral_uart_h uart, uart_baud_ra
 		return -EINVAL;
 	}
 
-	if (baud > UART_BAUD_RATE_230400) {
+	if (baud > PERIPHERAL_UART_BAUD_RATE_230400) {
 		_E("Invalid parameter");
 		return -EINVAL;
 	}
@@ -147,7 +147,7 @@ int peripheral_interface_uart_set_baud_rate(peripheral_uart_h uart, uart_baud_ra
 	return 0;
 }
 
-int peripheral_interface_uart_set_byte_size(peripheral_uart_h uart, uart_byte_size_e byte_size)
+int peripheral_interface_uart_set_byte_size(peripheral_uart_h uart, peripheral_uart_byte_size_e byte_size)
 {
 	int ret;
 	struct termios tio;
@@ -159,7 +159,7 @@ int peripheral_interface_uart_set_byte_size(peripheral_uart_h uart, uart_byte_si
 		return -EINVAL;
 	}
 
-	if (byte_size > UART_BYTE_SIZE_8BIT) {
+	if (byte_size > PERIPHERAL_UART_BYTE_SIZE_8BIT) {
 		_E("Invalid bytesize parameter");
 		return -EINVAL;
 	}
@@ -189,7 +189,7 @@ int peripheral_interface_uart_set_byte_size(peripheral_uart_h uart, uart_byte_si
 	return 0;
 }
 
-int peripheral_interface_uart_set_parity(peripheral_uart_h uart, uart_parity_e parity)
+int peripheral_interface_uart_set_parity(peripheral_uart_h uart, peripheral_uart_parity_e parity)
 {
 	int ret;
 	struct termios tio;
@@ -211,15 +211,15 @@ int peripheral_interface_uart_set_parity(peripheral_uart_h uart, uart_parity_e p
 
 	/* set parity info */
 	switch (parity) {
-	case UART_PARITY_EVEN:
+	case PERIPHERAL_UART_PARITY_EVEN:
 		tio.c_cflag |= PARENB;
 		tio.c_cflag &= ~PARODD;
 		break;
-	case UART_PARITY_ODD:
+	case PERIPHERAL_UART_PARITY_ODD:
 		tio.c_cflag |= PARENB;
 		tio.c_cflag |= PARODD;
 		break;
-	case UART_PARITY_NONE:
+	case PERIPHERAL_UART_PARITY_NONE:
 	default:
 		tio.c_cflag &= ~PARENB;
 		tio.c_cflag &= ~PARODD;
@@ -238,7 +238,7 @@ int peripheral_interface_uart_set_parity(peripheral_uart_h uart, uart_parity_e p
 	return 0;
 }
 
-int peripheral_interface_uart_set_stop_bits(peripheral_uart_h uart, uart_stop_bits_e stop_bits)
+int peripheral_interface_uart_set_stop_bits(peripheral_uart_h uart, peripheral_uart_stop_bits_e stop_bits)
 {
 	int ret;
 	struct termios tio;
@@ -260,10 +260,10 @@ int peripheral_interface_uart_set_stop_bits(peripheral_uart_h uart, uart_stop_bi
 
 	/* set stop bit */
 	switch (stop_bits) {
-	case UART_STOP_BITS_1BIT:
+	case PERIPHERAL_UART_STOP_BITS_1BIT:
 		tio.c_cflag &= ~CSTOPB;
 		break;
-	case UART_STOP_BITS_2BIT:
+	case PERIPHERAL_UART_STOP_BITS_2BIT:
 		tio.c_cflag |= CSTOPB;
 		break;
 	default:
@@ -283,7 +283,7 @@ int peripheral_interface_uart_set_stop_bits(peripheral_uart_h uart, uart_stop_bi
 	return 0;
 }
 
-int peripheral_interface_uart_set_flow_control(peripheral_uart_h uart, bool xonxoff, bool rtscts)
+int peripheral_interface_uart_set_flow_control(peripheral_uart_h uart, peripheral_uart_software_flow_control_e xonxoff, peripheral_uart_hardware_flow_control_e rtscts)
 {
 	int ret;
 	struct termios tio;
@@ -303,17 +303,19 @@ int peripheral_interface_uart_set_flow_control(peripheral_uart_h uart, bool xonx
 		return -1;
 	}
 
-	/* rtscts => 1: rts/cts on, 0: off */
-	if (rtscts)
+	if (rtscts == PERIPHERAL_UART_HARDWARE_FLOW_CONTROL_AUTO_RTSCTS)
 		tio.c_cflag |= CRTSCTS;
-	else
+	else if (rtscts == PERIPHERAL_UART_HARDWARE_FLOW_CONTROL_NONE)
 		tio.c_cflag &= ~CRTSCTS;
-
-	/* xonxoff => 1: xon/xoff on, 0: off */
-	if (xonxoff)
-		tio.c_iflag |= (IXON | IXOFF | IXANY);
 	else
+		return -EINVAL;
+
+	if (xonxoff == PERIPHERAL_UART_SOFTWARE_FLOW_CONTROL_XONXOFF)
+		tio.c_iflag |= (IXON | IXOFF | IXANY);
+	else if (xonxoff == PERIPHERAL_UART_SOFTWARE_FLOW_CONTROL_NONE)
 		tio.c_iflag &= ~(IXON | IXOFF | IXANY);
+	else
+		return -EINVAL;
 
 	ret = tcsetattr(uart->fd, TCSANOW, &tio);
 	if (ret) {
