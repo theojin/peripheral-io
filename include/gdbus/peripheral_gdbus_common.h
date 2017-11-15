@@ -23,7 +23,7 @@
 #include <gio/gunixfdlist.h>
 
 #include "peripheral_io.h"
-#include "peripheral_internal.h"
+#include "peripheral_handle.h"
 #include "peripheral_common.h"
 #include "peripheral_io_gdbus.h"
 

@@ -25,7 +25,7 @@
 #include <unistd.h>
 
 #include "peripheral_io.h"
-#include "peripheral_internal.h"
+#include "peripheral_handle.h"
 #include "peripheral_common.h"
 
 #define CHECK_ERROR(val) \

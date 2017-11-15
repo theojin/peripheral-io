@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef __PERIPHERAL_INTERNAL_H__
-#define __PERIPHERAL_INTERNAL_H__
+#ifndef __PERIPHERAL_HANDLE_H__
+#define __PERIPHERAL_HANDLE_H__
 
 /**
  * @brief Internal struct for gpio context
@@ -63,4 +63,4 @@ struct _peripheral_spi_s {
 	int fd;
 };
 
-#endif /* __PERIPHERAL_INTERNAL_H__ */
+#endif /* __PERIPHERAL_HANDLE_H__ */

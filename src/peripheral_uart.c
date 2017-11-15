@@ -23,7 +23,7 @@
 #include "peripheral_io.h"
 #include "peripheral_gdbus_uart.h"
 #include "peripheral_common.h"
-#include "peripheral_internal.h"
+#include "peripheral_handle.h"
 
 #define PERIPHERAL_IO_UART_FEATURE "http://tizen.org/feature/peripheral_io.uart"
 

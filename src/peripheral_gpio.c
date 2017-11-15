@@ -24,7 +24,7 @@
 #include "peripheral_io.h"
 #include "peripheral_gdbus_gpio.h"
 #include "peripheral_common.h"
-#include "peripheral_internal.h"
+#include "peripheral_handle.h"
 
 #define PERIPHERAL_IO_GPIO_FEATURE "http://tizen.org/feature/peripheral_io.gpio"
 
