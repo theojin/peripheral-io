@@ -19,8 +19,8 @@
 
 #include "peripheral_io.h"
 #include "peripheral_gdbus_pwm.h"
-#include "peripheral_common.h"
 #include "peripheral_handle.h"
+#include "peripheral_log.h"
 
 #define PERIPHERAL_IO_PWM_FEATURE "http://tizen.org/feature/peripheral_io.pwm"
 

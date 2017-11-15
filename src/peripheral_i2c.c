@@ -19,8 +19,8 @@
 
 #include "peripheral_io.h"
 #include "peripheral_gdbus_i2c.h"
-#include "peripheral_common.h"
 #include "peripheral_handle.h"
+#include "peripheral_log.h"
 
 #define PERIPHERAL_IO_I2C_FEATURE "http://tizen.org/feature/peripheral_io.i2c"
 

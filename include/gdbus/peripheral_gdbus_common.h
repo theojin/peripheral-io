@@ -23,8 +23,8 @@
 
 #include "peripheral_io.h"
 #include "peripheral_handle.h"
-#include "peripheral_common.h"
 #include "peripheral_io_gdbus.h"
+#include "peripheral_log.h"
 
 #define PERIPHERAL_GDBUS_INTERFACE	"org.tizen.peripheral_io"
 #define PERIPHERAL_GDBUS_GPIO_PATH	"/Org/Tizen/Peripheral_io/Gpio"

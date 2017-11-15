@@ -23,7 +23,7 @@
 
 #include "peripheral_io.h"
 #include "peripheral_handle.h"
-#include "peripheral_common.h"
+#include "peripheral_log.h"
 
 #define CHECK_ERROR(val) \
 	do { \
