@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #ifndef __PERIPHERAL_COMMON_H__
 #define __PERIPHERAL_COMMON_H__
 
-#include <unistd.h>
 #include <dlog.h>
 
 #undef LOG_TAG

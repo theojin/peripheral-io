@@ -17,7 +17,6 @@
 #ifndef __PERIPHERAL_GDBUS_COMMON_H__
 #define __PERIPHERAL_GDBUS_COMMON_H__
 
-#include <gio/gio.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <gio/gunixfdlist.h>

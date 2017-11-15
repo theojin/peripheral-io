@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-#include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <assert.h>
 #include <system_info.h>
 
 #include "peripheral_io.h"
