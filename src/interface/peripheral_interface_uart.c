@@ -47,13 +47,6 @@ int peripheral_interface_uart_close(peripheral_uart_h uart)
 {
 	int status;
 
-	_D("file_hndl : %d", uart->fd);
-
-	if (uart->fd < 0) {
-		_E("Invalid NULL parameter");
-		return -EINVAL;
-	}
-
 	status = peripheral_interface_uart_flush(uart);
 	CHECK_ERROR(status);
 
@@ -65,14 +58,7 @@ int peripheral_interface_uart_close(peripheral_uart_h uart)
 
 int peripheral_interface_uart_flush(peripheral_uart_h uart)
 {
-	int ret;
-
-	if (!uart->fd) {
-		_E("Invalid NULL parameter");
-		return -EINVAL;
-	}
-
-	ret = tcflush(uart->fd, TCIOFLUSH);
+	int ret = tcflush(uart->fd, TCIOFLUSH);
 	CHECK_ERROR(ret);
 
 	return 0;
@@ -82,19 +68,6 @@ int peripheral_interface_uart_set_baud_rate(peripheral_uart_h uart, peripheral_u
 {
 	int ret;
 	struct termios tio;
-
-	_D("file_hndl : %d, baud : %d", uart->fd, baud);
-
-	memset(&tio, 0, sizeof(tio));
-	if (!uart->fd) {
-		_E("Invalid NULL parameter");
-		return -EINVAL;
-	}
-
-	if (baud > PERIPHERAL_UART_BAUD_RATE_230400) {
-		_E("Invalid parameter");
-		return -EINVAL;
-	}
 
 	ret = tcgetattr(uart->fd, &tio);
 	CHECK_ERROR(ret);
@@ -118,21 +91,8 @@ int peripheral_interface_uart_set_byte_size(peripheral_uart_h uart, peripheral_u
 	int ret;
 	struct termios tio;
 
-	_D("file_hndl : %d, bytesize : %d", uart->fd, byte_size);
-
-	if (!uart->fd) {
-		_E("Invalid NULL parameter");
-		return -EINVAL;
-	}
-
-	if (byte_size > PERIPHERAL_UART_BYTE_SIZE_8BIT) {
-		_E("Invalid bytesize parameter");
-		return -EINVAL;
-	}
-
 	ret = tcgetattr(uart->fd, &tio);
 	CHECK_ERROR(ret);
-
 
 	/* set byte size */
 	tio.c_cflag &= ~CSIZE;
@@ -150,13 +110,6 @@ int peripheral_interface_uart_set_parity(peripheral_uart_h uart, peripheral_uart
 {
 	int ret;
 	struct termios tio;
-
-	_D("file_hndl : %d, parity : %d", uart->fd, parity);
-
-	if (!uart->fd) {
-		_E("Invalid NULL parameter");
-		return -EINVAL;
-	}
 
 	ret = tcgetattr(uart->fd, &tio);
 	CHECK_ERROR(ret);
@@ -190,13 +143,6 @@ int peripheral_interface_uart_set_stop_bits(peripheral_uart_h uart, peripheral_u
 	int ret;
 	struct termios tio;
 
-	_D("file_hndl : %d, stopbits : %d", uart->fd, stop_bits);
-
-	if (!uart->fd) {
-		_E("Invalid NULL parameter");
-		return -EINVAL;
-	}
-
 	ret = tcgetattr(uart->fd, &tio);
 	CHECK_ERROR(ret);
 
@@ -225,13 +171,6 @@ int peripheral_interface_uart_set_flow_control(peripheral_uart_h uart, periphera
 	int ret;
 	struct termios tio;
 
-	_D("file_hndl : %d, xonxoff : %d, rtscts : %d", uart->fd, xonxoff, rtscts);
-
-	if (!uart->fd) {
-		_E("Invalid NULL parameter");
-		return -EINVAL;
-	}
-
 	ret = tcgetattr(uart->fd, &tio);
 	CHECK_ERROR(ret);
 
@@ -257,14 +196,7 @@ int peripheral_interface_uart_set_flow_control(peripheral_uart_h uart, periphera
 
 int peripheral_interface_uart_read(peripheral_uart_h uart, uint8_t *buf, uint32_t length)
 {
-	int ret;
-
-	if (!uart->fd) {
-		_E("Invalid NULL parameter");
-		return -EINVAL;
-	}
-
-	ret = read(uart->fd, (void *)buf, length);
+	int ret = read(uart->fd, (void *)buf, length);
 	CHECK_ERROR(ret);
 
 	return ret;
@@ -272,14 +204,7 @@ int peripheral_interface_uart_read(peripheral_uart_h uart, uint8_t *buf, uint32_
 
 int peripheral_interface_uart_write(peripheral_uart_h uart, uint8_t *buf, uint32_t length)
 {
-	int ret;
-
-	if (!uart->fd) {
-		_E("Invalid NULL parameter");
-		return -EINVAL;
-	}
-
-	ret = write(uart->fd, buf, length);
+	int ret = write(uart->fd, buf, length);
 	CHECK_ERROR(ret);
 
 	return ret;

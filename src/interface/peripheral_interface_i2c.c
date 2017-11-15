@@ -22,12 +22,7 @@
 
 int peripheral_interface_i2c_close(peripheral_i2c_h i2c)
 {
-	int status;
-
-	_D("fd : %d", i2c->fd);
-	RETVM_IF(i2c->fd < 0, -EINVAL, "Invalid fd");
-
-	status = close(i2c->fd);
+	int status = close(i2c->fd);
 	CHECK_ERROR(status);
 
 	return 0;
@@ -35,11 +30,7 @@ int peripheral_interface_i2c_close(peripheral_i2c_h i2c)
 
 int peripheral_interface_i2c_read(peripheral_i2c_h i2c, uint8_t *data, uint32_t length)
 {
-	int status;
-
-	RETVM_IF(i2c->fd < 0, -EINVAL, "Invalid fd : %d", i2c->fd);
-
-	status = read(i2c->fd, data, length);
+	int status = read(i2c->fd, data, length);
 	CHECK_ERROR(status);
 
 	return 0;
@@ -47,11 +38,7 @@ int peripheral_interface_i2c_read(peripheral_i2c_h i2c, uint8_t *data, uint32_t 
 
 int peripheral_interface_i2c_write(peripheral_i2c_h i2c, uint8_t *data, uint32_t length)
 {
-	int status;
-
-	RETVM_IF(i2c->fd < 0, -EINVAL, "Invalid fd : %d", i2c->fd);
-
-	status = write(i2c->fd, data, length);
+	int status = write(i2c->fd, data, length);
 	CHECK_ERROR(status);
 
 	return 0;
@@ -59,11 +46,7 @@ int peripheral_interface_i2c_write(peripheral_i2c_h i2c, uint8_t *data, uint32_t
 
 int peripheral_interface_i2c_smbus_ioctl(peripheral_i2c_h i2c, struct i2c_smbus_ioctl_data *data)
 {
-	int status;
-
-	RETVM_IF(i2c->fd < 0, -EINVAL, "Invalid fd : %d", i2c->fd);
-
-	status = ioctl(i2c->fd, I2C_SMBUS, data);
+	int status = ioctl(i2c->fd, I2C_SMBUS, data);
 	CHECK_ERROR(status);
 
 	return 0;
