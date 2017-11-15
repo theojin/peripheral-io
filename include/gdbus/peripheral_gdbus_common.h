@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef __PERIPHERAL_GDBUS_H__
-#define __PERIPHERAL_GDBUS_H__
+#ifndef __PERIPHERAL_GDBUS_COMMON_H__
+#define __PERIPHERAL_GDBUS_COMMON_H__
 
 #include <gio/gio.h>
 
@@ -26,4 +26,4 @@
 #define PERIPHERAL_GDBUS_SPI_PATH	"/Org/Tizen/Peripheral_io/Spi"
 #define PERIPHERAL_GDBUS_NAME		"org.tizen.peripheral_io"
 
-#endif /* __PERIPHERAL_GDBUS_H__ */
+#endif /* __PERIPHERAL_GDBUS_COMMON_H__ */
