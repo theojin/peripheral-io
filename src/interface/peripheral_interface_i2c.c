@@ -44,9 +44,89 @@ int peripheral_interface_i2c_write(peripheral_i2c_h i2c, uint8_t *data, uint32_t
 	return 0;
 }
 
-int peripheral_interface_i2c_smbus_ioctl(peripheral_i2c_h i2c, struct i2c_smbus_ioctl_data *data)
+int peripheral_interface_i2c_read_register_byte(peripheral_i2c_h i2c, uint8_t reg, uint8_t *data_out)
 {
-	int status = ioctl(i2c->fd, I2C_SMBUS, data);
+	int status;
+
+	struct i2c_smbus_ioctl_data data_arg;
+	union i2c_smbus_data data;
+
+	memset(&data, 0x0, sizeof(data.block));
+
+	data_arg.read_write = I2C_SMBUS_READ;
+	data_arg.size = I2C_SMBUS_BYTE_DATA;
+	data_arg.data = &data;
+	data_arg.command = reg;
+
+	status = ioctl(fd, I2C_SMBUS, &data_arg);
+	CHECK_ERROR(status);
+
+	*data_out = data.byte;
+
+	return 0;
+}
+
+int peripheral_interface_i2c_write_register_byte(peripheral_i2c_h i2c, uint8_t reg, uint8_t data_in)
+{
+	int status;
+
+	struct i2c_smbus_ioctl_data data_arg;
+	union i2c_smbus_data data;
+
+	memset(&data, 0x0, sizeof(data.block));
+
+	data_arg.read_write = I2C_SMBUS_WRITE;
+	data_arg.size = I2C_SMBUS_BYTE_DATA;
+	data_arg.data = &data;
+	data_arg.command = reg;
+
+	data.byte = data_in;
+
+	status = ioctl(fd, I2C_SMBUS, &data_arg);
+	CHECK_ERROR(status);
+
+	return 0;
+}
+
+int peripheral_interface_i2c_read_register_word(peripheral_i2c_h i2c, uint8_t reg, uint16_t *data_out)
+{
+	int status;
+
+	struct i2c_smbus_ioctl_data data_arg;
+	union i2c_smbus_data data;
+
+	memset(&data, 0x0, sizeof(data.block));
+
+	data_arg.read_write = I2C_SMBUS_READ;
+	data_arg.size = I2C_SMBUS_WORD_DATA;
+	data_arg.data = &data;
+	data_arg.command = reg;
+
+	status = ioctl(fd, I2C_SMBUS, &data_arg);
+	CHECK_ERROR(status);
+
+	*data_out = data.word;
+
+	return 0;
+}
+
+int peripheral_interface_i2c_write_register_word(peripheral_i2c_h i2c, uint8_t reg, uint16_t data_in)
+{
+	int status;
+
+	struct i2c_smbus_ioctl_data data_arg;
+	union i2c_smbus_data data;
+
+	memset(&data, 0x0, sizeof(data.block));
+
+	data_arg.read_write = I2C_SMBUS_WRITE;
+	data_arg.size = I2C_SMBUS_WORD_DATA;
+	data_arg.data = &data;
+	data_arg.command = reg;
+
+	data.word = data_in;
+
+	statis = ioctl(fd, I2C_SMBUS, &data_arg);
 	CHECK_ERROR(status);
 
 	return 0;
