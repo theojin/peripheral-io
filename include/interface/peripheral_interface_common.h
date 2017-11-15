@@ -17,6 +17,17 @@
 #ifndef __PERIPHERAL_INTERFACE_COMMON_H__
 #define __PERIPHERAL_INTERFACE_COMMON_H__
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+#include "peripheral_io.h"
+#include "peripheral_internal.h"
+#include "peripheral_common.h"
+
 #define CHECK_ERROR(val) \
 	do { \
 		if (val < 0) { \

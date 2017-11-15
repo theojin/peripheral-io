@@ -14,15 +14,7 @@
  * limitations under the License.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <gio/gunixfdlist.h>
-
-#include "peripheral_io.h"
-#include "peripheral_gdbus_common.h"
-#include "peripheral_common.h"
-#include "peripheral_internal.h"
-#include "peripheral_io_gdbus.h"
+#include "peripheral_gdbus_spi.h"
 
 #define SPI_FD_INDEX 0
 

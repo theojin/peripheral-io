@@ -13,8 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #ifndef __PERIPHERAL_GDBUS_SPI_H_
 #define __PERIPHERAL_GDBUS_SPI_H_
+
+#include "peripheral_gdbus_common.h"
 
 int peripheral_gdbus_spi_open(peripheral_spi_h spi, int bus, int cs);
 int peripheral_gdbus_spi_close(peripheral_spi_h spi);

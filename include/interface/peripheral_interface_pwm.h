@@ -17,7 +17,7 @@
 #ifndef __PERIPHERAL_INTERFACE_PWM_H__
 #define __PERIPHERAL_INTERFACE_PWM_H__
 
-#include "peripheral_io.h"
+#include "peripheral_interface_common.h"
 
 /**
 * @brief pwm_close() deinit pwm pin.

@@ -14,15 +14,7 @@
  * limitations under the License.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <gio/gunixfdlist.h>
-
-#include "peripheral_io.h"
-#include "peripheral_gdbus_common.h"
-#include "peripheral_common.h"
-#include "peripheral_internal.h"
-#include "peripheral_io_gdbus.h"
+#include "peripheral_gdbus_pwm.h"
 
 #define PWM_FD_INDEX_PERIOD      0
 #define PWM_FD_INDEX_DUTY_CYCLE  1

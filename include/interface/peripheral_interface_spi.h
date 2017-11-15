@@ -17,7 +17,7 @@
 #ifndef __PERIPHERAL_INTERFACE_SPI_H__
 #define __PERIPHERAL_INTERFACE_SPI_H__
 
-#include "peripheral_io.h"
+#include "peripheral_interface_common.h"
 
 int peripheral_interface_spi_close(peripheral_spi_h spi);
 int peripheral_interface_spi_set_mode(peripheral_spi_h spi, peripheral_spi_mode_e mode);

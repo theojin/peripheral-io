@@ -30,6 +30,9 @@ INCLUDE_DIRECTORIES(${INC_DIR})
 INCLUDE_DIRECTORIES(${INC_DIR}/gdbus)
 INCLUDE_DIRECTORIES(${INC_DIR}/interface)
 
+SET(SRC_DIR src)
+INCLUDE_DIRECTORIES(${SRC_DIR}/gdbus)
+
 INCLUDE(FindPkgConfig)
 pkg_check_modules(${fw_name} REQUIRED ${dependents})
 FOREACH(flag ${${fw_name}_CFLAGS})

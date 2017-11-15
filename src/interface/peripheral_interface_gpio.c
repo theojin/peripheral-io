@@ -14,18 +14,7 @@
  * limitations under the License.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <poll.h>
-
-#include "peripheral_interface_common.h"
 #include "peripheral_interface_gpio.h"
-#include "peripheral_common.h"
-#include "peripheral_internal.h"
 
 #define MAX_ERR_LEN 255
 

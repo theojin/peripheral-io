@@ -13,10 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #ifndef __PERIPHERAL_GDBUS_COMMON_H__
 #define __PERIPHERAL_GDBUS_COMMON_H__
 
 #include <gio/gio.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <gio/gunixfdlist.h>
+
+#include "peripheral_io.h"
+#include "peripheral_internal.h"
+#include "peripheral_common.h"
+#include "peripheral_io_gdbus.h"
 
 #define PERIPHERAL_GDBUS_INTERFACE	"org.tizen.peripheral_io"
 #define PERIPHERAL_GDBUS_GPIO_PATH	"/Org/Tizen/Peripheral_io/Gpio"

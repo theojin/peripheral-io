@@ -14,20 +14,9 @@
  * limitations under the License.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <unistd.h>
 #include <termios.h>
-#include <stdbool.h>
-#include <sys/ioctl.h>
 
-#include "peripheral_interface_common.h"
 #include "peripheral_interface_uart.h"
-#include "peripheral_common.h"
-#include "peripheral_internal.h"
 
 #define PATH_BUF_MAX		64
 #define UART_BUF_MAX		16

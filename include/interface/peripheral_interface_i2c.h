@@ -17,9 +17,7 @@
 #ifndef __PERIPHERAL_INTERFACE_I2C_H__
 #define __PERIPHERAL_INTERFACE_I2C_H__
 
-#include <stdint.h>
-
-#include "peripheral_io.h"
+#include "peripheral_interface_common.h"
 
 #define SYSFS_I2C_DIR "/dev/i2c"
 #define I2C_BUFFER_MAX 64

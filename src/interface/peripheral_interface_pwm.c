@@ -14,18 +14,7 @@
  * limitations under the License.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdbool.h>
-
-#include "peripheral_interface_common.h"
 #include "peripheral_interface_pwm.h"
-#include "peripheral_common.h"
-#include "peripheral_internal.h"
 
 #define SYSFS_PWM_PATH	"/sys/class/pwm"
 

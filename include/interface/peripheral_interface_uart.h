@@ -17,9 +17,7 @@
 #ifndef __PERIPHERAL_INTERFACE_UART_H__
 #define __PERIPHERAL_INTERFACE_UART_H__
 
-#include "peripheral_io.h"
-
-#include <stdint.h>
+#include "peripheral_interface_common.h"
 
 /**
 * @brief uart_close() closes uart port.

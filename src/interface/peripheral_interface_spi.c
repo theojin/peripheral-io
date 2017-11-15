@@ -14,19 +14,10 @@
  * limitations under the License.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-#include <errno.h>
-#include <fcntl.h>
 #include <sys/ioctl.h>
 #include <linux/spi/spidev.h>
 
-#include "peripheral_interface_common.h"
 #include "peripheral_interface_spi.h"
-#include "peripheral_common.h"
-#include "peripheral_internal.h"
 
 #define SYSFS_SPI_DIR "/dev/spidev"
 #define SYSFS_SPI_BUFSIZ "/sys/module/spidev/parameters/bufsiz"

@@ -17,7 +17,7 @@
 #ifndef __PERIPHERAL_INTERFACE_GPIO_H__
 #define __PERIPHERAL_INTERFACE_GPIO_H__
 
-#include "peripheral_io.h"
+#include "peripheral_interface_common.h"
 
 #define SYSFS_GPIO_DIR "/sys/class/gpio"
 #define GPIO_BUFFER_MAX 64

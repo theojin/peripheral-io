@@ -13,8 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #ifndef __PERIPHERAL_GDBUS_UART_H_
 #define __PERIPHERAL_GDBUS_UART_H_
+
+#include "peripheral_gdbus_common.h"
 
 int peripheral_gdbus_uart_open(peripheral_uart_h uart, int port);
 int peripheral_gdbus_uart_close(peripheral_uart_h uart);
