@@ -70,9 +70,9 @@ int peripheral_interface_pwm_set_polarity(peripheral_pwm_h pwm, peripheral_pwm_p
 	int status;
 
 	if (polarity == PERIPHERAL_PWM_POLARITY_ACTIVE_HIGH)
-		status = write(pwm->fd_polarity, "normal", strlen("normal")+1);
+		status = write(pwm->fd_polarity, "normal", strlen("normal"));
 	else if (polarity == PERIPHERAL_PWM_POLARITY_ACTIVE_LOW)
-		status = write(pwm->fd_polarity, "inversed", strlen("inversed")+1);
+		status = write(pwm->fd_polarity, "inversed", strlen("inversed"));
 	else {
 		_E("Invalid pwm polarity : %d", polarity);
 		return -EINVAL;

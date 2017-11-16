@@ -23,11 +23,11 @@ int peripheral_interface_gpio_set_direction(peripheral_gpio_h gpio, peripheral_g
 	int status;
 
 	if (direction == PERIPHERAL_GPIO_DIRECTION_IN)
-		status = write(gpio->fd_direction, "in", strlen("in")+1);
+		status = write(gpio->fd_direction, "in", strlen("in"));
 	else if (direction == PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_HIGH)
-		status = write(gpio->fd_direction, "high", strlen("high")+1);
+		status = write(gpio->fd_direction, "high", strlen("high"));
 	else if (direction == PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_LOW)
-		status = write(gpio->fd_direction, "low", strlen("low")+1);
+		status = write(gpio->fd_direction, "low", strlen("low"));
 	else {
 		_E("Error: gpio direction is wrong\n");
 		return -EIO;
@@ -43,13 +43,13 @@ int peripheral_interface_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_g
 	int status;
 
 	if (edge == PERIPHERAL_GPIO_EDGE_NONE)
-		status = write(gpio->fd_edge, "none", strlen("none")+1);
+		status = write(gpio->fd_edge, "none", strlen("none"));
 	else if (edge == PERIPHERAL_GPIO_EDGE_RISING)
-		status = write(gpio->fd_edge, "rising", strlen("rising")+1);
+		status = write(gpio->fd_edge, "rising", strlen("rising"));
 	else if (edge == PERIPHERAL_GPIO_EDGE_FALLING)
-		status = write(gpio->fd_edge, "falling", strlen("falling")+1);
+		status = write(gpio->fd_edge, "falling", strlen("falling"));
 	else if (edge == PERIPHERAL_GPIO_EDGE_BOTH)
-		status = write(gpio->fd_edge, "both", strlen("both")+1);
+		status = write(gpio->fd_edge, "both", strlen("both"));
 	else {
 		_E("Error: gpio edge is wrong\n");
 		return -EIO;
@@ -65,9 +65,9 @@ int peripheral_interface_gpio_write(peripheral_gpio_h gpio, uint32_t value)
 	int status;
 
 	if (value == 1)
-		status = write(gpio->fd_value, "1", strlen("1")+1);
+		status = write(gpio->fd_value, "1", strlen("1"));
 	else if (value == 0)
-		status = write(gpio->fd_value, "0", strlen("0")+1);
+		status = write(gpio->fd_value, "0", strlen("0"));
 	else {
 		_E("Error: gpio write value error \n");
 		return -EIO;
