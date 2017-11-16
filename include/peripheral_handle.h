@@ -21,7 +21,6 @@
  * @brief Internal struct for gpio context
  */
 struct _peripheral_gpio_s {
-	int pin;
 	uint handle;
 	int fd_direction;
 	int fd_edge;

@@ -19,7 +19,7 @@
 
 #include "peripheral_gdbus_common.h"
 
-int peripheral_gdbus_gpio_open(peripheral_gpio_h gpio);
+int peripheral_gdbus_gpio_open(peripheral_gpio_h gpio, int pin);
 int peripheral_gdbus_gpio_close(void);
 
 #endif /* __PERIPHERAL_GDBUS_GPIO_H__ */

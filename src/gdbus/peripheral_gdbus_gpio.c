@@ -63,7 +63,7 @@ static int __gpio_proxy_deinit(void)
 	return PERIPHERAL_ERROR_NONE;
 }
 
-int peripheral_gdbus_gpio_open(peripheral_gpio_h gpio)
+int peripheral_gdbus_gpio_open(peripheral_gpio_h gpio, int pin)
 {
 	int ret;
 	GError *error = NULL;
@@ -75,7 +75,7 @@ int peripheral_gdbus_gpio_open(peripheral_gpio_h gpio)
 
 	if (peripheral_io_gdbus_gpio_call_open_sync(
 			gpio_proxy,
-			gpio->pin,
+			pin,
 			NULL,
 			&gpio->handle,
 			&ret,

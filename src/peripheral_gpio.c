@@ -58,15 +58,12 @@ int peripheral_gpio_open(int gpio_pin, peripheral_gpio_h *gpio)
 
 	/* Initialize */
 	handle = (peripheral_gpio_h)calloc(1, sizeof(struct _peripheral_gpio_s));
-
 	if (handle == NULL) {
 		_E("Failed to allocate peripheral_gpio_h");
 		return PERIPHERAL_ERROR_OUT_OF_MEMORY;
 	}
-	handle->pin = gpio_pin;
 
-	ret = peripheral_gdbus_gpio_open(handle);
-
+	ret = peripheral_gdbus_gpio_open(handle, gpio_pin);
 	if (ret != PERIPHERAL_ERROR_NONE) {
 		_E("Failed to open the gpio pin, ret : %d", ret);
 		free(handle);
