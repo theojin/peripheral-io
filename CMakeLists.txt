@@ -76,11 +76,7 @@ SET_TARGET_PROPERTIES(${fw_name}
 )
 
 INSTALL(TARGETS ${fw_name} DESTINATION ${libdir})
-INSTALL(
-		DIRECTORY ${INC_DIR}/ DESTINATION include
-		FILES_MATCHING
-		PATTERN "${INC_DIR}/*.h"
-		)
+INSTALL(FILES ${INC_DIR}/peripheral_io.h DESTINATION include)
 
 SET(PC_NAME ${fw_name})
 SET(PC_REQUIRED ${pc_dependents})
