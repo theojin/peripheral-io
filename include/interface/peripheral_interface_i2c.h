@@ -19,7 +19,6 @@
 
 #include "peripheral_interface_common.h"
 
-#define SYSFS_I2C_DIR "/dev/i2c"
 #define I2C_BUFFER_MAX 64
 
 #define I2C_SLAVE	0x0703	/* Use this slave address */

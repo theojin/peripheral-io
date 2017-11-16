@@ -19,11 +19,6 @@
 
 #include "peripheral_interface_spi.h"
 
-#define SYSFS_SPI_DIR "/dev/spidev"
-#define SYSFS_SPI_BUFSIZ "/sys/module/spidev/parameters/bufsiz"
-#define SPI_BUFFER_MAX 64
-#define MAX_ERR_LEN 255
-
 int peripheral_interface_spi_close(peripheral_spi_h spi)
 {
 	int ret = close(spi->fd);

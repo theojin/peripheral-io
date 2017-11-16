@@ -16,12 +16,6 @@
 
 #include "peripheral_interface_pwm.h"
 
-#define SYSFS_PWM_PATH	"/sys/class/pwm"
-
-#define PATH_BUF_MAX	64
-#define PWM_BUF_MAX	16
-#define MAX_ERR_LEN	255
-
 int peripheral_interface_pwm_close(peripheral_pwm_h pwm)
 {
 	int ret;

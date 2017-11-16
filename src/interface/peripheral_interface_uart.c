@@ -18,21 +18,7 @@
 
 #include "peripheral_interface_uart.h"
 
-#define PATH_BUF_MAX		64
-#define UART_BUF_MAX		16
-
 #define UART_BAUDRATE_SIZE	19
-
-#ifndef ARRAY_SIZE
-#define ARRAY_SIZE(x) (sizeof(x)/sizeof((x)[0]))
-#endif
-#define MAX_ERR_LEN 128
-
-char *sysfs_uart_path[] = {
-	"/dev/ttyS",
-	"/dev/ttyAMA",
-	"/dev/ttySAC",
-};
 
 static const int peripheral_uart_br[UART_BAUDRATE_SIZE] = {
 	B0,			B50,		B75,		B110,		B134,

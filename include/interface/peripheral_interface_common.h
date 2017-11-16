@@ -25,12 +25,14 @@
 #include "peripheral_handle.h"
 #include "peripheral_log.h"
 
+#define MAX_ERR_LEN 255
+
 #define CHECK_ERROR(expr) \
 	do { \
 		if (expr) { \
 			if (errno == EAGAIN) \
 				return -EAGAIN; \
-			char errmsg[255]; \
+			char errmsg[MAX_ERR_LEN]; \
 			strerror_r(errno, errmsg, sizeof(errmsg)); \
 			_E("Failed the %s(%d) function. errmsg: %s", __FUNCTION__, __LINE__, errmsg); \
 			return -EIO; \

@@ -16,8 +16,6 @@
 
 #include "peripheral_interface_gpio.h"
 
-#define MAX_ERR_LEN 255
-
 int peripheral_interface_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_direction_e direction)
 {
 	static predefined_type_s types[3] = {

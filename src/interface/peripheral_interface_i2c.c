@@ -18,8 +18,6 @@
 
 #include "peripheral_interface_i2c.h"
 
-#define MAX_ERR_LEN 255
-
 int peripheral_interface_i2c_close(peripheral_i2c_h i2c)
 {
 	int ret = close(i2c->fd);

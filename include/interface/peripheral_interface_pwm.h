@@ -19,6 +19,8 @@
 
 #include "peripheral_interface_common.h"
 
+#define PWM_BUF_MAX 16
+
 /**
 * @brief pwm_close() deinit pwm pin.
 *
