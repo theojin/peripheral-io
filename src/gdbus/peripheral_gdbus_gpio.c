@@ -43,7 +43,7 @@ static int __gpio_proxy_init(void)
 	if (gpio_proxy == NULL) {
 		_E("Failed to create gpio proxy : %s", error->message);
 		g_error_free(error);
-		return PERIPHERAL_ERROR_UNKNOWN;
+		return PERIPHERAL_ERROR_IO_ERROR;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -53,7 +53,7 @@ static int __gpio_proxy_deinit(void)
 {
 	if (gpio_proxy == NULL) {
 		_E("Gpio proxy is NULL");
-		return PERIPHERAL_ERROR_UNKNOWN;
+		return PERIPHERAL_ERROR_IO_ERROR;
 	}
 
 	g_object_unref(gpio_proxy);
@@ -84,7 +84,7 @@ int peripheral_gdbus_gpio_open(peripheral_gpio_h gpio)
 			&error) == FALSE) {
 		_E("Failed to request daemon to gpio open : %s", error->message);
 		g_error_free(error);
-		return PERIPHERAL_ERROR_UNKNOWN;
+		return PERIPHERAL_ERROR_IO_ERROR;
 	}
 
 	// TODO : If ret is not PERIPHERAL_ERROR_NONE, fd list it NULL from daemon.
@@ -95,21 +95,21 @@ int peripheral_gdbus_gpio_open(peripheral_gpio_h gpio)
 	if (gpio->fd_direction < 0) {
 		_E("Failed to get fd for gpio direction : %s", error->message);
 		g_error_free(error);
-		ret = PERIPHERAL_ERROR_UNKNOWN;
+		ret = PERIPHERAL_ERROR_IO_ERROR;
 	}
 
 	gpio->fd_edge = g_unix_fd_list_get(fd_list, GPIO_FD_INDEX_EDGE, &error);
 	if (gpio->fd_edge < 0) {
 		_E("Failed to get fd for gpio edge : %s", error->message);
 		g_error_free(error);
-		ret = PERIPHERAL_ERROR_UNKNOWN;
+		ret = PERIPHERAL_ERROR_IO_ERROR;
 	}
 
 	gpio->fd_value = g_unix_fd_list_get(fd_list, GPIO_FD_INDEX_VALUE, &error);
 	if (gpio->fd_value < 0) {
 		_E("Failed to get fd for gpio value : %s", error->message);
 		g_error_free(error);
-		ret = PERIPHERAL_ERROR_UNKNOWN;
+		ret = PERIPHERAL_ERROR_IO_ERROR;
 	}
 
 	g_object_unref(fd_list);

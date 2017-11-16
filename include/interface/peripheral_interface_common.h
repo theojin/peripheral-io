@@ -31,11 +31,11 @@
 	do { \
 		if (expr) { \
 			if (errno == EAGAIN) \
-				return -EAGAIN; \
+				return PERIPHERAL_ERROR_TRY_AGAIN; \
 			char errmsg[MAX_ERR_LEN]; \
 			strerror_r(errno, errmsg, sizeof(errmsg)); \
 			_E("Failed the %s(%d) function. errmsg: %s", __FUNCTION__, __LINE__, errmsg); \
-			return -EIO; \
+			return PERIPHERAL_ERROR_IO_ERROR; \
 		} \
 	} while (0)
 

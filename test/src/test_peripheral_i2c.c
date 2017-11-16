@@ -38,11 +38,11 @@ int test_peripheral_io_i2c_initialize(char *model, bool feature)
 	if ((!strcmp(model, "rpi3")) || (!strcmp(model, "artik")))
 		bus = I2C_BUS;
 	else
-		return -1;
+		return PERIPHERAL_ERROR_NO_DEVICE;
 
 	address = I2C_ADDRESS;
 
-	return 0;
+	return PERIPHERAL_ERROR_NONE;
 }
 
 int test_peripheral_io_i2c_peripheral_i2c_open_p(void)
@@ -53,14 +53,17 @@ int test_peripheral_io_i2c_peripheral_i2c_open_p(void)
 
 	if (g_feature == false) {
 		ret = peripheral_i2c_open(bus, address, &i2c_h);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_i2c_open(bus, address, &i2c_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_i2c_close(i2c_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -72,11 +75,13 @@ int test_peripheral_io_i2c_peripheral_i2c_open_n1(void)
 
 	if (g_feature == false) {
 		ret = peripheral_i2c_open(bus, address, NULL);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_i2c_open(bus, address, NULL);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -90,11 +95,13 @@ int test_peripheral_io_i2c_peripheral_i2c_open_n2(void)
 
 	if (g_feature == false) {
 		ret = peripheral_i2c_open(I2C_BUS_INVALID, address, &i2c_h);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_i2c_open(I2C_BUS_INVALID, address, &i2c_h);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -108,11 +115,13 @@ int test_peripheral_io_i2c_peripheral_i2c_open_n3(void)
 
 	if (g_feature == false) {
 		ret = peripheral_i2c_open(bus, I2C_ADDRESS_INVALID, &i2c_h);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_i2c_open(bus, I2C_ADDRESS_INVALID, &i2c_h);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -126,14 +135,17 @@ int test_peripheral_io_i2c_peripheral_i2c_close_p(void)
 
 	if (g_feature == false) {
 		ret = peripheral_i2c_close(i2c_h);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_i2c_open(bus, address, &i2c_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_i2c_close(i2c_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -145,11 +157,13 @@ int test_peripheral_io_i2c_peripheral_i2c_close_n(void)
 
 	if (g_feature == false) {
 		ret = peripheral_i2c_close(NULL);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_i2c_close(NULL);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -165,20 +179,23 @@ int test_peripheral_io_i2c_peripheral_i2c_read_p(void)
 
 	if (g_feature == false) {
 		ret = peripheral_i2c_read(i2c_h, buf, I2C_BUFFER_LEN);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_i2c_open(bus, address, &i2c_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_i2c_read(i2c_h, buf, I2C_BUFFER_LEN);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_i2c_close(i2c_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_i2c_close(i2c_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -192,11 +209,13 @@ int test_peripheral_io_i2c_peripheral_i2c_read_n1(void)
 
 	if (g_feature == false) {
 		ret = peripheral_i2c_read(NULL, buf, I2C_BUFFER_LEN);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_i2c_read(NULL, buf, I2C_BUFFER_LEN);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -210,20 +229,23 @@ int test_peripheral_io_i2c_peripheral_i2c_read_n2(void)
 
 	if (g_feature == false) {
 		ret = peripheral_i2c_read(i2c_h, NULL, I2C_BUFFER_LEN);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_i2c_open(bus, address, &i2c_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_i2c_read(i2c_h, NULL, I2C_BUFFER_LEN);
 		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) {
 			peripheral_i2c_close(i2c_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_i2c_close(i2c_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -239,20 +261,23 @@ int test_peripheral_io_i2c_peripheral_i2c_write_p(void)
 
 	if (g_feature == false) {
 		ret = peripheral_i2c_write(i2c_h, buf, I2C_BUFFER_LEN);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_i2c_open(bus, address, &i2c_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_i2c_write(i2c_h, buf, I2C_BUFFER_LEN);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_i2c_close(i2c_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_i2c_close(i2c_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -266,11 +291,13 @@ int test_peripheral_io_i2c_peripheral_i2c_write_n1(void)
 
 	if (g_feature == false) {
 		ret = peripheral_i2c_write(NULL, buf, I2C_BUFFER_LEN);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_i2c_write(NULL, buf, I2C_BUFFER_LEN);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -284,20 +311,23 @@ int test_peripheral_io_i2c_peripheral_i2c_write_n2(void)
 
 	if (g_feature == false) {
 		ret = peripheral_i2c_write(i2c_h, NULL, I2C_BUFFER_LEN);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_i2c_open(bus, address, &i2c_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_i2c_write(i2c_h, NULL, I2C_BUFFER_LEN);
 		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) {
 			peripheral_i2c_close(i2c_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_i2c_close(i2c_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -313,20 +343,23 @@ int test_peripheral_io_i2c_peripheral_i2c_read_register_byte_p(void)
 
 	if (g_feature == false) {
 		ret = peripheral_i2c_read_register_byte(i2c_h, I2C_REGISTER, &data);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_i2c_open(bus, address, &i2c_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_i2c_read_register_byte(i2c_h, I2C_REGISTER, &data);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_i2c_close(i2c_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_i2c_close(i2c_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -340,11 +373,13 @@ int test_peripheral_io_i2c_peripheral_i2c_read_register_byte_n1(void)
 
 	if (g_feature == false) {
 		ret = peripheral_i2c_read_register_byte(NULL, I2C_REGISTER, &data);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_i2c_read_register_byte(NULL, I2C_REGISTER, &data);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -359,20 +394,23 @@ int test_peripheral_io_i2c_peripheral_i2c_read_register_byte_n2(void)
 
 	if (g_feature == false) {
 		ret = peripheral_i2c_read_register_byte(i2c_h, I2C_REGISTER, NULL);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_i2c_open(bus, address, &i2c_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_i2c_read_register_byte(i2c_h, I2C_REGISTER, NULL);
 		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) {
 			peripheral_i2c_close(i2c_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_i2c_close(i2c_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -386,20 +424,23 @@ int test_peripheral_io_i2c_peripheral_i2c_write_register_byte_p(void)
 
 	if (g_feature == false) {
 		ret = peripheral_i2c_write_register_byte(i2c_h, I2C_REGISTER, I2C_BUFFER_VALUE);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_i2c_open(bus, address, &i2c_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_i2c_write_register_byte(i2c_h, I2C_REGISTER, I2C_BUFFER_VALUE);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_i2c_close(i2c_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_i2c_close(i2c_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -411,11 +452,13 @@ int test_peripheral_io_i2c_peripheral_i2c_write_register_byte_n(void)
 
 	if (g_feature == false) {
 		ret = peripheral_i2c_write_register_byte(NULL, I2C_REGISTER, I2C_BUFFER_VALUE);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_i2c_write_register_byte(NULL, I2C_REGISTER, I2C_BUFFER_VALUE);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -431,20 +474,23 @@ int test_peripheral_io_i2c_peripheral_i2c_read_register_word_p(void)
 
 	if (g_feature == false) {
 		ret = peripheral_i2c_read_register_word(i2c_h, I2C_REGISTER, &data);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_i2c_open(bus, address, &i2c_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_i2c_read_register_word(i2c_h, I2C_REGISTER, &data);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_i2c_close(i2c_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_i2c_close(i2c_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -458,11 +504,13 @@ int test_peripheral_io_i2c_peripheral_i2c_read_register_word_n1(void)
 
 	if (g_feature == false) {
 		ret = peripheral_i2c_read_register_word(NULL, I2C_REGISTER, &data);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_i2c_read_register_word(NULL, I2C_REGISTER, &data);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -477,20 +525,23 @@ int test_peripheral_io_i2c_peripheral_i2c_read_register_word_n2(void)
 
 	if (g_feature == false) {
 		ret = peripheral_i2c_read_register_word(i2c_h, I2C_REGISTER, NULL);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_i2c_open(bus, address, &i2c_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_i2c_read_register_word(i2c_h, I2C_REGISTER, NULL);
 		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) {
 			peripheral_i2c_close(i2c_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_i2c_close(i2c_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -505,20 +556,23 @@ int test_peripheral_io_i2c_peripheral_i2c_write_register_word_p(void)
 
 	if (g_feature == false) {
 		ret = peripheral_i2c_write_register_word(i2c_h, I2C_REGISTER, I2C_BUFFER_VALUE);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_i2c_open(bus, address, &i2c_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_i2c_write_register_word(i2c_h, I2C_REGISTER, I2C_BUFFER_VALUE);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_i2c_close(i2c_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_i2c_close(i2c_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -530,11 +584,13 @@ int test_peripheral_io_i2c_peripheral_i2c_write_register_word_n(void)
 
 	if (g_feature == false) {
 		ret = peripheral_i2c_write_register_word(NULL, I2C_REGISTER, I2C_BUFFER_VALUE);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_i2c_write_register_word(NULL, I2C_REGISTER, I2C_BUFFER_VALUE);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;

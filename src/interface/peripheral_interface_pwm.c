@@ -32,7 +32,7 @@ int peripheral_interface_pwm_close(peripheral_pwm_h pwm)
 	ret = close(pwm->fd_enable);
 	CHECK_ERROR(ret != 0);
 
-	return 0;
+	return PERIPHERAL_ERROR_NONE;
 }
 
 int peripheral_interface_pwm_set_period(peripheral_pwm_h pwm, uint32_t period)
@@ -45,7 +45,7 @@ int peripheral_interface_pwm_set_period(peripheral_pwm_h pwm, uint32_t period)
 	ret = write(pwm->fd_period, pwm_buf, length);
 	CHECK_ERROR(ret != length);
 
-	return 0;
+	return PERIPHERAL_ERROR_NONE;
 }
 
 int peripheral_interface_pwm_set_duty_cycle(peripheral_pwm_h pwm, uint32_t duty_cycle)
@@ -58,7 +58,7 @@ int peripheral_interface_pwm_set_duty_cycle(peripheral_pwm_h pwm, uint32_t duty_
 	ret = write(pwm->fd_duty_cycle, pwm_buf, length);
 	CHECK_ERROR(ret != length);
 
-	return 0;
+	return PERIPHERAL_ERROR_NONE;
 }
 
 int peripheral_interface_pwm_set_polarity(peripheral_pwm_h pwm, peripheral_pwm_polarity_e polarity)
@@ -71,7 +71,7 @@ int peripheral_interface_pwm_set_polarity(peripheral_pwm_h pwm, peripheral_pwm_p
 	int ret = write(pwm->fd_polarity, types[polarity].type, types[polarity].len);
 	CHECK_ERROR(ret != types[polarity].len);
 
-	return 0;
+	return PERIPHERAL_ERROR_NONE;
 }
 
 int peripheral_interface_pwm_set_enable(peripheral_pwm_h pwm, bool enable)
@@ -84,5 +84,5 @@ int peripheral_interface_pwm_set_enable(peripheral_pwm_h pwm, bool enable)
 	int ret = write(pwm->fd_enable, types[enable].type, types[enable].len);
 	CHECK_ERROR(ret != types[enable].len);
 
-	return 0;
+	return PERIPHERAL_ERROR_NONE;
 }

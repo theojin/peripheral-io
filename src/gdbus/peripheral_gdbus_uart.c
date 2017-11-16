@@ -41,7 +41,7 @@ static int __uart_proxy_init(void)
 	if (uart_proxy == NULL) {
 		_E("Failed to create uart proxy : %s", error->message);
 		g_error_free(error);
-		return PERIPHERAL_ERROR_UNKNOWN;
+		return PERIPHERAL_ERROR_IO_ERROR;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -51,7 +51,7 @@ static int __uart_proxy_deinit(void)
 {
 	if (uart_proxy == NULL) {
 		_E("Uart proxy is NULL");
-		return PERIPHERAL_ERROR_UNKNOWN;
+		return PERIPHERAL_ERROR_IO_ERROR;
 	}
 
 	g_object_unref(uart_proxy);
@@ -82,7 +82,7 @@ int peripheral_gdbus_uart_open(peripheral_uart_h uart, int port)
 			&error) == FALSE) {
 		_E("Failed to request daemon to uart open : %s", error->message);
 		g_error_free(error);
-		return PERIPHERAL_ERROR_UNKNOWN;
+		return PERIPHERAL_ERROR_IO_ERROR;
 	}
 
 	// TODO : If ret is not PERIPHERAL_ERROR_NONE, fd list it NULL from daemon.
@@ -93,7 +93,7 @@ int peripheral_gdbus_uart_open(peripheral_uart_h uart, int port)
 	if (uart->fd < 0) {
 		_E("Failed to get fd for uart : %s", error->message);
 		g_error_free(error);
-		ret = PERIPHERAL_ERROR_UNKNOWN;
+		ret = PERIPHERAL_ERROR_IO_ERROR;
 	}
 
 	g_object_unref(fd_list);

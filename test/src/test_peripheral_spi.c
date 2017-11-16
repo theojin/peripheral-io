@@ -43,11 +43,11 @@ int test_peripheral_io_spi_initialize(char *model, bool feature)
 	else if (!strcmp(model, "artik"))
 		bus = SPI_BUS_ARTIK530;
 	else
-		return -1;
+		return PERIPHERAL_ERROR_NO_DEVICE;
 
 	cs = SPI_CS;
 
-	return 0;
+	return PERIPHERAL_ERROR_NONE;
 }
 
 int test_peripheral_io_spi_peripheral_spi_open_p(void)
@@ -58,14 +58,17 @@ int test_peripheral_io_spi_peripheral_spi_open_p(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_open(bus, cs, &spi_h);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_open(bus, cs, &spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_spi_close(spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -79,11 +82,13 @@ int test_peripheral_io_spi_peripheral_spi_open_n1(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_open(SPI_BUS_INVALID, cs, &spi_h);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_open(SPI_BUS_INVALID, cs, &spi_h);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -97,11 +102,13 @@ int test_peripheral_io_spi_peripheral_spi_open_n2(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_open(bus, SPI_CS_INVALID, &spi_h);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_open(bus, SPI_CS_INVALID, &spi_h);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -113,11 +120,13 @@ int test_peripheral_io_spi_peripheral_spi_open_n3(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_open(bus, cs, NULL);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_open(bus, cs, NULL);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -131,14 +140,17 @@ int test_peripheral_io_spi_peripheral_spi_close_p(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_close(spi_h);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_open(bus, cs, &spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_spi_close(spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -150,11 +162,13 @@ int test_peripheral_io_spi_peripheral_spi_close_n(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_close(NULL);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_close(NULL);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -168,20 +182,23 @@ int test_peripheral_io_spi_peripheral_spi_set_mode_p1(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_set_mode(spi_h, PERIPHERAL_SPI_MODE_0);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_open(bus, cs, &spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_spi_set_mode(spi_h, PERIPHERAL_SPI_MODE_0);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_spi_close(spi_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_spi_close(spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -195,20 +212,23 @@ int test_peripheral_io_spi_peripheral_spi_set_mode_p2(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_set_mode(spi_h, PERIPHERAL_SPI_MODE_1);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_open(bus, cs, &spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_spi_set_mode(spi_h, PERIPHERAL_SPI_MODE_1);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_spi_close(spi_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_spi_close(spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -222,20 +242,23 @@ int test_peripheral_io_spi_peripheral_spi_set_mode_p3(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_set_mode(spi_h, PERIPHERAL_SPI_MODE_2);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_open(bus, cs, &spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_spi_set_mode(spi_h, PERIPHERAL_SPI_MODE_2);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_spi_close(spi_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_spi_close(spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -249,20 +272,23 @@ int test_peripheral_io_spi_peripheral_spi_set_mode_p4(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_set_mode(spi_h, PERIPHERAL_SPI_MODE_3);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_open(bus, cs, &spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_spi_set_mode(spi_h, PERIPHERAL_SPI_MODE_3);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_spi_close(spi_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_spi_close(spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -276,20 +302,23 @@ int test_peripheral_io_spi_peripheral_spi_set_mode_n1(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_set_mode(NULL, PERIPHERAL_SPI_MODE_0);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_open(bus, cs, &spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_spi_set_mode(NULL, PERIPHERAL_SPI_MODE_0);
 		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) {
 			peripheral_spi_close(spi_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_spi_close(spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -303,20 +332,23 @@ int test_peripheral_io_spi_peripheral_spi_set_mode_n2(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_set_mode(spi_h, PERIPHERAL_SPI_MODE_0 - 1);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_open(bus, cs, &spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_spi_set_mode(spi_h, PERIPHERAL_SPI_MODE_0 - 1);
 		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) {
 			peripheral_spi_close(spi_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_spi_close(spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -330,20 +362,23 @@ int test_peripheral_io_spi_peripheral_spi_set_mode_n3(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_set_mode(spi_h, PERIPHERAL_SPI_MODE_3 + 1);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_open(bus, cs, &spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_spi_set_mode(spi_h, PERIPHERAL_SPI_MODE_3 + 1);
 		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) {
 			peripheral_spi_close(spi_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_spi_close(spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -357,20 +392,23 @@ int test_peripheral_io_spi_peripheral_spi_set_bit_order_p1(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_set_bit_order(spi_h, PERIPHERAL_SPI_BIT_ORDER_MSB);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_open(bus, cs, &spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_spi_set_bit_order(spi_h, PERIPHERAL_SPI_BIT_ORDER_MSB);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_spi_close(spi_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_spi_close(spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -384,20 +422,23 @@ int test_peripheral_io_spi_peripheral_spi_set_bit_order_p2(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_set_bit_order(spi_h, PERIPHERAL_SPI_BIT_ORDER_LSB);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_open(bus, cs, &spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_spi_set_bit_order(spi_h, PERIPHERAL_SPI_BIT_ORDER_LSB);
 		if (ret != PERIPHERAL_ERROR_IO_ERROR) {
 			peripheral_spi_close(spi_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_spi_close(spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -409,11 +450,13 @@ int test_peripheral_io_spi_peripheral_spi_set_bit_order_n1(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_set_bit_order(NULL, PERIPHERAL_SPI_BIT_ORDER_MSB);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_set_bit_order(NULL, PERIPHERAL_SPI_BIT_ORDER_MSB);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -427,20 +470,23 @@ int test_peripheral_io_spi_peripheral_spi_set_bit_order_n2(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_set_bit_order(spi_h, PERIPHERAL_SPI_BIT_ORDER_MSB - 1);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_open(bus, cs, &spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_spi_set_bit_order(spi_h, PERIPHERAL_SPI_BIT_ORDER_MSB - 1);
 		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) {
 			peripheral_spi_close(spi_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_spi_close(spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -454,20 +500,23 @@ int test_peripheral_io_spi_peripheral_spi_set_bit_order_n3(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_set_bit_order(spi_h, PERIPHERAL_SPI_BIT_ORDER_LSB + 1);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_open(bus, cs, &spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_spi_set_bit_order(spi_h, PERIPHERAL_SPI_BIT_ORDER_LSB + 1);
 		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) {
 			peripheral_spi_close(spi_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_spi_close(spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -481,20 +530,23 @@ int test_peripheral_io_spi_peripheral_spi_set_bits_per_word_p(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_set_bits_per_word(spi_h, SPI_BITS_PER_WORD);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_open(bus, cs, &spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_spi_set_bits_per_word(spi_h, SPI_BITS_PER_WORD);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_spi_close(spi_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_spi_close(spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -506,11 +558,13 @@ int test_peripheral_io_spi_peripheral_spi_set_bits_per_word_n1(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_set_bits_per_word(NULL, SPI_BITS_PER_WORD);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_set_bits_per_word(NULL, SPI_BITS_PER_WORD);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -524,20 +578,23 @@ int test_peripheral_io_spi_peripheral_spi_set_bits_per_word_n2(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_set_bits_per_word(spi_h, SPI_BITS_PER_WORD_INVALID);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_open(bus, cs, &spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_spi_set_bits_per_word(spi_h, SPI_BITS_PER_WORD_INVALID);
 		if (ret != PERIPHERAL_ERROR_IO_ERROR) {
 			peripheral_spi_close(spi_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_spi_close(spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -551,32 +608,35 @@ int test_peripheral_io_spi_peripheral_spi_set_frequency_p(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_set_frequency(spi_h, SPI_FREQUENCY);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_open(bus, cs, &spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_spi_set_mode(spi_h, PERIPHERAL_SPI_MODE_0);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_spi_close(spi_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_spi_set_bits_per_word(spi_h, SPI_BITS_PER_WORD);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_spi_close(spi_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_spi_set_frequency(spi_h, SPI_FREQUENCY);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_spi_close(spi_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_spi_close(spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -588,11 +648,13 @@ int test_peripheral_io_spi_peripheral_spi_set_frequency_n(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_set_frequency(NULL, SPI_FREQUENCY);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_set_frequency(NULL, SPI_FREQUENCY);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -608,20 +670,23 @@ int test_peripheral_io_spi_peripheral_spi_read_p(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_read(spi_h, &data, SPI_BUFFER_LEN);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_open(bus, cs, &spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_spi_read(spi_h, &data, SPI_BUFFER_LEN);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_spi_close(spi_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_spi_close(spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -635,11 +700,13 @@ int test_peripheral_io_spi_peripheral_spi_read_n1(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_read(NULL, &data, SPI_BUFFER_LEN);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_read(NULL, &data, SPI_BUFFER_LEN);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -653,20 +720,23 @@ int test_peripheral_io_spi_peripheral_spi_read_n2(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_read(spi_h, NULL, SPI_BUFFER_LEN);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_open(bus, cs, &spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_spi_read(spi_h, NULL, SPI_BUFFER_LEN);
 		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) {
 			peripheral_spi_close(spi_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_spi_close(spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -682,20 +752,23 @@ int test_peripheral_io_spi_peripheral_spi_write_p(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_write(spi_h, &data, SPI_BUFFER_LEN);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_open(bus, cs, &spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_spi_write(spi_h, &data, SPI_BUFFER_LEN);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_spi_close(spi_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_spi_close(spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -709,11 +782,13 @@ int test_peripheral_io_spi_peripheral_spi_write_n1(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_write(NULL, &data, SPI_BUFFER_LEN);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_write(NULL, &data, SPI_BUFFER_LEN);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -728,20 +803,23 @@ int test_peripheral_io_spi_peripheral_spi_write_n2(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_write(spi_h, NULL, SPI_BUFFER_LEN);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_open(bus, cs, &spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_spi_write(spi_h, NULL, SPI_BUFFER_LEN);
 		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) {
 			peripheral_spi_close(spi_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_spi_close(spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -758,20 +836,23 @@ int test_peripheral_io_spi_peripheral_spi_transfer_p(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_transfer(spi_h, &tx_data, &rx_data, SPI_BUFFER_LEN);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_open(bus, cs, &spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_spi_transfer(spi_h, &tx_data, &rx_data, SPI_BUFFER_LEN);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_spi_close(spi_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_spi_close(spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -786,11 +867,13 @@ int test_peripheral_io_spi_peripheral_spi_transfer_n1(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_transfer(NULL, &tx_data, &rx_data, SPI_BUFFER_LEN);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_transfer(NULL, &tx_data, &rx_data, SPI_BUFFER_LEN);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -806,20 +889,23 @@ int test_peripheral_io_spi_peripheral_spi_transfer_n2(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_transfer(spi_h, NULL, &rx_data, SPI_BUFFER_LEN);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_open(bus, cs, &spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_spi_transfer(spi_h, NULL, &rx_data, SPI_BUFFER_LEN);
 		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) {
 			peripheral_spi_close(spi_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_spi_close(spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -835,20 +921,23 @@ int test_peripheral_io_spi_peripheral_spi_transfer_n3(void)
 
 	if (g_feature == false) {
 		ret = peripheral_spi_transfer(spi_h, &tx_data, NULL, SPI_BUFFER_LEN);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_spi_open(bus, cs, &spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_spi_transfer(spi_h, &tx_data, NULL, SPI_BUFFER_LEN);
 		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) {
 			peripheral_spi_close(spi_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_spi_close(spi_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;

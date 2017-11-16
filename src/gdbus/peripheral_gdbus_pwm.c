@@ -44,7 +44,7 @@ static int __pwm_proxy_init(void)
 	if (pwm_proxy == NULL) {
 		_E("Failed to create pwm proxy : %s", error->message);
 		g_error_free(error);
-		return PERIPHERAL_ERROR_UNKNOWN;
+		return PERIPHERAL_ERROR_IO_ERROR;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -54,7 +54,7 @@ static int __pwm_proxy_deinit(void)
 {
 	if (pwm_proxy == NULL) {
 		_E("Pwm proxy is NULL");
-		return PERIPHERAL_ERROR_UNKNOWN;
+		return PERIPHERAL_ERROR_IO_ERROR;
 	}
 
 	g_object_unref(pwm_proxy);
@@ -86,7 +86,7 @@ int peripheral_gdbus_pwm_open(peripheral_pwm_h pwm, int chip, int pin)
 			&error) == FALSE) {
 		_E("Failed to request daemon to pwm open : %s", error->message);
 		g_error_free(error);
-		return PERIPHERAL_ERROR_UNKNOWN;
+		return PERIPHERAL_ERROR_IO_ERROR;
 	}
 
 	// TODO : If ret is not PERIPHERAL_ERROR_NONE, fd list it NULL from daemon.
@@ -97,28 +97,28 @@ int peripheral_gdbus_pwm_open(peripheral_pwm_h pwm, int chip, int pin)
 	if (pwm->fd_period < 0) {
 		_E("Failed to get fd for pwm period : %s", error->message);
 		g_error_free(error);
-		ret = PERIPHERAL_ERROR_UNKNOWN;
+		ret = PERIPHERAL_ERROR_IO_ERROR;
 	}
 
 	pwm->fd_duty_cycle = g_unix_fd_list_get(fd_list, PWM_FD_INDEX_DUTY_CYCLE, &error);
 	if (pwm->fd_duty_cycle < 0) {
 		_E("Failed to get fd for pwm duty cycle : %s", error->message);
 		g_error_free(error);
-		ret = PERIPHERAL_ERROR_UNKNOWN;
+		ret = PERIPHERAL_ERROR_IO_ERROR;
 	}
 
 	pwm->fd_polarity = g_unix_fd_list_get(fd_list, PWM_FD_INDEX_POLARITY, &error);
 	if (pwm->fd_polarity < 0) {
 		_E("Failed to get fd for pwm polarity : %s", error->message);
 		g_error_free(error);
-		ret = PERIPHERAL_ERROR_UNKNOWN;
+		ret = PERIPHERAL_ERROR_IO_ERROR;
 	}
 
 	pwm->fd_enable = g_unix_fd_list_get(fd_list, PWM_FD_INDEX_ENABLE, &error);
 	if (pwm->fd_enable < 0) {
 		_E("Failed to get fd for pwm enable : %s", error->message);
 		g_error_free(error);
-		ret = PERIPHERAL_ERROR_UNKNOWN;
+		ret = PERIPHERAL_ERROR_IO_ERROR;
 	}
 
 	g_object_unref(fd_list);

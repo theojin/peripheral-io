@@ -52,9 +52,9 @@ static int __get_model_name(char **model_name)
 	ret = system_info_get_platform_string(KEY_SYSTEM_MODEL_NAME, model_name);
 	if (ret != SYSTEM_INFO_ERROR_NONE) {
 		printf("[Message] Failed to get model name.\n\n");
-		return -1;
+		return PERIPHERAL_ERROR_NOT_SUPPORTED;
 	}
-	return 0;
+	return PERIPHERAL_ERROR_NONE;
 }
 
 static int __get_feature(const char *key, bool *feature)
@@ -63,45 +63,56 @@ static int __get_feature(const char *key, bool *feature)
 	ret = system_info_get_platform_bool(key, feature);
 	if (ret != SYSTEM_INFO_ERROR_NONE) {
 		printf("[Message] Failed to feature (%s).\n\n", key);
-		return -1;
+		return PERIPHERAL_ERROR_NOT_SUPPORTED;
 	}
-	return 0;
+	return PERIPHERAL_ERROR_NONE;
 }
 
 static int __test_peripheral_init()
 {
-	int ret = 0;
+	int ret = PERIPHERAL_ERROR_NONE;
 
 	char *model_name = NULL;
 	bool feature = false;
 
 	ret = __get_model_name(&model_name);
-	if (ret != 0) return ret;
+	if (ret != PERIPHERAL_ERROR_NONE)
+		return ret;
 
 	ret = __get_feature(KEY_FEATURE_PERIPHERAL_IO_GPIO, &feature);
-	if (ret != 0) return ret;
+	if (ret != PERIPHERAL_ERROR_NONE)
+		return ret;
 	ret = test_peripheral_io_gpio_initialize(model_name, feature);
-	if (ret != 0) return ret;
+	if (ret != PERIPHERAL_ERROR_NONE)
+		return ret;
 
 	ret = __get_feature(KEY_FEATURE_PERIPHERAL_IO_I2C, &feature);
-	if (ret != 0) return ret;
+	if (ret != PERIPHERAL_ERROR_NONE)
+		return ret;
 	ret = test_peripheral_io_i2c_initialize(model_name, feature);
-	if (ret != 0) return ret;
+	if (ret != PERIPHERAL_ERROR_NONE)
+		return ret;
 
 	ret = __get_feature(KEY_FEATURE_PERIPHERAL_IO_PWM, &feature);
-	if (ret != 0) return ret;
+	if (ret != PERIPHERAL_ERROR_NONE)
+		return ret;
 	ret = test_peripheral_io_pwm_initialize(model_name, feature);
-	if (ret != 0) return ret;
+	if (ret != PERIPHERAL_ERROR_NONE)
+		return ret;
 
 	ret = __get_feature(KEY_FEATURE_PERIPHERAL_IO_UART, &feature);
-	if (ret != 0) return ret;
+	if (ret != PERIPHERAL_ERROR_NONE)
+		return ret;
 	ret = test_peripheral_io_uart_initialize(model_name, feature);
-	if (ret != 0) return ret;
+	if (ret != PERIPHERAL_ERROR_NONE)
+		return ret;
 
 	ret = __get_feature(KEY_FEATURE_PERIPHERAL_IO_SPI, &feature);
-	if (ret != 0) return ret;
+	if (ret != PERIPHERAL_ERROR_NONE)
+		return ret;
 	ret = test_peripheral_io_spi_initialize(model_name, feature);
-	if (ret != 0) return ret;
+	if (ret != PERIPHERAL_ERROR_NONE)
+		return ret;
 
 	return ret;
 }
@@ -485,7 +496,7 @@ int main(int argc, char **argv)
 		pass_count = 0;
 
 		ret = __test_peripheral_init();
-		if (ret != 0) {
+		if (ret != PERIPHERAL_ERROR_NONE) {
 			printf("[Message] Failed test init...\n\n");
 			return -1;
 		}

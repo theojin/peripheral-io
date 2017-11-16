@@ -27,7 +27,7 @@ int peripheral_interface_gpio_set_direction(peripheral_gpio_h gpio, peripheral_g
 	int ret = write(gpio->fd_direction, types[direction].type, types[direction].len);
 	CHECK_ERROR(ret != types[direction].len);
 
-	return 0;
+	return PERIPHERAL_ERROR_NONE;
 }
 
 int peripheral_interface_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e edge)
@@ -42,7 +42,7 @@ int peripheral_interface_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_g
 	int ret = write(gpio->fd_edge, types[edge].type, types[edge].len);
 	CHECK_ERROR(ret != types[edge].len);
 
-	return 0;
+	return PERIPHERAL_ERROR_NONE;
 }
 
 int peripheral_interface_gpio_write(peripheral_gpio_h gpio, uint32_t value)
@@ -55,7 +55,7 @@ int peripheral_interface_gpio_write(peripheral_gpio_h gpio, uint32_t value)
 	int ret = write(gpio->fd_value, types[value].type, types[value].len);
 	CHECK_ERROR(ret != types[value].len);
 
-	return 0;
+	return PERIPHERAL_ERROR_NONE;
 }
 
 int peripheral_interface_gpio_read(peripheral_gpio_h gpio, uint32_t *value)
@@ -67,15 +67,16 @@ int peripheral_interface_gpio_read(peripheral_gpio_h gpio, uint32_t *value)
 	ret = read(gpio->fd_value, &gpio_buf, length);
 	CHECK_ERROR(ret != length);
 
-	if (gpio_buf[0] == '0')
+	if (gpio_buf[0] == '0') {
 		*value = 0;
-	else if (gpio_buf[0] == '1')
+	} else if (gpio_buf[0] == '1') {
 		*value = 1;
-	else
+	} else {
 		_E("Error: gpio value is error \n");
-		return -EIO;
+		return PERIPHERAL_ERROR_IO_ERROR;
+	}
 
-	return 0;
+	return PERIPHERAL_ERROR_NONE;
 }
 
 int peripheral_interface_gpio_close(peripheral_gpio_h gpio)
@@ -91,19 +92,19 @@ int peripheral_interface_gpio_close(peripheral_gpio_h gpio)
 	ret = close(gpio->fd_value);
 	CHECK_ERROR(ret != 0);
 
-	return 0;
+	return PERIPHERAL_ERROR_NONE;
 }
 
 int peripheral_interface_gpio_open_isr(peripheral_gpio_h gpio)
 {
 	// TODO: set interrupted callback function
 
-	return 0;
+	return PERIPHERAL_ERROR_NONE;
 }
 
 int peripheral_interface_gpio_close_isr(peripheral_gpio_h gpio)
 {
 	// TODO: unset interrupted callback function
 
-	return 0;
+	return PERIPHERAL_ERROR_NONE;
 }

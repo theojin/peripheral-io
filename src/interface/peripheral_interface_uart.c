@@ -38,7 +38,7 @@ int peripheral_interface_uart_close(peripheral_uart_h uart)
 	ret = close(uart->fd);
 	CHECK_ERROR(ret != 0);
 
-	return 0;
+	return PERIPHERAL_ERROR_NONE;
 }
 
 int peripheral_interface_uart_flush(peripheral_uart_h uart)
@@ -46,7 +46,7 @@ int peripheral_interface_uart_flush(peripheral_uart_h uart)
 	int ret = tcflush(uart->fd, TCIOFLUSH);
 	CHECK_ERROR(ret != 0);
 
-	return 0;
+	return PERIPHERAL_ERROR_NONE;
 }
 
 int peripheral_interface_uart_set_baud_rate(peripheral_uart_h uart, peripheral_uart_baud_rate_e baud)
@@ -68,7 +68,7 @@ int peripheral_interface_uart_set_baud_rate(peripheral_uart_h uart, peripheral_u
 	ret = tcsetattr(uart->fd, TCSANOW, &tio);
 	CHECK_ERROR(ret != 0);
 
-	return 0;
+	return PERIPHERAL_ERROR_NONE;
 }
 
 int peripheral_interface_uart_set_byte_size(peripheral_uart_h uart, peripheral_uart_byte_size_e byte_size)
@@ -88,7 +88,7 @@ int peripheral_interface_uart_set_byte_size(peripheral_uart_h uart, peripheral_u
 	ret = tcsetattr(uart->fd, TCSANOW, &tio);
 	CHECK_ERROR(ret != 0);
 
-	return 0;
+	return PERIPHERAL_ERROR_NONE;
 }
 
 int peripheral_interface_uart_set_parity(peripheral_uart_h uart, peripheral_uart_parity_e parity)
@@ -120,7 +120,7 @@ int peripheral_interface_uart_set_parity(peripheral_uart_h uart, peripheral_uart
 	ret = tcsetattr(uart->fd, TCSANOW, &tio);
 	CHECK_ERROR(ret != 0);
 
-	return 0;
+	return PERIPHERAL_ERROR_NONE;
 }
 
 int peripheral_interface_uart_set_stop_bits(peripheral_uart_h uart, peripheral_uart_stop_bits_e stop_bits)
@@ -141,14 +141,14 @@ int peripheral_interface_uart_set_stop_bits(peripheral_uart_h uart, peripheral_u
 		break;
 	default:
 		_E("Invalid parameter stop_bits");
-		return -EINVAL;
+		return PERIPHERAL_ERROR_INVALID_PARAMETER;
 	}
 
 	peripheral_interface_uart_flush(uart);
 	ret = tcsetattr(uart->fd, TCSANOW, &tio);
 	CHECK_ERROR(ret != 0);
 
-	return 0;
+	return PERIPHERAL_ERROR_NONE;
 }
 
 int peripheral_interface_uart_set_flow_control(peripheral_uart_h uart, peripheral_uart_software_flow_control_e xonxoff, peripheral_uart_hardware_flow_control_e rtscts)
@@ -164,19 +164,19 @@ int peripheral_interface_uart_set_flow_control(peripheral_uart_h uart, periphera
 	else if (rtscts == PERIPHERAL_UART_HARDWARE_FLOW_CONTROL_NONE)
 		tio.c_cflag &= ~CRTSCTS;
 	else
-		return -EINVAL;
+		return PERIPHERAL_ERROR_INVALID_PARAMETER;
 
 	if (xonxoff == PERIPHERAL_UART_SOFTWARE_FLOW_CONTROL_XONXOFF)
 		tio.c_iflag |= (IXON | IXOFF | IXANY);
 	else if (xonxoff == PERIPHERAL_UART_SOFTWARE_FLOW_CONTROL_NONE)
 		tio.c_iflag &= ~(IXON | IXOFF | IXANY);
 	else
-		return -EINVAL;
+		return PERIPHERAL_ERROR_INVALID_PARAMETER;
 
 	ret = tcsetattr(uart->fd, TCSANOW, &tio);
 	CHECK_ERROR(ret != 0);
 
-	return 0;
+	return PERIPHERAL_ERROR_NONE;
 }
 
 int peripheral_interface_uart_read(peripheral_uart_h uart, uint8_t *buf, uint32_t length)
@@ -184,7 +184,7 @@ int peripheral_interface_uart_read(peripheral_uart_h uart, uint8_t *buf, uint32_
 	int ret = read(uart->fd, (void *)buf, length);
 	CHECK_ERROR(ret != length);
 
-	return ret;
+	return PERIPHERAL_ERROR_NONE;
 }
 
 int peripheral_interface_uart_write(peripheral_uart_h uart, uint8_t *buf, uint32_t length)
@@ -192,5 +192,5 @@ int peripheral_interface_uart_write(peripheral_uart_h uart, uint8_t *buf, uint32
 	int ret = write(uart->fd, buf, length);
 	CHECK_ERROR(ret != length);
 
-	return ret;
+	return PERIPHERAL_ERROR_NONE;
 }

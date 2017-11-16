@@ -41,7 +41,7 @@ static int __spi_proxy_init(void)
 	if (spi_proxy == NULL) {
 		_E("Failed to create spi proxy : %s", error->message);
 		g_error_free(error);
-		return PERIPHERAL_ERROR_UNKNOWN;
+		return PERIPHERAL_ERROR_IO_ERROR;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -51,7 +51,7 @@ static int __spi_proxy_deinit(void)
 {
 	if (spi_proxy == NULL) {
 		_E("Spi proxy is NULL");
-		return PERIPHERAL_ERROR_UNKNOWN;
+		return PERIPHERAL_ERROR_IO_ERROR;
 	}
 
 	g_object_unref(spi_proxy);
@@ -83,7 +83,7 @@ int peripheral_gdbus_spi_open(peripheral_spi_h spi, int bus, int cs)
 			&error) == FALSE) {
 		_E("Failed to request daemon to spi open : %s", error->message);
 		g_error_free(error);
-		return PERIPHERAL_ERROR_UNKNOWN;
+		return PERIPHERAL_ERROR_IO_ERROR;
 	}
 
 	// TODO : If ret is not PERIPHERAL_ERROR_NONE, fd list it NULL from daemon.
@@ -94,7 +94,7 @@ int peripheral_gdbus_spi_open(peripheral_spi_h spi, int bus, int cs)
 	if (spi->fd < 0) {
 		_E("Failed to get fd for spi : %s", error->message);
 		g_error_free(error);
-		ret = PERIPHERAL_ERROR_UNKNOWN;
+		ret = PERIPHERAL_ERROR_IO_ERROR;
 	}
 
 	g_object_unref(fd_list);

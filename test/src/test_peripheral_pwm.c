@@ -38,9 +38,9 @@ int test_peripheral_io_pwm_initialize(char *model, bool feature)
 		chip = PWM_CHIP;
 		pin = PWM_PIN;
 	} else {
-		return -1;
+		return PERIPHERAL_ERROR_NO_DEVICE;
 	}
-	return 0;
+	return PERIPHERAL_ERROR_NONE;
 }
 
 int test_peripheral_io_pwm_peripheral_pwm_open_p(void)
@@ -51,14 +51,17 @@ int test_peripheral_io_pwm_peripheral_pwm_open_p(void)
 
 	if (g_feature == false) {
 		ret = peripheral_pwm_open(chip, pin, &pwm_h);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_pwm_open(chip, pin, &pwm_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_pwm_close(pwm_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -72,11 +75,13 @@ int test_peripheral_io_pwm_peripheral_pwm_open_n1(void)
 
 	if (g_feature == false) {
 		ret = peripheral_pwm_open(PWM_CHIP_INVALID, pin, &pwm_h);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_pwm_open(PWM_CHIP_INVALID, pin, &pwm_h);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -90,11 +95,13 @@ int test_peripheral_io_pwm_peripheral_pwm_open_n2(void)
 
 	if (g_feature == false) {
 		ret = peripheral_pwm_open(chip, PWM_PIN_INVALID, &pwm_h);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_pwm_open(chip, PWM_PIN_INVALID, &pwm_h);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -106,11 +113,13 @@ int test_peripheral_io_pwm_peripheral_pwm_open_n3(void)
 
 	if (g_feature == false) {
 		ret = peripheral_pwm_open(chip, pin, NULL);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_pwm_open(chip, pin, NULL);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -124,14 +133,17 @@ int test_peripheral_io_pwm_peripheral_pwm_close_p(void)
 
 	if (g_feature == false) {
 		ret = peripheral_pwm_close(pwm_h);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_pwm_open(chip, pin, &pwm_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_pwm_close(pwm_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -143,11 +155,13 @@ int test_peripheral_io_pwm_peripheral_pwm_close_n(void)
 
 	if (g_feature == false) {
 		ret = peripheral_pwm_close(NULL);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_pwm_close(NULL);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -161,20 +175,23 @@ int test_peripheral_io_pwm_peripheral_pwm_set_period_p(void)
 
 	if (g_feature == false) {
 		ret = peripheral_pwm_set_period(pwm_h, PWM_PERIOD);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_pwm_open(chip, pin, &pwm_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_pwm_set_period(pwm_h, PWM_PERIOD);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_pwm_close(pwm_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_pwm_close(pwm_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -186,11 +203,13 @@ int test_peripheral_io_pwm_peripheral_pwm_set_period_n(void)
 
 	if (g_feature == false) {
 		ret = peripheral_pwm_set_period(NULL, PWM_PERIOD);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_pwm_set_period(NULL, PWM_PERIOD);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -204,20 +223,23 @@ int test_peripheral_io_pwm_peripheral_pwm_set_duty_cycle_p(void)
 
 	if (g_feature == false) {
 		ret = peripheral_pwm_set_duty_cycle(pwm_h, PWM_DUTY_CYCLE);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_pwm_open(chip, pin, &pwm_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_pwm_set_duty_cycle(pwm_h, PWM_DUTY_CYCLE);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_pwm_close(pwm_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_pwm_close(pwm_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -229,11 +251,13 @@ int test_peripheral_io_pwm_peripheral_pwm_set_duty_cycle_n(void)
 
 	if (g_feature == false) {
 		ret = peripheral_pwm_set_duty_cycle(NULL, PWM_DUTY_CYCLE);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_pwm_set_duty_cycle(NULL, PWM_DUTY_CYCLE);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -247,20 +271,23 @@ int test_peripheral_io_pwm_peripheral_pwm_set_polarity_p1(void)
 
 	if (g_feature == false) {
 		ret = peripheral_pwm_set_polarity(pwm_h, PERIPHERAL_PWM_POLARITY_ACTIVE_HIGH);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_pwm_open(chip, pin, &pwm_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_pwm_set_polarity(pwm_h, PERIPHERAL_PWM_POLARITY_ACTIVE_HIGH);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_pwm_close(pwm_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_pwm_close(pwm_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -274,20 +301,23 @@ int test_peripheral_io_pwm_peripheral_pwm_set_polarity_p2(void)
 
 	if (g_feature == false) {
 		ret = peripheral_pwm_set_polarity(pwm_h, PERIPHERAL_PWM_POLARITY_ACTIVE_LOW);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_pwm_open(chip, pin, &pwm_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_pwm_set_polarity(pwm_h, PERIPHERAL_PWM_POLARITY_ACTIVE_LOW);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_pwm_close(pwm_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_pwm_close(pwm_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -299,11 +329,13 @@ int test_peripheral_io_pwm_peripheral_pwm_set_polarity_n1(void)
 
 	if (g_feature == false) {
 		ret = peripheral_pwm_set_polarity(NULL, PERIPHERAL_PWM_POLARITY_ACTIVE_HIGH);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_pwm_set_polarity(NULL, PERIPHERAL_PWM_POLARITY_ACTIVE_HIGH);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -317,20 +349,23 @@ int test_peripheral_io_pwm_peripheral_pwm_set_polarity_n2(void)
 
 	if (g_feature == false) {
 		ret = peripheral_pwm_set_polarity(pwm_h, PERIPHERAL_PWM_POLARITY_ACTIVE_HIGH - 1);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_pwm_open(chip, pin, &pwm_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_pwm_set_polarity(pwm_h, PERIPHERAL_PWM_POLARITY_ACTIVE_HIGH - 1);
 		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) {
 			peripheral_pwm_close(pwm_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_pwm_close(pwm_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -344,20 +379,23 @@ int test_peripheral_io_pwm_peripheral_pwm_set_polarity_n3(void)
 
 	if (g_feature == false) {
 		ret = peripheral_pwm_set_polarity(pwm_h, PERIPHERAL_PWM_POLARITY_ACTIVE_LOW + 1);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_pwm_open(chip, pin, &pwm_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_pwm_set_polarity(pwm_h, PERIPHERAL_PWM_POLARITY_ACTIVE_LOW + 1);
 		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) {
 			peripheral_pwm_close(pwm_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_pwm_close(pwm_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -373,20 +411,23 @@ int test_peripheral_io_pwm_peripheral_pwm_set_enabled_p1(void)
 
 	if (g_feature == false) {
 		ret = peripheral_pwm_set_enabled(pwm_h, enable);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_pwm_open(chip, pin, &pwm_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_pwm_set_enabled(pwm_h, enable);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_pwm_close(pwm_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_pwm_close(pwm_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -402,20 +443,23 @@ int test_peripheral_io_pwm_peripheral_pwm_set_enabled_p2(void)
 
 	if (g_feature == false) {
 		ret = peripheral_pwm_set_enabled(pwm_h, enable);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_pwm_open(chip, pin, &pwm_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_pwm_set_enabled(pwm_h, enable);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_pwm_close(pwm_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_pwm_close(pwm_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -429,11 +473,13 @@ int test_peripheral_io_pwm_peripheral_pwm_set_enabled_n(void)
 
 	if (g_feature == false) {
 		ret = peripheral_pwm_set_enabled(NULL, enable);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_pwm_set_enabled(NULL, enable);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;

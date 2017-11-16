@@ -41,7 +41,7 @@ static int __i2c_proxy_init(void)
 	if (i2c_proxy == NULL) {
 		_E("Failed to create i2c proxy : %s", error->message);
 		g_error_free(error);
-		return PERIPHERAL_ERROR_UNKNOWN;
+		return PERIPHERAL_ERROR_IO_ERROR;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -51,7 +51,7 @@ static int __i2c_proxy_deinit(void)
 {
 	if (i2c_proxy == NULL) {
 		_E("I2c proxy is NULL");
-		return PERIPHERAL_ERROR_UNKNOWN;
+		return PERIPHERAL_ERROR_IO_ERROR;
 	}
 
 	g_object_unref(i2c_proxy);
@@ -83,7 +83,7 @@ int peripheral_gdbus_i2c_open(peripheral_i2c_h i2c, int bus, int address)
 			&error) == FALSE) {
 		_E("Failed to request daemon to i2c open : %s", error->message);
 		g_error_free(error);
-		return PERIPHERAL_ERROR_UNKNOWN;
+		return PERIPHERAL_ERROR_IO_ERROR;
 	}
 
 	// TODO : If ret is not PERIPHERAL_ERROR_NONE, fd list it NULL from daemon.
@@ -94,6 +94,7 @@ int peripheral_gdbus_i2c_open(peripheral_i2c_h i2c, int bus, int address)
 	if (i2c->fd < 0) {
 		_E("Failed to get fd for i2c : %s", error->message);
 		g_error_free(error);
+		ret = PERIPHERAL_ERROR_IO_ERROR;
 	}
 
 	g_object_unref(fd_list);

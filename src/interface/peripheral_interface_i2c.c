@@ -23,7 +23,7 @@ int peripheral_interface_i2c_close(peripheral_i2c_h i2c)
 	int ret = close(i2c->fd);
 	CHECK_ERROR(ret != 0);
 
-	return 0;
+	return PERIPHERAL_ERROR_NONE;
 }
 
 int peripheral_interface_i2c_read(peripheral_i2c_h i2c, uint8_t *data, uint32_t length)
@@ -31,7 +31,7 @@ int peripheral_interface_i2c_read(peripheral_i2c_h i2c, uint8_t *data, uint32_t 
 	int ret = read(i2c->fd, data, length);
 	CHECK_ERROR(ret != length);
 
-	return 0;
+	return PERIPHERAL_ERROR_NONE;
 }
 
 int peripheral_interface_i2c_write(peripheral_i2c_h i2c, uint8_t *data, uint32_t length)
@@ -39,7 +39,7 @@ int peripheral_interface_i2c_write(peripheral_i2c_h i2c, uint8_t *data, uint32_t
 	int ret = write(i2c->fd, data, length);
 	CHECK_ERROR(ret != length);
 
-	return 0;
+	return PERIPHERAL_ERROR_NONE;
 }
 
 int peripheral_interface_i2c_read_register_byte(peripheral_i2c_h i2c, uint8_t reg, uint8_t *data_out)
@@ -61,7 +61,7 @@ int peripheral_interface_i2c_read_register_byte(peripheral_i2c_h i2c, uint8_t re
 
 	*data_out = data.byte;
 
-	return 0;
+	return PERIPHERAL_ERROR_NONE;
 }
 
 int peripheral_interface_i2c_write_register_byte(peripheral_i2c_h i2c, uint8_t reg, uint8_t data_in)
@@ -83,7 +83,7 @@ int peripheral_interface_i2c_write_register_byte(peripheral_i2c_h i2c, uint8_t r
 	ret = ioctl(i2c->fd, I2C_SMBUS, &data_arg);
 	CHECK_ERROR(ret != 0);
 
-	return 0;
+	return PERIPHERAL_ERROR_NONE;
 }
 
 int peripheral_interface_i2c_read_register_word(peripheral_i2c_h i2c, uint8_t reg, uint16_t *data_out)
@@ -105,7 +105,7 @@ int peripheral_interface_i2c_read_register_word(peripheral_i2c_h i2c, uint8_t re
 
 	*data_out = data.word;
 
-	return 0;
+	return PERIPHERAL_ERROR_NONE;
 }
 
 int peripheral_interface_i2c_write_register_word(peripheral_i2c_h i2c, uint8_t reg, uint16_t data_in)
@@ -127,5 +127,5 @@ int peripheral_interface_i2c_write_register_word(peripheral_i2c_h i2c, uint8_t r
 	ret = ioctl(i2c->fd, I2C_SMBUS, &data_arg);
 	CHECK_ERROR(ret != 0);
 
-	return 0;
+	return PERIPHERAL_ERROR_NONE;
 }

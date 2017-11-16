@@ -35,8 +35,8 @@ int test_peripheral_io_gpio_initialize(char *model, bool feature)
 	else if (!strcmp(model, "artik"))
 		pin = GPIO_PIN_ARTIK530;
 	else
-		return -1;
-	return 0;
+		return PERIPHERAL_ERROR_NO_DEVICE;
+	return PERIPHERAL_ERROR_NONE;
 }
 
 int test_peripheral_io_gpio_peripheral_gpio_open_p(void)
@@ -47,14 +47,17 @@ int test_peripheral_io_gpio_peripheral_gpio_open_p(void)
 
 	if (g_feature == false) {
 		ret = peripheral_gpio_open(pin, &gpio_h);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_gpio_open(pin, &gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_gpio_close(gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -66,11 +69,13 @@ int test_peripheral_io_gpio_peripheral_gpio_open_n1(void)
 
 	if (g_feature == false) {
 		ret = peripheral_gpio_open(pin, NULL);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_gpio_open(pin, NULL);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -84,11 +89,13 @@ int test_peripheral_io_gpio_peripheral_gpio_open_n2(void)
 
 	if (g_feature == false) {
 		ret = peripheral_gpio_open(GPIO_PIN_INVALID, &gpio_h);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_gpio_open(GPIO_PIN_INVALID, &gpio_h);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -102,14 +109,17 @@ int test_peripheral_io_gpio_peripheral_gpio_close_p(void)
 
 	if (g_feature == false) {
 		ret = peripheral_gpio_close(gpio_h);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_gpio_open(pin, &gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_gpio_close(gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -121,11 +131,13 @@ int test_peripheral_io_gpio_peripheral_gpio_close_n(void)
 
 	if (g_feature == false) {
 		ret = peripheral_gpio_close(NULL);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_gpio_close(NULL);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -139,20 +151,23 @@ int test_peripheral_io_gpio_peripheral_gpio_set_direction_p1(void)
 
 	if (g_feature == false) {
 		ret = peripheral_gpio_set_direction(gpio_h, PERIPHERAL_GPIO_DIRECTION_IN);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_gpio_open(pin, &gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_gpio_set_direction(gpio_h, PERIPHERAL_GPIO_DIRECTION_IN);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_gpio_close(gpio_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_gpio_close(gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -166,20 +181,23 @@ int test_peripheral_io_gpio_peripheral_gpio_set_direction_p2(void)
 
 	if (g_feature == false) {
 		ret = peripheral_gpio_set_direction(gpio_h, PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_HIGH);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_gpio_open(pin, &gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_gpio_set_direction(gpio_h, PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_HIGH);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_gpio_close(gpio_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_gpio_close(gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -193,20 +211,23 @@ int test_peripheral_io_gpio_peripheral_gpio_set_direction_p3(void)
 
 	if (g_feature == false) {
 		ret = peripheral_gpio_set_direction(gpio_h, PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_LOW);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_gpio_open(pin, &gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_gpio_set_direction(gpio_h, PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_LOW);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_gpio_close(gpio_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_gpio_close(gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -218,11 +239,13 @@ int test_peripheral_io_gpio_peripheral_gpio_set_direction_n1(void)
 
 	if (g_feature == false) {
 		ret = peripheral_gpio_set_direction(NULL, PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_HIGH);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_gpio_set_direction(NULL, PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_HIGH);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -236,20 +259,23 @@ int test_peripheral_io_gpio_peripheral_gpio_set_direction_n2(void)
 
 	if (g_feature == false) {
 		ret = peripheral_gpio_set_direction(gpio_h, PERIPHERAL_GPIO_DIRECTION_IN - 1);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_gpio_open(pin, &gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_gpio_set_direction(gpio_h, PERIPHERAL_GPIO_DIRECTION_IN - 1);
 		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) {
 			peripheral_gpio_close(gpio_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_gpio_close(gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -263,20 +289,23 @@ int test_peripheral_io_gpio_peripheral_gpio_set_direction_n3(void)
 
 	if (g_feature == false) {
 		ret = peripheral_gpio_set_direction(gpio_h, PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_LOW + 1);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_gpio_open(pin, &gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_gpio_set_direction(gpio_h, PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_LOW + 1);
 		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) {
 			peripheral_gpio_close(gpio_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_gpio_close(gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -290,26 +319,29 @@ int test_peripheral_io_gpio_peripheral_gpio_set_edge_mode_p1(void)
 
 	if (g_feature == false) {
 		ret = peripheral_gpio_set_edge_mode(gpio_h, PERIPHERAL_GPIO_EDGE_NONE);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_gpio_open(pin, &gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_gpio_set_direction(gpio_h, PERIPHERAL_GPIO_DIRECTION_IN);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_gpio_close(gpio_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_gpio_set_edge_mode(gpio_h, PERIPHERAL_GPIO_EDGE_NONE);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_gpio_close(gpio_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_gpio_close(gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -323,26 +355,29 @@ int test_peripheral_io_gpio_peripheral_gpio_set_edge_mode_p2(void)
 
 	if (g_feature == false) {
 		ret = peripheral_gpio_set_edge_mode(gpio_h, PERIPHERAL_GPIO_EDGE_RISING);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_gpio_open(pin, &gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_gpio_set_direction(gpio_h, PERIPHERAL_GPIO_DIRECTION_IN);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_gpio_close(gpio_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_gpio_set_edge_mode(gpio_h, PERIPHERAL_GPIO_EDGE_RISING);
 		if (ret != PERIPHERAL_ERROR_NONE && ret != PERIPHERAL_ERROR_TRY_AGAIN) {
 			peripheral_gpio_close(gpio_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_gpio_close(gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -356,26 +391,29 @@ int test_peripheral_io_gpio_peripheral_gpio_set_edge_mode_p3(void)
 
 	if (g_feature == false) {
 		ret = peripheral_gpio_set_edge_mode(gpio_h, PERIPHERAL_GPIO_EDGE_FALLING);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_gpio_open(pin, &gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_gpio_set_direction(gpio_h, PERIPHERAL_GPIO_DIRECTION_IN);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_gpio_close(gpio_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_gpio_set_edge_mode(gpio_h, PERIPHERAL_GPIO_EDGE_FALLING);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_gpio_close(gpio_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_gpio_close(gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -389,20 +427,23 @@ int test_peripheral_io_gpio_peripheral_gpio_set_edge_mode_p4(void)
 
 	if (g_feature == false) {
 		ret = peripheral_gpio_set_edge_mode(gpio_h, PERIPHERAL_GPIO_EDGE_BOTH);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_gpio_open(pin, &gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_gpio_set_edge_mode(gpio_h, PERIPHERAL_GPIO_EDGE_BOTH);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_gpio_close(gpio_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_gpio_close(gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -414,11 +455,13 @@ int test_peripheral_io_gpio_peripheral_gpio_set_edge_mode_n1(void)
 
 	if (g_feature == false) {
 		ret = peripheral_gpio_set_edge_mode(NULL, PERIPHERAL_GPIO_EDGE_RISING);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_gpio_set_edge_mode(NULL, PERIPHERAL_GPIO_EDGE_RISING);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -432,20 +475,23 @@ int test_peripheral_io_gpio_peripheral_gpio_set_edge_mode_n2(void)
 
 	if (g_feature == false) {
 		ret = peripheral_gpio_set_edge_mode(gpio_h, PERIPHERAL_GPIO_EDGE_NONE - 1);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_gpio_open(pin, &gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_gpio_set_edge_mode(gpio_h, PERIPHERAL_GPIO_EDGE_NONE - 1);
 		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) {
 			peripheral_gpio_close(gpio_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_gpio_close(gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -459,20 +505,23 @@ int test_peripheral_io_gpio_peripheral_gpio_set_edge_mode_n3(void)
 
 	if (g_feature == false) {
 		ret = peripheral_gpio_set_edge_mode(gpio_h, PERIPHERAL_GPIO_EDGE_BOTH + 1);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_gpio_open(pin, &gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_gpio_set_edge_mode(gpio_h, PERIPHERAL_GPIO_EDGE_BOTH + 1);
 		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) {
 			peripheral_gpio_close(gpio_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_gpio_close(gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -493,38 +542,41 @@ int test_peripheral_io_gpio_peripheral_gpio_set_interrupted_cb_p(void)
 
 	if (g_feature == false) {
 		ret = peripheral_gpio_set_interrupted_cb(gpio_h, gpio_interrupted_cb, NULL);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_gpio_open(pin, &gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_gpio_set_direction(gpio_h, PERIPHERAL_GPIO_DIRECTION_IN);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_gpio_close(gpio_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_gpio_set_edge_mode(gpio_h, PERIPHERAL_GPIO_EDGE_RISING);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_gpio_close(gpio_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_gpio_set_interrupted_cb(gpio_h, gpio_interrupted_cb, NULL);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_gpio_close(gpio_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_gpio_unset_interrupted_cb(gpio_h);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_gpio_close(gpio_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_gpio_close(gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -536,11 +588,13 @@ int test_peripheral_io_gpio_peripheral_gpio_set_interrupted_cb_n1(void)
 
 	if (g_feature == false) {
 		ret = peripheral_gpio_set_interrupted_cb(NULL, gpio_interrupted_cb, NULL);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_gpio_set_interrupted_cb(NULL, gpio_interrupted_cb, NULL);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -554,20 +608,23 @@ int test_peripheral_io_gpio_peripheral_gpio_set_interrupted_cb_n2(void)
 
 	if (g_feature == false) {
 		ret = peripheral_gpio_set_interrupted_cb(gpio_h, NULL, NULL);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_gpio_open(pin, &gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_gpio_set_interrupted_cb(gpio_h, NULL, NULL);
 		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) {
 			peripheral_gpio_close(gpio_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_gpio_close(gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -581,26 +638,29 @@ int test_peripheral_io_gpio_peripheral_gpio_unset_interrupted_cb_p1(void)
 
 	if (g_feature == false) {
 		ret = peripheral_gpio_unset_interrupted_cb(gpio_h);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_gpio_open(pin, &gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_gpio_set_interrupted_cb(gpio_h, gpio_interrupted_cb, NULL);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_gpio_close(gpio_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_gpio_unset_interrupted_cb(gpio_h);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_gpio_close(gpio_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_gpio_close(gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -614,20 +674,23 @@ int test_peripheral_io_gpio_peripheral_gpio_unset_interrupted_cb_p2(void)
 
 	if (g_feature == false) {
 		ret = peripheral_gpio_unset_interrupted_cb(gpio_h);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_gpio_open(pin, &gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_gpio_unset_interrupted_cb(gpio_h);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_gpio_close(gpio_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_gpio_close(gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -639,11 +702,13 @@ int test_peripheral_io_gpio_peripheral_gpio_unset_interrupted_cb_n(void)
 
 	if (g_feature == false) {
 		ret = peripheral_gpio_unset_interrupted_cb(NULL);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_gpio_unset_interrupted_cb(NULL);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -659,26 +724,29 @@ int test_peripheral_io_gpio_peripheral_gpio_read_p(void)
 
 	if (g_feature == false) {
 		ret = peripheral_gpio_read(gpio_h, &value);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_gpio_open(pin, &gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_gpio_set_direction(gpio_h, PERIPHERAL_GPIO_DIRECTION_IN);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_gpio_close(gpio_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_gpio_read(gpio_h, &value);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_gpio_close(gpio_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_gpio_close(gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -692,11 +760,13 @@ int test_peripheral_io_gpio_peripheral_gpio_read_n1(void)
 
 	if (g_feature == false) {
 		ret = peripheral_gpio_read(NULL, &value);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_gpio_read(NULL, &value);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -710,26 +780,29 @@ int test_peripheral_io_gpio_peripheral_gpio_read_n2(void)
 
 	if (g_feature == false) {
 		ret = peripheral_gpio_read(gpio_h, NULL);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_gpio_open(pin, &gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_gpio_set_direction(gpio_h, PERIPHERAL_GPIO_DIRECTION_IN);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_gpio_close(gpio_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_gpio_read(gpio_h, NULL);
 		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) {
 			peripheral_gpio_close(gpio_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_gpio_close(gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -745,26 +818,29 @@ int test_peripheral_io_gpio_peripheral_gpio_write_p(void)
 
 	if (g_feature == false) {
 		ret = peripheral_gpio_write(gpio_h, value);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_gpio_open(pin, &gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_gpio_set_direction(gpio_h, PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_LOW);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_gpio_close(gpio_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_gpio_write(gpio_h, value);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_gpio_close(gpio_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_gpio_close(gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -778,11 +854,13 @@ int test_peripheral_io_gpio_peripheral_gpio_write_n1(void)
 
 	if (g_feature == false) {
 		ret = peripheral_gpio_write(NULL, value);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_gpio_write(NULL, value);
-		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
@@ -798,26 +876,29 @@ int test_peripheral_io_gpio_peripheral_gpio_write_n2(void)
 
 	if (g_feature == false) {
 		ret = peripheral_gpio_write(gpio_h, value);
-		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
+			return ret;
 
 	} else {
 		ret = peripheral_gpio_open(pin, &gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 
 		ret = peripheral_gpio_set_direction(gpio_h, PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_LOW);
 		if (ret != PERIPHERAL_ERROR_NONE) {
 			peripheral_gpio_close(gpio_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_gpio_write(gpio_h, value);
 		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) {
 			peripheral_gpio_close(gpio_h);
-			return PERIPHERAL_ERROR_UNKNOWN;
+			return ret;
 		}
 
 		ret = peripheral_gpio_close(gpio_h);
-		if (ret != PERIPHERAL_ERROR_NONE) return PERIPHERAL_ERROR_UNKNOWN;
+		if (ret != PERIPHERAL_ERROR_NONE)
+			return ret;
 	}
 
 	return PERIPHERAL_ERROR_NONE;
