@@ -58,7 +58,7 @@ int peripheral_interface_i2c_read_register_byte(peripheral_i2c_h i2c, uint8_t re
 	data_arg.data = &data;
 	data_arg.command = reg;
 
-	status = ioctl(fd, I2C_SMBUS, &data_arg);
+	status = ioctl(i2c->fd, I2C_SMBUS, &data_arg);
 	CHECK_ERROR(status);
 
 	*data_out = data.byte;
@@ -82,7 +82,7 @@ int peripheral_interface_i2c_write_register_byte(peripheral_i2c_h i2c, uint8_t r
 
 	data.byte = data_in;
 
-	status = ioctl(fd, I2C_SMBUS, &data_arg);
+	status = ioctl(i2c->fd, I2C_SMBUS, &data_arg);
 	CHECK_ERROR(status);
 
 	return 0;
@@ -102,7 +102,7 @@ int peripheral_interface_i2c_read_register_word(peripheral_i2c_h i2c, uint8_t re
 	data_arg.data = &data;
 	data_arg.command = reg;
 
-	status = ioctl(fd, I2C_SMBUS, &data_arg);
+	status = ioctl(i2c->fd, I2C_SMBUS, &data_arg);
 	CHECK_ERROR(status);
 
 	*data_out = data.word;
@@ -126,7 +126,7 @@ int peripheral_interface_i2c_write_register_word(peripheral_i2c_h i2c, uint8_t r
 
 	data.word = data_in;
 
-	statis = ioctl(fd, I2C_SMBUS, &data_arg);
+	status = ioctl(i2c->fd, I2C_SMBUS, &data_arg);
 	CHECK_ERROR(status);
 
 	return 0;
