@@ -23,18 +23,64 @@ void peripheral_interface_i2c_close(peripheral_i2c_h i2c)
 	close(i2c->fd);
 }
 
-int peripheral_interface_i2c_read(peripheral_i2c_h i2c, uint8_t *data, uint32_t length)
+/* It was developed temporarily because of the I2C Stub. */
+static int peripheral_interface_i2c_read_buffer(peripheral_i2c_h i2c, uint8_t *data_out, uint32_t length)
 {
-	int ret = read(i2c->fd, data, length);
-	CHECK_ERROR(ret != length);
+	int ret;
+
+	struct i2c_smbus_ioctl_data data_arg;
+	union i2c_smbus_data data;
+
+	memset(&data, 0x0, sizeof(data.block));
+
+	data_arg.read_write = I2C_SMBUS_READ;
+	data_arg.size = I2C_SMBUS_BYTE;
+	data_arg.data = &data;
+	data_arg.command = *data_out;
+
+	ret = ioctl(i2c->fd, I2C_SMBUS, &data_arg);
+	CHECK_ERROR(ret != 0);
+
+	*data_out = data.byte;
 
 	return PERIPHERAL_ERROR_NONE;
 }
 
-int peripheral_interface_i2c_write(peripheral_i2c_h i2c, uint8_t *data, uint32_t length)
+int peripheral_interface_i2c_read(peripheral_i2c_h i2c, uint8_t *data_out, uint32_t length)
 {
-	int ret = write(i2c->fd, data, length);
-	CHECK_ERROR(ret != length);
+	int ret = read(i2c->fd, data_out, length);
+	if (ret != length)
+		return peripheral_interface_i2c_read_buffer(i2c, data_out, length);
+
+	return PERIPHERAL_ERROR_NONE;
+}
+
+/* It was developed temporarily because of the I2C Stub. */
+static int peripheral_interface_i2c_write_buffer(peripheral_i2c_h i2c, uint8_t *data_in, uint32_t length)
+{
+	int ret;
+
+	struct i2c_smbus_ioctl_data data_arg;
+	union i2c_smbus_data data;
+
+	memset(&data, 0x0, sizeof(data.block));
+
+	data_arg.read_write = I2C_SMBUS_WRITE;
+	data_arg.size = I2C_SMBUS_BYTE;
+	data_arg.data = &data;
+	data_arg.command = *data_in;
+
+	ret = ioctl(i2c->fd, I2C_SMBUS, &data_arg);
+	CHECK_ERROR(ret != 0);
+
+	return PERIPHERAL_ERROR_NONE;
+}
+
+int peripheral_interface_i2c_write(peripheral_i2c_h i2c, uint8_t *data_in, uint32_t length)
+{
+	int ret = write(i2c->fd, data_in, length);
+	if (ret != length)
+		return peripheral_interface_i2c_write_buffer(i2c, data_in, length);
 
 	return PERIPHERAL_ERROR_NONE;
 }
