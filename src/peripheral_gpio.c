@@ -90,7 +90,7 @@ int peripheral_gpio_close(peripheral_gpio_h gpio)
 	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
 
 	/* call gpio_close */
-	ret = peripheral_gdbus_gpio_close(gpio);
+	ret = peripheral_gdbus_gpio_close();
 	if (ret != PERIPHERAL_ERROR_NONE)
 		_E("Failed to close the gpio pin, ret : %d", ret);
 

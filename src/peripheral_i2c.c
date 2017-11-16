@@ -90,7 +90,7 @@ int peripheral_i2c_close(peripheral_i2c_h i2c)
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "I2C feature is not supported");
 	RETVM_IF(i2c == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "i2c handle is NULL");
 
-	ret = peripheral_gdbus_i2c_close(i2c);
+	ret = peripheral_gdbus_i2c_close();
 	if (ret != PERIPHERAL_ERROR_NONE)
 		_E("Failed to close i2c communcation, ret : %d", ret);
 

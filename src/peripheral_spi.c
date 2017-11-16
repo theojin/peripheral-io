@@ -81,7 +81,7 @@ int peripheral_spi_close(peripheral_spi_h spi)
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "SPI feature is not supported");
 	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
 
-	ret = peripheral_gdbus_spi_close(spi);
+	ret = peripheral_gdbus_spi_close();
 	if (ret < PERIPHERAL_ERROR_NONE)
 		_E("Failed to close SPI device, continuing anyway, ret : %d", ret);
 

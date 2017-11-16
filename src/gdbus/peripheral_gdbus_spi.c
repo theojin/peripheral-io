@@ -47,13 +47,18 @@ static int __spi_proxy_init()
 	return PERIPHERAL_ERROR_NONE;
 }
 
-static void __spi_proxy_deinit()
+static int __spi_proxy_deinit()
 {
-	if (spi_proxy) {
-		g_object_unref(spi_proxy);
-		if (!G_IS_OBJECT(spi_proxy))
-			spi_proxy = NULL;
+	if (spi_proxy == NULL) {
+		_E("Spi proxy is NULL");
+		return PERIPHERAL_ERROR_UNKNOWN;
 	}
+
+	g_object_unref(spi_proxy);
+	if (!G_IS_OBJECT(spi_proxy))
+		spi_proxy = NULL;
+
+	return PERIPHERAL_ERROR_NONE;
 }
 
 int peripheral_gdbus_spi_open(peripheral_spi_h spi, int bus, int cs)
@@ -97,30 +102,8 @@ int peripheral_gdbus_spi_open(peripheral_spi_h spi, int bus, int cs)
 	return ret;
 }
 
-int peripheral_gdbus_spi_close(peripheral_spi_h spi)
+int peripheral_gdbus_spi_close()
 {
-	int ret;
-	GError *error = NULL;
-
-	if (spi_proxy == NULL) {
-		_E("Can't try to spi close because spi proxy is NULL.");
-		return PERIPHERAL_ERROR_UNKNOWN;
-	}
-
-	if (peripheral_io_gdbus_spi_call_close_sync(
-			spi_proxy,
-			spi->handle,
-			&ret,
-			NULL,
-			&error) == FALSE) {
-		_E("Failed to request daemon to spi close : %s", error->message);
-		g_error_free(error);
-		return PERIPHERAL_ERROR_UNKNOWN;
-	}
-
-	// TODO : If the return value is not PERIPHERAL_ERROR_NONE, the daemon returns status before close request.
-	if (ret == PERIPHERAL_ERROR_NONE)
-		__spi_proxy_deinit();
-
+	int ret = __spi_proxy_deinit();
 	return ret;
 }

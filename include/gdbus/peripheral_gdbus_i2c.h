@@ -20,6 +20,6 @@
 #include "peripheral_gdbus_common.h"
 
 int peripheral_gdbus_i2c_open(peripheral_i2c_h i2c, int bus, int address);
-int peripheral_gdbus_i2c_close(peripheral_i2c_h i2c);
+int peripheral_gdbus_i2c_close();
 
 #endif /* __PERIPHERAL_GDBUS_I2C_H__ */

@@ -47,13 +47,18 @@ static int __i2c_proxy_init()
 	return PERIPHERAL_ERROR_NONE;
 }
 
-static void __i2c_proxy_deinit()
+static int __i2c_proxy_deinit()
 {
-	if (i2c_proxy) {
-		g_object_unref(i2c_proxy);
-		if (!G_IS_OBJECT(i2c_proxy))
-			i2c_proxy = NULL;
+	if (i2c_proxy == NULL) {
+		_E("I2c proxy is NULL");
+		return PERIPHERAL_ERROR_UNKNOWN;
 	}
+
+	g_object_unref(i2c_proxy);
+	if (!G_IS_OBJECT(i2c_proxy))
+		i2c_proxy = NULL;
+
+	return PERIPHERAL_ERROR_NONE;
 }
 
 int peripheral_gdbus_i2c_open(peripheral_i2c_h i2c, int bus, int address)
@@ -96,30 +101,8 @@ int peripheral_gdbus_i2c_open(peripheral_i2c_h i2c, int bus, int address)
 	return ret;
 }
 
-int peripheral_gdbus_i2c_close(peripheral_i2c_h i2c)
+int peripheral_gdbus_i2c_close()
 {
-	int ret;
-	GError *error = NULL;
-
-	if (i2c_proxy == NULL) {
-		_E("Can't try to i2c close because i2c proxy is NULL.");
-		return PERIPHERAL_ERROR_UNKNOWN;
-	}
-
-	if (peripheral_io_gdbus_i2c_call_close_sync(
-			i2c_proxy,
-			i2c->handle,
-			&ret,
-			NULL,
-			&error) == FALSE) {
-		_E("Failed to request daemon to i2c close : %s", error->message);
-		g_error_free(error);
-		return PERIPHERAL_ERROR_UNKNOWN;
-	}
-
-	// TODO : If the return value is not PERIPHERAL_ERROR_NONE, the daemon returns status before close request.
-	if (ret == PERIPHERAL_ERROR_NONE)
-		__i2c_proxy_deinit();
-
+	int ret = __i2c_proxy_deinit();
 	return ret;
 }

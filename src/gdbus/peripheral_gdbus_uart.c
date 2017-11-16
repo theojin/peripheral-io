@@ -47,13 +47,18 @@ static int __uart_proxy_init()
 	return PERIPHERAL_ERROR_NONE;
 }
 
-static void __uart_proxy_deinit()
+static int __uart_proxy_deinit()
 {
-	if (uart_proxy) {
-		g_object_unref(uart_proxy);
-		if (!G_IS_OBJECT(uart_proxy))
-			uart_proxy = NULL;
+	if (uart_proxy == NULL) {
+		_E("Uart proxy is NULL");
+		return PERIPHERAL_ERROR_UNKNOWN;
 	}
+
+	g_object_unref(uart_proxy);
+	if (!G_IS_OBJECT(uart_proxy))
+		uart_proxy = NULL;
+
+	return PERIPHERAL_ERROR_NONE;
 }
 
 int peripheral_gdbus_uart_open(peripheral_uart_h uart, int port)
@@ -96,30 +101,8 @@ int peripheral_gdbus_uart_open(peripheral_uart_h uart, int port)
 	return ret;
 }
 
-int peripheral_gdbus_uart_close(peripheral_uart_h uart)
+int peripheral_gdbus_uart_close()
 {
-	int ret;
-	GError *error = NULL;
-
-	if (uart_proxy == NULL) {
-		_E("Can't try to uart close because uart proxy is NULL.");
-		return PERIPHERAL_ERROR_UNKNOWN;
-	}
-
-	if (peripheral_io_gdbus_uart_call_close_sync(
-			uart_proxy,
-			uart->handle,
-			&ret,
-			NULL,
-			&error) == FALSE) {
-		_E("Failed to request daemon to uart close : %s", error->message);
-		g_error_free(error);
-		return PERIPHERAL_ERROR_UNKNOWN;
-	}
-
-	// TODO : If the return value is not PERIPHERAL_ERROR_NONE, the daemon returns status before close request.
-	if (ret == PERIPHERAL_ERROR_NONE)
-		__uart_proxy_deinit();
-
+	int ret = __uart_proxy_deinit();
 	return ret;
 }
