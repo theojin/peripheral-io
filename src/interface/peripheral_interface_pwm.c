@@ -24,43 +24,45 @@
 
 int peripheral_interface_pwm_close(peripheral_pwm_h pwm)
 {
-	int status;
+	int ret;
 
-	status = close(pwm->fd_period);
-	CHECK_ERROR(status);
+	ret = close(pwm->fd_period);
+	CHECK_ERROR(ret != 0);
 
-	status = close(pwm->fd_duty_cycle);
-	CHECK_ERROR(status);
+	ret = close(pwm->fd_duty_cycle);
+	CHECK_ERROR(ret != 0);
 
-	status = close(pwm->fd_polarity);
-	CHECK_ERROR(status);
+	ret = close(pwm->fd_polarity);
+	CHECK_ERROR(ret != 0);
 
-	status = close(pwm->fd_enable);
-	CHECK_ERROR(status);
+	ret = close(pwm->fd_enable);
+	CHECK_ERROR(ret != 0);
 
 	return 0;
 }
 
 int peripheral_interface_pwm_set_period(peripheral_pwm_h pwm, uint32_t period)
 {
-	int len, status;
+	int ret;
+	int length;
 	char pwm_buf[PWM_BUF_MAX] = {0};
 
-	len = snprintf(pwm_buf, sizeof(pwm_buf), "%d", period);
-	status = write(pwm->fd_period, pwm_buf, len);
-	CHECK_ERROR(status);
+	length = snprintf(pwm_buf, sizeof(pwm_buf), "%d", period);
+	ret = write(pwm->fd_period, pwm_buf, length);
+	CHECK_ERROR(ret != length);
 
 	return 0;
 }
 
 int peripheral_interface_pwm_set_duty_cycle(peripheral_pwm_h pwm, uint32_t duty_cycle)
 {
-	int len, status;
+	int ret;
+	int length;
 	char pwm_buf[PWM_BUF_MAX] = {0};
 
-	len = snprintf(pwm_buf, sizeof(pwm_buf), "%d", duty_cycle);
-	status = write(pwm->fd_duty_cycle, pwm_buf, len);
-	CHECK_ERROR(status);
+	length = snprintf(pwm_buf, sizeof(pwm_buf), "%d", duty_cycle);
+	ret = write(pwm->fd_duty_cycle, pwm_buf, length);
+	CHECK_ERROR(ret != length);
 
 	return 0;
 }
@@ -72,8 +74,8 @@ int peripheral_interface_pwm_set_polarity(peripheral_pwm_h pwm, peripheral_pwm_p
 		{"inversed", 8}
 	};
 
-	int status = write(pwm->fd_polarity, types[polarity].type, types[polarity].len);
-	CHECK_ERROR(status);
+	int ret = write(pwm->fd_polarity, types[polarity].type, types[polarity].len);
+	CHECK_ERROR(ret != types[polarity].len);
 
 	return 0;
 }
@@ -85,8 +87,8 @@ int peripheral_interface_pwm_set_enable(peripheral_pwm_h pwm, bool enable)
 		{"1", 1}
 	};
 
-	int status = write(pwm->fd_enable, types[enable].type, types[enable].len);
-	CHECK_ERROR(status);
+	int ret = write(pwm->fd_enable, types[enable].type, types[enable].len);
+	CHECK_ERROR(ret != types[enable].len);
 
 	return 0;
 }

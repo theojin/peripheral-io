@@ -26,8 +26,8 @@ int peripheral_interface_gpio_set_direction(peripheral_gpio_h gpio, peripheral_g
 		{"low",  3}
 	};
 
-	int status = write(gpio->fd_direction, types[direction].type, types[direction].len);
-	CHECK_ERROR(status);
+	int ret = write(gpio->fd_direction, types[direction].type, types[direction].len);
+	CHECK_ERROR(ret != types[direction].len);
 
 	return 0;
 }
@@ -41,8 +41,8 @@ int peripheral_interface_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_g
 		{"both",    4}
 	};
 
-	int status = write(gpio->fd_edge, types[edge].type, types[edge].len);
-	CHECK_ERROR(status);
+	int ret = write(gpio->fd_edge, types[edge].type, types[edge].len);
+	CHECK_ERROR(ret != types[edge].len);
 
 	return 0;
 }
@@ -54,19 +54,20 @@ int peripheral_interface_gpio_write(peripheral_gpio_h gpio, uint32_t value)
 		{"1", 1}
 	};
 
-	int status = write(gpio->fd_value, types[value].type, types[value].len);
-	CHECK_ERROR(status);
+	int ret = write(gpio->fd_value, types[value].type, types[value].len);
+	CHECK_ERROR(ret != types[value].len);
 
 	return 0;
 }
 
 int peripheral_interface_gpio_read(peripheral_gpio_h gpio, uint32_t *value)
 {
-	int len;
+	int ret;
+	int length = 1;
 	char gpio_buf[GPIO_BUFFER_MAX] = {0, };
 
-	len = read(gpio->fd_value, &gpio_buf, 1);
-	CHECK_ERROR(len);
+	ret = read(gpio->fd_value, &gpio_buf, length);
+	CHECK_ERROR(ret != length);
 
 	if (gpio_buf[0] == '0')
 		*value = 0;
@@ -81,16 +82,16 @@ int peripheral_interface_gpio_read(peripheral_gpio_h gpio, uint32_t *value)
 
 int peripheral_interface_gpio_close(peripheral_gpio_h gpio)
 {
-	int status;
+	int ret;
 
-	status = close(gpio->fd_direction);
-	CHECK_ERROR(status);
+	ret = close(gpio->fd_direction);
+	CHECK_ERROR(ret != 0);
 
-	status = close(gpio->fd_edge);
-	CHECK_ERROR(status);
+	ret = close(gpio->fd_edge);
+	CHECK_ERROR(ret != 0);
 
-	status = close(gpio->fd_value);
-	CHECK_ERROR(status);
+	ret = close(gpio->fd_value);
+	CHECK_ERROR(ret != 0);
 
 	return 0;
 }

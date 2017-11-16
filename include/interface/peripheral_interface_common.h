@@ -25,9 +25,9 @@
 #include "peripheral_handle.h"
 #include "peripheral_log.h"
 
-#define CHECK_ERROR(val) \
+#define CHECK_ERROR(expr) \
 	do { \
-		if (val < 0) { \
+		if (expr) { \
 			if (errno == EAGAIN) \
 				return -EAGAIN; \
 			char errmsg[255]; \

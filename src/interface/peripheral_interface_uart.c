@@ -45,13 +45,12 @@ static const int byteinfo[4] = {CS5, CS6, CS7, CS8};
 
 int peripheral_interface_uart_close(peripheral_uart_h uart)
 {
-	int status;
+	int ret;
 
-	status = peripheral_interface_uart_flush(uart);
-	CHECK_ERROR(status);
+	peripheral_interface_uart_flush(uart);
 
-	status = close(uart->fd);
-	CHECK_ERROR(status);
+	ret = close(uart->fd);
+	CHECK_ERROR(ret != 0);
 
 	return 0;
 }
@@ -59,7 +58,7 @@ int peripheral_interface_uart_close(peripheral_uart_h uart)
 int peripheral_interface_uart_flush(peripheral_uart_h uart)
 {
 	int ret = tcflush(uart->fd, TCIOFLUSH);
-	CHECK_ERROR(ret);
+	CHECK_ERROR(ret != 0);
 
 	return 0;
 }
@@ -70,7 +69,7 @@ int peripheral_interface_uart_set_baud_rate(peripheral_uart_h uart, peripheral_u
 	struct termios tio;
 
 	ret = tcgetattr(uart->fd, &tio);
-	CHECK_ERROR(ret);
+	CHECK_ERROR(ret != 0);
 
 	tio.c_cflag = peripheral_uart_br[baud];
 	tio.c_iflag = IGNPAR;
@@ -81,7 +80,7 @@ int peripheral_interface_uart_set_baud_rate(peripheral_uart_h uart, peripheral_u
 
 	peripheral_interface_uart_flush(uart);
 	ret = tcsetattr(uart->fd, TCSANOW, &tio);
-	CHECK_ERROR(ret);
+	CHECK_ERROR(ret != 0);
 
 	return 0;
 }
@@ -92,7 +91,7 @@ int peripheral_interface_uart_set_byte_size(peripheral_uart_h uart, peripheral_u
 	struct termios tio;
 
 	ret = tcgetattr(uart->fd, &tio);
-	CHECK_ERROR(ret);
+	CHECK_ERROR(ret != 0);
 
 	/* set byte size */
 	tio.c_cflag &= ~CSIZE;
@@ -101,7 +100,7 @@ int peripheral_interface_uart_set_byte_size(peripheral_uart_h uart, peripheral_u
 
 	peripheral_interface_uart_flush(uart);
 	ret = tcsetattr(uart->fd, TCSANOW, &tio);
-	CHECK_ERROR(ret);
+	CHECK_ERROR(ret != 0);
 
 	return 0;
 }
@@ -112,7 +111,7 @@ int peripheral_interface_uart_set_parity(peripheral_uart_h uart, peripheral_uart
 	struct termios tio;
 
 	ret = tcgetattr(uart->fd, &tio);
-	CHECK_ERROR(ret);
+	CHECK_ERROR(ret != 0);
 
 	/* set parity info */
 	switch (parity) {
@@ -133,7 +132,7 @@ int peripheral_interface_uart_set_parity(peripheral_uart_h uart, peripheral_uart
 
 	peripheral_interface_uart_flush(uart);
 	ret = tcsetattr(uart->fd, TCSANOW, &tio);
-	CHECK_ERROR(ret);
+	CHECK_ERROR(ret != 0);
 
 	return 0;
 }
@@ -144,7 +143,7 @@ int peripheral_interface_uart_set_stop_bits(peripheral_uart_h uart, peripheral_u
 	struct termios tio;
 
 	ret = tcgetattr(uart->fd, &tio);
-	CHECK_ERROR(ret);
+	CHECK_ERROR(ret != 0);
 
 	/* set stop bit */
 	switch (stop_bits) {
@@ -161,7 +160,7 @@ int peripheral_interface_uart_set_stop_bits(peripheral_uart_h uart, peripheral_u
 
 	peripheral_interface_uart_flush(uart);
 	ret = tcsetattr(uart->fd, TCSANOW, &tio);
-	CHECK_ERROR(ret);
+	CHECK_ERROR(ret != 0);
 
 	return 0;
 }
@@ -172,7 +171,7 @@ int peripheral_interface_uart_set_flow_control(peripheral_uart_h uart, periphera
 	struct termios tio;
 
 	ret = tcgetattr(uart->fd, &tio);
-	CHECK_ERROR(ret);
+	CHECK_ERROR(ret != 0);
 
 	if (rtscts == PERIPHERAL_UART_HARDWARE_FLOW_CONTROL_AUTO_RTSCTS)
 		tio.c_cflag |= CRTSCTS;
@@ -189,7 +188,7 @@ int peripheral_interface_uart_set_flow_control(peripheral_uart_h uart, periphera
 		return -EINVAL;
 
 	ret = tcsetattr(uart->fd, TCSANOW, &tio);
-	CHECK_ERROR(ret);
+	CHECK_ERROR(ret != 0);
 
 	return 0;
 }
@@ -197,7 +196,7 @@ int peripheral_interface_uart_set_flow_control(peripheral_uart_h uart, periphera
 int peripheral_interface_uart_read(peripheral_uart_h uart, uint8_t *buf, uint32_t length)
 {
 	int ret = read(uart->fd, (void *)buf, length);
-	CHECK_ERROR(ret);
+	CHECK_ERROR(ret != length);
 
 	return ret;
 }
@@ -205,7 +204,7 @@ int peripheral_interface_uart_read(peripheral_uart_h uart, uint8_t *buf, uint32_
 int peripheral_interface_uart_write(peripheral_uart_h uart, uint8_t *buf, uint32_t length)
 {
 	int ret = write(uart->fd, buf, length);
-	CHECK_ERROR(ret);
+	CHECK_ERROR(ret != length);
 
 	return ret;
 }
