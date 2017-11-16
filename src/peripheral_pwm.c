@@ -18,8 +18,9 @@
 #include <system_info.h>
 
 #include "peripheral_io.h"
-#include "peripheral_gdbus_pwm.h"
 #include "peripheral_handle.h"
+#include "peripheral_gdbus_pwm.h"
+#include "peripheral_interface_pwm.h"
 #include "peripheral_log.h"
 
 #define PERIPHERAL_IO_PWM_FEATURE "http://tizen.org/feature/peripheral_io.pwm"
@@ -57,19 +58,18 @@ int peripheral_pwm_open(int chip, int pin, peripheral_pwm_h *pwm)
 
 	/* Initialize */
 	handle = (peripheral_pwm_h)calloc(1, sizeof(struct _peripheral_pwm_s));
-
 	if (handle == NULL) {
 		_E("Failed to allocate peripheral_pwm_h");
 		return PERIPHERAL_ERROR_OUT_OF_MEMORY;
 	}
 
 	ret = peripheral_gdbus_pwm_open(handle, chip, pin);
-
 	if (ret != PERIPHERAL_ERROR_NONE) {
 		_E("Failed to open PWM chip : %d, pin : %d", chip, pin);
 		free(handle);
 		handle = NULL;
 	}
+
 	*pwm = handle;
 
 	return ret;
@@ -82,59 +82,49 @@ int peripheral_pwm_close(peripheral_pwm_h pwm)
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "PWM feature is not supported");
 	RETVM_IF(pwm == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "pwm handle is NULL");
 
-	if ((ret = peripheral_gdbus_pwm_close()) < 0)
+	ret = peripheral_gdbus_pwm_close();
+	if (ret != PERIPHERAL_ERROR_NONE) {
 		_E("Failed to close PWM chip, continuing anyway, ret : %d", ret);
+		return ret;
+	}
+
+	peripheral_interface_pwm_close(pwm);
 
 	free(pwm);
+	pwm = NULL;
 
 	return ret;
 }
 
 int peripheral_pwm_set_period(peripheral_pwm_h pwm, uint32_t period_ns)
 {
-	int ret = PERIPHERAL_ERROR_NONE;
-
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "PWM feature is not supported");
 	RETVM_IF(pwm == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "pwm handle is NULL");
 
-	// TODO : replace interface function
-
-	return ret;
+	return peripheral_interface_pwm_set_period(pwm, period_ns);
 }
 
 int peripheral_pwm_set_duty_cycle(peripheral_pwm_h pwm, uint32_t duty_cycle_ns)
 {
-	int ret = PERIPHERAL_ERROR_NONE;
-
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "PWM feature is not supported");
 	RETVM_IF(pwm == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "pwm handle is NULL");
 
-	// TODO : replace interface function
-
-	return ret;
+	return peripheral_interface_pwm_set_duty_cycle(pwm, duty_cycle_ns);
 }
 
 int peripheral_pwm_set_polarity(peripheral_pwm_h pwm, peripheral_pwm_polarity_e polarity)
 {
-	int ret = PERIPHERAL_ERROR_NONE;
-
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "PWM feature is not supported");
 	RETVM_IF(pwm == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "pwm handle is NULL");
 	RETVM_IF((polarity < PERIPHERAL_PWM_POLARITY_ACTIVE_HIGH) || (polarity > PERIPHERAL_PWM_POLARITY_ACTIVE_LOW), PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid polarity parameter");
 
-	// TODO : replace interface function
-
-	return ret;
+	return peripheral_interface_pwm_set_polarity(pwm, polarity);
 }
 
 int peripheral_pwm_set_enabled(peripheral_pwm_h pwm, bool enable)
 {
-	int ret = PERIPHERAL_ERROR_NONE;
-
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "PWM feature is not supported");
 	RETVM_IF(pwm == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "pwm handle is NULL");
 
-	// TODO : replace interface function
-
-	return ret;
+	return peripheral_interface_pwm_set_enable(pwm, enable);
 }

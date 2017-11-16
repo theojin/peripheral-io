@@ -79,20 +79,11 @@ int peripheral_interface_gpio_read(peripheral_gpio_h gpio, uint32_t *value)
 	return PERIPHERAL_ERROR_NONE;
 }
 
-int peripheral_interface_gpio_close(peripheral_gpio_h gpio)
+void peripheral_interface_gpio_close(peripheral_gpio_h gpio)
 {
-	int ret;
-
-	ret = close(gpio->fd_direction);
-	CHECK_ERROR(ret != 0);
-
-	ret = close(gpio->fd_edge);
-	CHECK_ERROR(ret != 0);
-
-	ret = close(gpio->fd_value);
-	CHECK_ERROR(ret != 0);
-
-	return PERIPHERAL_ERROR_NONE;
+	close(gpio->fd_direction);
+	close(gpio->fd_edge);
+	close(gpio->fd_value);
 }
 
 int peripheral_interface_gpio_open_isr(peripheral_gpio_h gpio)

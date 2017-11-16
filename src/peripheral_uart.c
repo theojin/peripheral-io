@@ -18,8 +18,9 @@
 #include <system_info.h>
 
 #include "peripheral_io.h"
-#include "peripheral_gdbus_uart.h"
 #include "peripheral_handle.h"
+#include "peripheral_gdbus_uart.h"
+#include "peripheral_interface_uart.h"
 #include "peripheral_log.h"
 
 #define PERIPHERAL_IO_UART_FEATURE "http://tizen.org/feature/peripheral_io.uart"
@@ -58,19 +59,18 @@ int peripheral_uart_open(int port, peripheral_uart_h *uart)
 	RETVM_IF(port < 0, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid port number");
 
 	handle = (peripheral_uart_h)calloc(1, sizeof(struct _peripheral_uart_s));
-
 	if (handle == NULL) {
 		_E("Failed to allocate peripheral_uart_h");
 		return PERIPHERAL_ERROR_OUT_OF_MEMORY;
 	}
 
 	ret = peripheral_gdbus_uart_open(handle, port);
-
 	if (ret != PERIPHERAL_ERROR_NONE) {
 		_E("Failed to open uart port, ret : %d", ret);
 		free(handle);
 		handle = NULL;
 	}
+
 	*uart = handle;
 
 	return ret;
@@ -87,8 +87,12 @@ int peripheral_uart_close(peripheral_uart_h uart)
 	RETVM_IF(uart == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "uart handle is NULL");
 
 	ret = peripheral_gdbus_uart_close();
-	if (ret < PERIPHERAL_ERROR_NONE)
+	if (ret != PERIPHERAL_ERROR_NONE) {
 		_E("Failed to close uart communication, continuing anyway, ret : %d", ret);
+		return ret;
+	}
+
+	peripheral_interface_uart_close(uart);
 
 	free(uart);
 	uart = NULL;
@@ -101,72 +105,51 @@ int peripheral_uart_close(peripheral_uart_h uart)
  */
 int peripheral_uart_set_baud_rate(peripheral_uart_h uart, peripheral_uart_baud_rate_e baud)
 {
-	int ret = PERIPHERAL_ERROR_NONE;
-
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "UART feature is not supported");
 	RETVM_IF(uart == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "uart handle is NULL");
 	RETVM_IF((baud < PERIPHERAL_UART_BAUD_RATE_0) || (baud > PERIPHERAL_UART_BAUD_RATE_230400), PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid baud input");
 
-	// TODO : replace interface function
-
-	return ret;
+	return peripheral_interface_uart_set_baud_rate(uart, baud);
 }
 
 int peripheral_uart_set_byte_size(peripheral_uart_h uart, peripheral_uart_byte_size_e byte_size)
 {
-	int ret = PERIPHERAL_ERROR_NONE;
-
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "UART feature is not supported");
 	RETVM_IF(uart == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "uart handle is NULL");
 	RETVM_IF((byte_size < PERIPHERAL_UART_BYTE_SIZE_5BIT) || (byte_size > PERIPHERAL_UART_BYTE_SIZE_8BIT), PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
 
-	// TODO : replace interface function
-
-	return ret;
+	return peripheral_interface_uart_set_byte_size(uart, byte_size);
 }
 
 int peripheral_uart_set_parity(peripheral_uart_h uart, peripheral_uart_parity_e parity)
 {
-	int ret = PERIPHERAL_ERROR_NONE;
-
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "UART feature is not supported");
 	RETVM_IF(uart == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "uart handle is NULL");
 	RETVM_IF((parity < PERIPHERAL_UART_PARITY_NONE) || (parity > PERIPHERAL_UART_PARITY_ODD), PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
 
-	// TODO : replace interface function
-
-	return ret;
+	return peripheral_interface_uart_set_parity(uart, parity);
 }
 
 int peripheral_uart_set_stop_bits(peripheral_uart_h uart, peripheral_uart_stop_bits_e stop_bits)
 {
-	int ret = PERIPHERAL_ERROR_NONE;
-
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "UART feature is not supported");
 	RETVM_IF(uart == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "uart handle is NULL");
 	RETVM_IF((stop_bits < PERIPHERAL_UART_STOP_BITS_1BIT) || (stop_bits > PERIPHERAL_UART_STOP_BITS_2BIT), PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
 
-	// TODO : replace interface function
-
-	return ret;
+	return peripheral_interface_uart_set_stop_bits(uart, stop_bits);
 }
-
 
 /**
  * @brief Sets baudrate of the uart device.
  */
 int peripheral_uart_set_flow_control(peripheral_uart_h uart, peripheral_uart_software_flow_control_e sw_flow_control, peripheral_uart_hardware_flow_control_e hw_flow_control)
 {
-	int ret = PERIPHERAL_ERROR_NONE;
-
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "UART feature is not supported");
 	RETVM_IF(uart == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "uart handle is NULL");
 	RETVM_IF((sw_flow_control < PERIPHERAL_UART_SOFTWARE_FLOW_CONTROL_NONE) || (sw_flow_control > PERIPHERAL_UART_SOFTWARE_FLOW_CONTROL_XONXOFF), PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid sw_flow_control parameter");
 	RETVM_IF((hw_flow_control < PERIPHERAL_UART_HARDWARE_FLOW_CONTROL_NONE) || (hw_flow_control > PERIPHERAL_UART_HARDWARE_FLOW_CONTROL_AUTO_RTSCTS), PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid hw_flow_control parameter");
 
-	// TODO : replace interface function
-
-	return ret;
+	return peripheral_interface_uart_set_flow_control(uart, sw_flow_control, hw_flow_control);
 }
 
 /**
@@ -174,15 +157,11 @@ int peripheral_uart_set_flow_control(peripheral_uart_h uart, peripheral_uart_sof
  */
 int peripheral_uart_read(peripheral_uart_h uart, uint8_t *data, uint32_t length)
 {
-	int ret = PERIPHERAL_ERROR_NONE;
-
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "UART feature is not supported");
 	RETVM_IF(uart == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "uart handle is NULL");
 	RETVM_IF(data == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
 
-	// TODO : replace interface function
-
-	return ret;
+	return peripheral_interface_uart_read(uart, data, length);
 }
 
 /**
@@ -190,13 +169,9 @@ int peripheral_uart_read(peripheral_uart_h uart, uint8_t *data, uint32_t length)
  */
 int peripheral_uart_write(peripheral_uart_h uart, uint8_t *data, uint32_t length)
 {
-	int ret = PERIPHERAL_ERROR_NONE;
-
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "UART feature is not supported");
 	RETVM_IF(uart == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "uart handle is NULL");
 	RETVM_IF(data == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid parameter");
 
-	// TODO : replace interface function
-
-	return ret;
+	return peripheral_interface_uart_write(uart, data, length);
 }

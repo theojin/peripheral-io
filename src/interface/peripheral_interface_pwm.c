@@ -16,23 +16,12 @@
 
 #include "peripheral_interface_pwm.h"
 
-int peripheral_interface_pwm_close(peripheral_pwm_h pwm)
+void peripheral_interface_pwm_close(peripheral_pwm_h pwm)
 {
-	int ret;
-
-	ret = close(pwm->fd_period);
-	CHECK_ERROR(ret != 0);
-
-	ret = close(pwm->fd_duty_cycle);
-	CHECK_ERROR(ret != 0);
-
-	ret = close(pwm->fd_polarity);
-	CHECK_ERROR(ret != 0);
-
-	ret = close(pwm->fd_enable);
-	CHECK_ERROR(ret != 0);
-
-	return PERIPHERAL_ERROR_NONE;
+	close(pwm->fd_period);
+	close(pwm->fd_duty_cycle);
+	close(pwm->fd_polarity);
+	close(pwm->fd_enable);
 }
 
 int peripheral_interface_pwm_set_period(peripheral_pwm_h pwm, uint32_t period)

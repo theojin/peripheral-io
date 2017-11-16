@@ -18,8 +18,9 @@
 #include <system_info.h>
 
 #include "peripheral_io.h"
-#include "peripheral_gdbus_gpio.h"
 #include "peripheral_handle.h"
+#include "peripheral_gdbus_gpio.h"
+#include "peripheral_interface_gpio.h"
 #include "peripheral_log.h"
 
 #define PERIPHERAL_IO_GPIO_FEATURE "http://tizen.org/feature/peripheral_io.gpio"
@@ -88,8 +89,12 @@ int peripheral_gpio_close(peripheral_gpio_h gpio)
 
 	/* call gpio_close */
 	ret = peripheral_gdbus_gpio_close();
-	if (ret != PERIPHERAL_ERROR_NONE)
+	if (ret != PERIPHERAL_ERROR_NONE) {
 		_E("Failed to close the gpio pin, ret : %d", ret);
+		return ret;
+	}
+
+	peripheral_interface_gpio_close(gpio);
 
 	free(gpio);
 	gpio = NULL;
@@ -102,16 +107,11 @@ int peripheral_gpio_close(peripheral_gpio_h gpio)
  */
 int peripheral_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_direction_e direction)
 {
-	int ret = PERIPHERAL_ERROR_NONE;
-
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "GPIO feature is not supported");
 	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
 	RETVM_IF((direction < PERIPHERAL_GPIO_DIRECTION_IN) || (direction > PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_LOW), PERIPHERAL_ERROR_INVALID_PARAMETER, "Invalid direction input");
 
-	/* call gpio_set_direction */
-	// TODO : replace interface function
-
-	return ret;
+	return peripheral_interface_gpio_set_direction(gpio, direction);
 }
 
 /**
@@ -119,16 +119,11 @@ int peripheral_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_direct
  */
 int peripheral_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e edge)
 {
-	int ret = PERIPHERAL_ERROR_NONE;
-
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "GPIO feature is not supported");
 	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
 	RETVM_IF((edge < PERIPHERAL_GPIO_EDGE_NONE) || (edge > PERIPHERAL_GPIO_EDGE_BOTH), PERIPHERAL_ERROR_INVALID_PARAMETER, "edge input is invalid");
 
-	/* call gpio_set_edge_mode */
-	// TODO : replace interface function
-
-	return ret;
+	return peripheral_interface_gpio_set_edge_mode(gpio, edge);
 }
 
 /**
@@ -167,16 +162,11 @@ int peripheral_gpio_unset_interrupted_cb(peripheral_gpio_h gpio)
  */
 int peripheral_gpio_read(peripheral_gpio_h gpio, uint32_t *value)
 {
-	int ret = PERIPHERAL_ERROR_NONE;
-
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "GPIO feature is not supported");
 	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
 	RETVM_IF(value == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio read value is invalid");
 
-	/* call gpio_read */
-	// TODO : replace interface function
-
-	return ret;
+	return peripheral_interface_gpio_read(gpio, value);
 }
 
 /**
@@ -184,14 +174,9 @@ int peripheral_gpio_read(peripheral_gpio_h gpio, uint32_t *value)
  */
 int peripheral_gpio_write(peripheral_gpio_h gpio, uint32_t value)
 {
-	int ret = PERIPHERAL_ERROR_NONE;
-
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "GPIO feature is not supported");
 	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
 	RETVM_IF((value != 0) && (value != 1), PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio value is invalid");
 
-	/* call gpio_write */
-	// TODO : replace interface function
-
-	return ret;
+	return peripheral_interface_gpio_write(gpio, value);
 }

@@ -54,7 +54,7 @@ struct i2c_smbus_ioctl_data {
 	union i2c_smbus_data *data;
 };
 
-int peripheral_interface_i2c_close(peripheral_i2c_h i2c);
+void peripheral_interface_i2c_close(peripheral_i2c_h i2c);
 int peripheral_interface_i2c_read(peripheral_i2c_h i2c, uint8_t *data, uint32_t length);
 int peripheral_interface_i2c_write(peripheral_i2c_h i2c, uint8_t *data, uint32_t length);
 int peripheral_interface_i2c_read_register_byte(peripheral_i2c_h i2c, uint8_t reg, uint8_t *data_out);

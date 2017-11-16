@@ -18,12 +18,9 @@
 
 #include "peripheral_interface_i2c.h"
 
-int peripheral_interface_i2c_close(peripheral_i2c_h i2c)
+void peripheral_interface_i2c_close(peripheral_i2c_h i2c)
 {
-	int ret = close(i2c->fd);
-	CHECK_ERROR(ret != 0);
-
-	return PERIPHERAL_ERROR_NONE;
+	close(i2c->fd);
 }
 
 int peripheral_interface_i2c_read(peripheral_i2c_h i2c, uint8_t *data, uint32_t length)

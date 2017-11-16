@@ -29,16 +29,10 @@ static const int peripheral_uart_br[UART_BAUDRATE_SIZE] = {
 
 static const int byteinfo[4] = {CS5, CS6, CS7, CS8};
 
-int peripheral_interface_uart_close(peripheral_uart_h uart)
+void peripheral_interface_uart_close(peripheral_uart_h uart)
 {
-	int ret;
-
 	peripheral_interface_uart_flush(uart);
-
-	ret = close(uart->fd);
-	CHECK_ERROR(ret != 0);
-
-	return PERIPHERAL_ERROR_NONE;
+	close(uart->fd);
 }
 
 int peripheral_interface_uart_flush(peripheral_uart_h uart)

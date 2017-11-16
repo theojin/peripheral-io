@@ -25,7 +25,7 @@
 * @param[in] file_hndl handle of uart_context
 * @return On success, 0 is returned. On failure, a negative value is returned.
 */
-int peripheral_interface_uart_close(peripheral_uart_h uart);
+void peripheral_interface_uart_close(peripheral_uart_h uart);
 
 /**
 * @brief uart_flush() flushes uart buffer.

@@ -28,7 +28,7 @@
 * @param[in] pin pwm pin number
 * @return On success, 0 is returned. On failure, a negative value is returned.
 */
-int peripheral_interface_pwm_close(peripheral_pwm_h pwm);
+void peripheral_interface_pwm_close(peripheral_pwm_h pwm);
 
 /**
 * @brief pwm_set_period() sets the pwm period.

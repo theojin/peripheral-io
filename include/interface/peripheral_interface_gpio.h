@@ -21,7 +21,7 @@
 
 #define GPIO_BUFFER_MAX 64
 
-int peripheral_interface_gpio_close(peripheral_gpio_h gpio);
+void peripheral_interface_gpio_close(peripheral_gpio_h gpio);
 int peripheral_interface_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e edge);
 int peripheral_interface_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_direction_e direction);
 int peripheral_interface_gpio_write(peripheral_gpio_h gpio, uint32_t value);

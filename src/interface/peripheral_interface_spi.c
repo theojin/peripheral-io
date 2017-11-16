@@ -19,12 +19,9 @@
 
 #include "peripheral_interface_spi.h"
 
-int peripheral_interface_spi_close(peripheral_spi_h spi)
+void peripheral_interface_spi_close(peripheral_spi_h spi)
 {
-	int ret = close(spi->fd);
-	CHECK_ERROR(ret != 0);
-
-	return PERIPHERAL_ERROR_NONE;
+	close(spi->fd);
 }
 
 int peripheral_interface_spi_set_mode(peripheral_spi_h spi, peripheral_spi_mode_e mode)
