@@ -20,6 +20,6 @@
 #include "peripheral_gdbus_common.h"
 
 int peripheral_gdbus_spi_open(peripheral_spi_h spi, int bus, int cs);
-int peripheral_gdbus_spi_close();
+int peripheral_gdbus_spi_close(void);
 
 #endif /* __PERIPHERAL_GDBUS_SPI_H_ */

@@ -20,7 +20,7 @@
 
 static PeripheralIoGdbusSpi *spi_proxy = NULL;
 
-static int __spi_proxy_init()
+static int __spi_proxy_init(void)
 {
 	GError *error = NULL;
 
@@ -47,7 +47,7 @@ static int __spi_proxy_init()
 	return PERIPHERAL_ERROR_NONE;
 }
 
-static int __spi_proxy_deinit()
+static int __spi_proxy_deinit(void)
 {
 	if (spi_proxy == NULL) {
 		_E("Spi proxy is NULL");
@@ -102,7 +102,7 @@ int peripheral_gdbus_spi_open(peripheral_spi_h spi, int bus, int cs)
 	return ret;
 }
 
-int peripheral_gdbus_spi_close()
+int peripheral_gdbus_spi_close(void)
 {
 	int ret = __spi_proxy_deinit();
 	return ret;

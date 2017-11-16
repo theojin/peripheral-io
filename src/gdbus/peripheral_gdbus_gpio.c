@@ -22,7 +22,7 @@
 
 static PeripheralIoGdbusGpio *gpio_proxy = NULL;
 
-static int __gpio_proxy_init()
+static int __gpio_proxy_init(void)
 {
 	GError *error = NULL;
 
@@ -49,7 +49,7 @@ static int __gpio_proxy_init()
 	return PERIPHERAL_ERROR_NONE;
 }
 
-static int __gpio_proxy_deinit()
+static int __gpio_proxy_deinit(void)
 {
 	if (gpio_proxy == NULL) {
 		_E("Gpio proxy is NULL");
@@ -117,7 +117,7 @@ int peripheral_gdbus_gpio_open(peripheral_gpio_h gpio)
 	return ret;
 }
 
-int peripheral_gdbus_gpio_close()
+int peripheral_gdbus_gpio_close(void)
 {
 	int ret = __gpio_proxy_deinit();
 	return ret;

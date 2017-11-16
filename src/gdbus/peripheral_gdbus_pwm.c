@@ -23,7 +23,7 @@
 
 static PeripheralIoGdbusPwm *pwm_proxy = NULL;
 
-static int __pwm_proxy_init()
+static int __pwm_proxy_init(void)
 {
 	GError *error = NULL;
 
@@ -50,7 +50,7 @@ static int __pwm_proxy_init()
 	return PERIPHERAL_ERROR_NONE;
 }
 
-static int __pwm_proxy_deinit()
+static int __pwm_proxy_deinit(void)
 {
 	if (pwm_proxy == NULL) {
 		_E("Pwm proxy is NULL");
@@ -126,7 +126,7 @@ int peripheral_gdbus_pwm_open(peripheral_pwm_h pwm, int chip, int pin)
 	return ret;
 }
 
-int peripheral_gdbus_pwm_close()
+int peripheral_gdbus_pwm_close(void)
 {
 	int ret = __pwm_proxy_deinit();
 	return ret;

@@ -20,6 +20,6 @@
 #include "peripheral_gdbus_common.h"
 
 int peripheral_gdbus_pwm_open(peripheral_pwm_h pwm, int chip, int pin);
-int peripheral_gdbus_pwm_close();
+int peripheral_gdbus_pwm_close(void);
 
 #endif /* __PERIPHERAL_GDBUS_PWM_H__ */

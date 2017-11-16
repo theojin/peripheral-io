@@ -20,6 +20,6 @@
 #include "peripheral_gdbus_common.h"
 
 int peripheral_gdbus_uart_open(peripheral_uart_h uart, int port);
-int peripheral_gdbus_uart_close();
+int peripheral_gdbus_uart_close(void);
 
 #endif /* __PERIPHERAL_GDBUS_UART_H_ */

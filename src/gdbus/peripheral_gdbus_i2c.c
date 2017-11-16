@@ -20,7 +20,7 @@
 
 static PeripheralIoGdbusI2c *i2c_proxy = NULL;
 
-static int __i2c_proxy_init()
+static int __i2c_proxy_init(void)
 {
 	GError *error = NULL;
 
@@ -47,7 +47,7 @@ static int __i2c_proxy_init()
 	return PERIPHERAL_ERROR_NONE;
 }
 
-static int __i2c_proxy_deinit()
+static int __i2c_proxy_deinit(void)
 {
 	if (i2c_proxy == NULL) {
 		_E("I2c proxy is NULL");
@@ -101,7 +101,7 @@ int peripheral_gdbus_i2c_open(peripheral_i2c_h i2c, int bus, int address)
 	return ret;
 }
 
-int peripheral_gdbus_i2c_close()
+int peripheral_gdbus_i2c_close(void)
 {
 	int ret = __i2c_proxy_deinit();
 	return ret;

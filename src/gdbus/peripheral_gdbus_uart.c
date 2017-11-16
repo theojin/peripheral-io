@@ -20,7 +20,7 @@
 
 static PeripheralIoGdbusUart *uart_proxy = NULL;
 
-static int __uart_proxy_init()
+static int __uart_proxy_init(void)
 {
 	GError *error = NULL;
 
@@ -47,7 +47,7 @@ static int __uart_proxy_init()
 	return PERIPHERAL_ERROR_NONE;
 }
 
-static int __uart_proxy_deinit()
+static int __uart_proxy_deinit(void)
 {
 	if (uart_proxy == NULL) {
 		_E("Uart proxy is NULL");
@@ -101,7 +101,7 @@ int peripheral_gdbus_uart_open(peripheral_uart_h uart, int port)
 	return ret;
 }
 
-int peripheral_gdbus_uart_close()
+int peripheral_gdbus_uart_close(void)
 {
 	int ret = __uart_proxy_deinit();
 	return ret;

@@ -30,7 +30,7 @@
 
 static int pwm_feature = PWM_FEATURE_UNKNOWN;
 
-static bool __is_feature_supported()
+static bool __is_feature_supported(void)
 {
 	int ret = SYSTEM_INFO_ERROR_NONE;
 	bool feature = false;
