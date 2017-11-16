@@ -67,17 +67,12 @@ int peripheral_interface_pwm_set_duty_cycle(peripheral_pwm_h pwm, uint32_t duty_
 
 int peripheral_interface_pwm_set_polarity(peripheral_pwm_h pwm, peripheral_pwm_polarity_e polarity)
 {
-	int status;
+	static predefined_type_s types[2] = {
+		{"normal",   6},
+		{"inversed", 8}
+	};
 
-	if (polarity == PERIPHERAL_PWM_POLARITY_ACTIVE_HIGH)
-		status = write(pwm->fd_polarity, "normal", strlen("normal"));
-	else if (polarity == PERIPHERAL_PWM_POLARITY_ACTIVE_LOW)
-		status = write(pwm->fd_polarity, "inversed", strlen("inversed"));
-	else {
-		_E("Invalid pwm polarity : %d", polarity);
-		return -EINVAL;
-	}
-
+	int status = write(pwm->fd_polarity, types[polarity].type, types[polarity].len);
 	CHECK_ERROR(status);
 
 	return 0;
@@ -85,11 +80,12 @@ int peripheral_interface_pwm_set_polarity(peripheral_pwm_h pwm, peripheral_pwm_p
 
 int peripheral_interface_pwm_set_enable(peripheral_pwm_h pwm, bool enable)
 {
-	int len, status;
-	char pwm_buf[PWM_BUF_MAX] = {0};
+	static predefined_type_s types[2] = {
+		{"0", 1},
+		{"1", 1}
+	};
 
-	len = snprintf(pwm_buf, sizeof(pwm_buf), "%d", enable);
-	status = write(pwm->fd_enable, pwm_buf, len);
+	int status = write(pwm->fd_enable, types[enable].type, types[enable].len);
 	CHECK_ERROR(status);
 
 	return 0;

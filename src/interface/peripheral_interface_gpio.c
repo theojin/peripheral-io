@@ -20,19 +20,13 @@
 
 int peripheral_interface_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_direction_e direction)
 {
-	int status;
+	static predefined_type_s types[3] = {
+		{"in",   2},
+		{"high", 4},
+		{"low",  3}
+	};
 
-	if (direction == PERIPHERAL_GPIO_DIRECTION_IN)
-		status = write(gpio->fd_direction, "in", strlen("in"));
-	else if (direction == PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_HIGH)
-		status = write(gpio->fd_direction, "high", strlen("high"));
-	else if (direction == PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_LOW)
-		status = write(gpio->fd_direction, "low", strlen("low"));
-	else {
-		_E("Error: gpio direction is wrong\n");
-		return -EIO;
-	}
-
+	int status = write(gpio->fd_direction, types[direction].type, types[direction].len);
 	CHECK_ERROR(status);
 
 	return 0;
@@ -40,21 +34,14 @@ int peripheral_interface_gpio_set_direction(peripheral_gpio_h gpio, peripheral_g
 
 int peripheral_interface_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e edge)
 {
-	int status;
+	static predefined_type_s types[4] = {
+		{"none",    4},
+		{"rising",  6},
+		{"falling", 7},
+		{"both",    4}
+	};
 
-	if (edge == PERIPHERAL_GPIO_EDGE_NONE)
-		status = write(gpio->fd_edge, "none", strlen("none"));
-	else if (edge == PERIPHERAL_GPIO_EDGE_RISING)
-		status = write(gpio->fd_edge, "rising", strlen("rising"));
-	else if (edge == PERIPHERAL_GPIO_EDGE_FALLING)
-		status = write(gpio->fd_edge, "falling", strlen("falling"));
-	else if (edge == PERIPHERAL_GPIO_EDGE_BOTH)
-		status = write(gpio->fd_edge, "both", strlen("both"));
-	else {
-		_E("Error: gpio edge is wrong\n");
-		return -EIO;
-	}
-
+	int status = write(gpio->fd_edge, types[edge].type, types[edge].len);
 	CHECK_ERROR(status);
 
 	return 0;
@@ -62,17 +49,12 @@ int peripheral_interface_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_g
 
 int peripheral_interface_gpio_write(peripheral_gpio_h gpio, uint32_t value)
 {
-	int status;
+	static predefined_type_s types[2] = {
+		{"0", 1},
+		{"1", 1}
+	};
 
-	if (value == 1)
-		status = write(gpio->fd_value, "1", strlen("1"));
-	else if (value == 0)
-		status = write(gpio->fd_value, "0", strlen("0"));
-	else {
-		_E("Error: gpio write value error \n");
-		return -EIO;
-	}
-
+	int status = write(gpio->fd_value, types[value].type, types[value].len);
 	CHECK_ERROR(status);
 
 	return 0;
@@ -86,14 +68,13 @@ int peripheral_interface_gpio_read(peripheral_gpio_h gpio, uint32_t *value)
 	len = read(gpio->fd_value, &gpio_buf, 1);
 	CHECK_ERROR(len);
 
-	if (0 == strncmp(gpio_buf, "1", strlen("1")))
-		*value = 1;
-	else if (0 == strncmp(gpio_buf, "0", strlen("0")))
+	if (gpio_buf[0] == '0')
 		*value = 0;
-	else {
+	else if (gpio_buf[0] == '1')
+		*value = 1;
+	else
 		_E("Error: gpio value is error \n");
 		return -EIO;
-	}
 
 	return 0;
 }

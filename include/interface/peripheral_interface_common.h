@@ -37,4 +37,9 @@
 		} \
 	} while (0)
 
+typedef struct predefined_type {
+	char *type;
+	int len;
+} predefined_type_s;
+
 #endif /*__PERIPHERAL_INTERFACE_COMMON_H__*/
