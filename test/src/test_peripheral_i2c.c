@@ -19,7 +19,8 @@
 #include <peripheral_io.h>
 #include "test_peripheral_i2c.h"
 
-#define I2C_BUS 4
+#define I2C_BUS_RPI3 4
+#define I2C_BUS_ARTIK530 11
 #define I2C_BUS_INVALID -99
 #define I2C_ADDRESS 0x39
 #define I2C_ADDRESS_INVALID -99
@@ -35,8 +36,10 @@ int test_peripheral_io_i2c_initialize(char *model, bool feature)
 {
 	g_feature = feature;
 
-	if ((!strcmp(model, "rpi3")) || (!strcmp(model, "artik")))
-		bus = I2C_BUS;
+	if (!strcmp(model, "rpi3"))
+		bus = I2C_BUS_RPI3;
+	else if (!strcmp(model, "artik"))
+		bus = I2C_BUS_ARTIK530;
 	else
 		return PERIPHERAL_ERROR_NO_DEVICE;
 
