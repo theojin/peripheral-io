@@ -49,10 +49,7 @@ static int __uart_proxy_init(void)
 
 static int __uart_proxy_deinit(void)
 {
-	if (uart_proxy == NULL) {
-		_E("Uart proxy is NULL");
-		return PERIPHERAL_ERROR_IO_ERROR;
-	}
+	RETVM_IF(uart_proxy == NULL, PERIPHERAL_ERROR_IO_ERROR, "Uart proxy is NULL");
 
 	g_object_unref(uart_proxy);
 	if (!G_IS_OBJECT(uart_proxy))
@@ -101,8 +98,25 @@ int peripheral_gdbus_uart_open(peripheral_uart_h uart, int port)
 	return ret;
 }
 
-int peripheral_gdbus_uart_close(void)
+int peripheral_gdbus_uart_close(peripheral_uart_h uart)
 {
-	int ret = __uart_proxy_deinit();
+	RETVM_IF(uart_proxy == NULL, PERIPHERAL_ERROR_IO_ERROR, "Uart proxy is NULL");
+
+	int ret;
+	GError *error = NULL;
+
+	if (peripheral_io_gdbus_uart_call_close_sync(
+			uart_proxy,
+			uart->handle,
+			&ret,
+			NULL,
+			&error) == FALSE) {
+		_E("Failed to request daemon to gpio uart : %s", error->message);
+		g_error_free(error);
+		return PERIPHERAL_ERROR_IO_ERROR;
+	}
+
+	__uart_proxy_deinit();
+
 	return ret;
 }

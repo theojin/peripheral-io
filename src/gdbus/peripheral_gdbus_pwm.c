@@ -52,10 +52,7 @@ static int __pwm_proxy_init(void)
 
 static int __pwm_proxy_deinit(void)
 {
-	if (pwm_proxy == NULL) {
-		_E("Pwm proxy is NULL");
-		return PERIPHERAL_ERROR_IO_ERROR;
-	}
+	RETVM_IF(pwm_proxy == NULL, PERIPHERAL_ERROR_IO_ERROR, "Pwm proxy is NULL");
 
 	g_object_unref(pwm_proxy);
 	if (!G_IS_OBJECT(pwm_proxy))
@@ -126,8 +123,25 @@ int peripheral_gdbus_pwm_open(peripheral_pwm_h pwm, int chip, int pin)
 	return ret;
 }
 
-int peripheral_gdbus_pwm_close(void)
+int peripheral_gdbus_pwm_close(peripheral_pwm_h pwm)
 {
-	int ret = __pwm_proxy_deinit();
+	RETVM_IF(pwm_proxy == NULL, PERIPHERAL_ERROR_IO_ERROR, "Pwm proxy is NULL");
+
+	int ret;
+	GError *error = NULL;
+
+	if (peripheral_io_gdbus_pwm_call_close_sync(
+			pwm_proxy,
+			pwm->handle,
+			&ret,
+			NULL,
+			&error) == FALSE) {
+		_E("Failed to request daemon to gpio pwm : %s", error->message);
+		g_error_free(error);
+		return PERIPHERAL_ERROR_IO_ERROR;
+	}
+
+	__pwm_proxy_deinit();
+
 	return ret;
 }

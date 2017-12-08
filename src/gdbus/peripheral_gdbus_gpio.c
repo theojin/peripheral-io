@@ -51,10 +51,7 @@ static int __gpio_proxy_init(void)
 
 static int __gpio_proxy_deinit(void)
 {
-	if (gpio_proxy == NULL) {
-		_E("Gpio proxy is NULL");
-		return PERIPHERAL_ERROR_IO_ERROR;
-	}
+	RETVM_IF(gpio_proxy == NULL, PERIPHERAL_ERROR_IO_ERROR, "Gpio proxy is NULL");
 
 	g_object_unref(gpio_proxy);
 	if (!G_IS_OBJECT(gpio_proxy))
@@ -117,8 +114,25 @@ int peripheral_gdbus_gpio_open(peripheral_gpio_h gpio, int pin)
 	return ret;
 }
 
-int peripheral_gdbus_gpio_close(void)
+int peripheral_gdbus_gpio_close(peripheral_gpio_h gpio)
 {
-	int ret = __gpio_proxy_deinit();
+	RETVM_IF(gpio_proxy == NULL, PERIPHERAL_ERROR_IO_ERROR, "Gpio proxy is NULL");
+
+	int ret;
+	GError *error = NULL;
+
+	if (peripheral_io_gdbus_gpio_call_close_sync(
+			gpio_proxy,
+			gpio->handle,
+			&ret,
+			NULL,
+			&error) == FALSE) {
+		_E("Failed to request daemon to gpio close : %s", error->message);
+		g_error_free(error);
+		return PERIPHERAL_ERROR_IO_ERROR;
+	}
+
+	__gpio_proxy_deinit();
+
 	return ret;
 }

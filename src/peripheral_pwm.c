@@ -82,7 +82,7 @@ int peripheral_pwm_close(peripheral_pwm_h pwm)
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "PWM feature is not supported");
 	RETVM_IF(pwm == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "pwm handle is NULL");
 
-	ret = peripheral_gdbus_pwm_close();
+	ret = peripheral_gdbus_pwm_close(pwm);
 	if (ret != PERIPHERAL_ERROR_NONE) {
 		_E("Failed to close PWM chip, continuing anyway, ret : %d", ret);
 		return ret;

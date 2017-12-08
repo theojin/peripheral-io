@@ -49,10 +49,7 @@ static int __spi_proxy_init(void)
 
 static int __spi_proxy_deinit(void)
 {
-	if (spi_proxy == NULL) {
-		_E("Spi proxy is NULL");
-		return PERIPHERAL_ERROR_IO_ERROR;
-	}
+	RETVM_IF(spi_proxy == NULL, PERIPHERAL_ERROR_IO_ERROR, "Spi proxy is NULL");
 
 	g_object_unref(spi_proxy);
 	if (!G_IS_OBJECT(spi_proxy))
@@ -102,8 +99,25 @@ int peripheral_gdbus_spi_open(peripheral_spi_h spi, int bus, int cs)
 	return ret;
 }
 
-int peripheral_gdbus_spi_close(void)
+int peripheral_gdbus_spi_close(peripheral_spi_h spi)
 {
-	int ret = __spi_proxy_deinit();
+	RETVM_IF(spi_proxy == NULL, PERIPHERAL_ERROR_IO_ERROR, "Spi proxy is NULL");
+
+	int ret;
+	GError *error = NULL;
+
+	if (peripheral_io_gdbus_spi_call_close_sync(
+			spi_proxy,
+			spi->handle,
+			&ret,
+			NULL,
+			&error) == FALSE) {
+		_E("Failed to request daemon to gpio spi : %s", error->message);
+		g_error_free(error);
+		return PERIPHERAL_ERROR_IO_ERROR;
+	}
+
+	__spi_proxy_deinit();
+
 	return ret;
 }
