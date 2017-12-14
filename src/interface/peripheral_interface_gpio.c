@@ -40,8 +40,20 @@ int peripheral_interface_gpio_set_initial_direction_into_handle(peripheral_gpio_
 	return PERIPHERAL_ERROR_IO_ERROR;
 }
 
+/*
+ *      [edge_mode]                [direction]
+ *
+ *          none -----------------> in, out (O)
+ *
+ * rising, falling, both ---------> in (O)
+ *                          \
+ *                           -----> out (X)
+ */
 int peripheral_interface_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_direction_e direction)
 {
+	RETV_IF(gpio->direction == direction, PERIPHERAL_ERROR_NONE);
+	RETV_IF(gpio->edge != PERIPHERAL_GPIO_EDGE_NONE, PERIPHERAL_ERROR_IO_ERROR);
+
 	static predefined_type_s types[3] = {
 		{"in",   2},
 		{"high", 4},
@@ -81,8 +93,20 @@ int peripheral_interface_gpio_set_initial_edge_into_handle(peripheral_gpio_h gpi
 	return PERIPHERAL_ERROR_IO_ERROR;
 }
 
+/*
+ * [direction]          [edge_mode]
+ *
+ *    in ---------> none, rising, falling, both (O)
+ *
+ *    out --------> none (O)
+ *          \
+ *           -----> rising, falling, both (X)
+ */
 int peripheral_interface_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e edge)
 {
+	RETV_IF(gpio->edge == edge, PERIPHERAL_ERROR_NONE);
+	RETV_IF(gpio->direction != PERIPHERAL_GPIO_DIRECTION_IN, PERIPHERAL_ERROR_IO_ERROR);
+
 	static predefined_type_s types[4] = {
 		{"none",    4},
 		{"rising",  6},
@@ -98,8 +122,16 @@ int peripheral_interface_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_g
 	return PERIPHERAL_ERROR_NONE;
 }
 
+/*
+ * [direction]     [value]
+ *
+ *    in ---------> write (X)
+ *    out --------> write (O)
+ */
 int peripheral_interface_gpio_write(peripheral_gpio_h gpio, uint32_t value)
 {
+	RETV_IF(gpio->direction == PERIPHERAL_GPIO_DIRECTION_IN, PERIPHERAL_ERROR_IO_ERROR);
+
 	static predefined_type_s types[2] = {
 		{"0", 1},
 		{"1", 1}
@@ -111,6 +143,12 @@ int peripheral_interface_gpio_write(peripheral_gpio_h gpio, uint32_t value)
 	return PERIPHERAL_ERROR_NONE;
 }
 
+/*
+ * [direction]     [value]
+ *
+ *    in ---------> read (O)
+ *    out --------> read (O)
+ */
 int peripheral_interface_gpio_read(peripheral_gpio_h gpio, uint32_t *value)
 {
 	int ret;
