@@ -16,6 +16,30 @@
 
 #include "peripheral_interface_gpio.h"
 
+int peripheral_interface_gpio_set_initial_direction_into_handle(peripheral_gpio_h gpio)
+{
+	static predefined_type_s types[2] = {
+		{"in",   2},
+		{"out",  3},
+	};
+
+	int index;
+	char gpio_buf[GPIO_BUFFER_MAX] = {0, };
+
+	int ret = read(gpio->fd_direction, &gpio_buf, GPIO_BUFFER_MAX);
+	CHECK_ERROR(ret <= 0);
+
+	for (index = 0; index < 2; index++) {
+		if (!strncmp(gpio_buf, types[index].type, types[index].len)) {
+			// PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_HIGH and PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_LOW : out type
+			gpio->direction = (peripheral_gpio_direction_e)index;
+			return PERIPHERAL_ERROR_NONE;
+		}
+	}
+
+	return PERIPHERAL_ERROR_IO_ERROR;
+}
+
 int peripheral_interface_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_direction_e direction)
 {
 	static predefined_type_s types[3] = {
@@ -27,7 +51,34 @@ int peripheral_interface_gpio_set_direction(peripheral_gpio_h gpio, peripheral_g
 	int ret = write(gpio->fd_direction, types[direction].type, types[direction].len);
 	CHECK_ERROR(ret != types[direction].len);
 
+	gpio->direction = direction;
+
 	return PERIPHERAL_ERROR_NONE;
+}
+
+int peripheral_interface_gpio_set_initial_edge_into_handle(peripheral_gpio_h gpio)
+{
+	static predefined_type_s types[4] = {
+		{"none",    4},
+		{"rising",  6},
+		{"falling", 7},
+		{"both",    4}
+	};
+
+	int index;
+	char gpio_buf[GPIO_BUFFER_MAX] = {0, };
+
+	int ret = read(gpio->fd_edge, &gpio_buf, GPIO_BUFFER_MAX);
+	CHECK_ERROR(ret <= 0);
+
+	for (index = 0; index < 4; index++) {
+		if (!strncmp(gpio_buf, types[index].type, types[index].len)) {
+			gpio->edge = (peripheral_gpio_edge_e)index;
+			return PERIPHERAL_ERROR_NONE;
+		}
+	}
+
+	return PERIPHERAL_ERROR_IO_ERROR;
 }
 
 int peripheral_interface_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e edge)
@@ -41,6 +92,8 @@ int peripheral_interface_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_g
 
 	int ret = write(gpio->fd_edge, types[edge].type, types[edge].len);
 	CHECK_ERROR(ret != types[edge].len);
+
+	gpio->edge = edge;
 
 	return PERIPHERAL_ERROR_NONE;
 }

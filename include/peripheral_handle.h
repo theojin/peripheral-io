@@ -25,6 +25,8 @@ struct _peripheral_gpio_s {
 	int fd_direction;
 	int fd_edge;
 	int fd_value;
+	peripheral_gpio_direction_e direction;
+	peripheral_gpio_edge_e edge;
 };
 
 /**

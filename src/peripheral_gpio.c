@@ -71,9 +71,23 @@ int peripheral_gpio_open(int gpio_pin, peripheral_gpio_h *gpio)
 		handle = NULL;
 	}
 
+	ret = peripheral_interface_gpio_set_initial_direction_into_handle(handle);
+	if (ret != PERIPHERAL_ERROR_NONE) {
+		_E("Failed to peripheral_interface_gpio_set_initial_direction_into_handle()");
+		peripheral_gpio_close(handle);
+		return ret;
+	}
+
+	ret = peripheral_interface_gpio_set_initial_edge_into_handle(handle);
+	if (ret != PERIPHERAL_ERROR_NONE) {
+		_E("Failed to peripheral_interface_gpio_set_initial_edge_into_handle()");
+		peripheral_gpio_close(handle);
+		return ret;
+	}
+
 	*gpio = handle;
 
-	return ret;
+	return PERIPHERAL_ERROR_NONE;
 }
 
 /**
