@@ -32,7 +32,7 @@ int peripheral_interface_gpio_set_direction(peripheral_gpio_h gpio, peripheral_g
 int peripheral_interface_gpio_write(peripheral_gpio_h gpio, uint32_t value);
 int peripheral_interface_gpio_read(peripheral_gpio_h gpio, uint32_t *value);
 
-int peripheral_interface_gpio_open_isr(peripheral_gpio_h gpio);
-int peripheral_interface_gpio_close_isr(peripheral_gpio_h gpio);
+int peripheral_interface_gpio_set_interrupted_cb(peripheral_gpio_h gpio, peripheral_gpio_interrupted_cb callback, void *user_data);
+int peripheral_interface_gpio_unset_interrupted_cb(peripheral_gpio_h gpio);
 
 #endif/*__PERIPHERAL_INTERFACE_GPIO_H__*/

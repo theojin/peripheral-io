@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
+#include <poll.h>
 #include "peripheral_interface_gpio.h"
+
+#define GPIO_INTERRUPTED_CALLBACK_UNSET 0
+#define GPIO_INTERRUPTED_CALLBACK_SET   1
 
 int peripheral_interface_gpio_set_initial_direction_into_handle(peripheral_gpio_h gpio)
 {
@@ -155,6 +159,7 @@ int peripheral_interface_gpio_read(peripheral_gpio_h gpio, uint32_t *value)
 	int length = 1;
 	char gpio_buf[GPIO_BUFFER_MAX] = {0, };
 
+	lseek(gpio->fd_value, 0, SEEK_SET);
 	ret = read(gpio->fd_value, &gpio_buf, length);
 	CHECK_ERROR(ret != length);
 
@@ -172,21 +177,89 @@ int peripheral_interface_gpio_read(peripheral_gpio_h gpio, uint32_t *value)
 
 void peripheral_interface_gpio_close(peripheral_gpio_h gpio)
 {
+	peripheral_interface_gpio_unset_interrupted_cb(gpio);
+
 	close(gpio->fd_direction);
 	close(gpio->fd_edge);
 	close(gpio->fd_value);
 }
 
-int peripheral_interface_gpio_open_isr(peripheral_gpio_h gpio)
+static gboolean __peripheral_interface_gpio_interrupted_cb_invoke(gpointer data)
 {
-	// TODO: set interrupted callback function
+	peripheral_gpio_h gpio = (peripheral_gpio_h)data;
+	gpio->cb_info.cb(gpio, gpio->cb_info.error, NULL);
+	return FALSE;
+}
+
+static gpointer __peripheral_interface_gpio_poll(void *data)
+{
+	peripheral_gpio_h gpio = (peripheral_gpio_h)data;
+
+	int ret;
+	int poll_state = 0;
+	struct pollfd poll_fd;
+
+	poll_fd.fd = gpio->fd_value;
+	poll_fd.events = POLLPRI;
+
+	uint32_t value;
+
+	while (gpio->cb_info.status == GPIO_INTERRUPTED_CALLBACK_SET) {
+
+		poll_state = poll(&poll_fd, 1, 3000);
+
+		if (poll_state == 0)
+			continue;
+
+		if (poll_state < 0) {
+			_E("poll failed!");
+			gpio->cb_info.error = PERIPHERAL_ERROR_IO_ERROR;
+			g_idle_add_full(G_PRIORITY_HIGH_IDLE, __peripheral_interface_gpio_interrupted_cb_invoke, gpio, NULL);
+			break;
+		}
+
+		if (poll_fd.revents & POLLPRI) {
+			ret = peripheral_interface_gpio_read(gpio, &value);
+			if (ret != PERIPHERAL_ERROR_NONE)
+				continue;
+		} else {
+			continue;
+		}
+
+		if (gpio->edge == PERIPHERAL_GPIO_EDGE_NONE)
+			continue;
+
+		if (gpio->edge == PERIPHERAL_GPIO_EDGE_RISING && value == 0)
+			continue;
+
+		if (gpio->edge == PERIPHERAL_GPIO_EDGE_FALLING && value == 1)
+			continue;
+
+		gpio->cb_info.error = PERIPHERAL_ERROR_NONE;
+		g_idle_add_full(G_PRIORITY_HIGH_IDLE, __peripheral_interface_gpio_interrupted_cb_invoke, gpio, NULL);
+	}
+
+	return NULL;
+}
+
+int peripheral_interface_gpio_set_interrupted_cb(peripheral_gpio_h gpio, peripheral_gpio_interrupted_cb callback, void *user_data)
+{
+	RETV_IF(gpio->direction != PERIPHERAL_GPIO_DIRECTION_IN, PERIPHERAL_ERROR_IO_ERROR);
+
+	peripheral_interface_gpio_unset_interrupted_cb(gpio);
+
+	gpio->cb_info.cb = callback;
+	gpio->cb_info.user_data = user_data;
+	gpio->cb_info.status = GPIO_INTERRUPTED_CALLBACK_SET;
+	gpio->cb_info.thread = g_thread_new(NULL, __peripheral_interface_gpio_poll, gpio);
 
 	return PERIPHERAL_ERROR_NONE;
 }
 
-int peripheral_interface_gpio_close_isr(peripheral_gpio_h gpio)
+int peripheral_interface_gpio_unset_interrupted_cb(peripheral_gpio_h gpio)
 {
-	// TODO: unset interrupted callback function
+	gpio->cb_info.status = GPIO_INTERRUPTED_CALLBACK_UNSET;
+	g_thread_join(gpio->cb_info.thread);
 
 	return PERIPHERAL_ERROR_NONE;
 }

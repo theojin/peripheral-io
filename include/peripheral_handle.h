@@ -17,6 +17,16 @@
 #ifndef __PERIPHERAL_HANDLE_H__
 #define __PERIPHERAL_HANDLE_H__
 
+#include <gio/gio.h>
+
+typedef struct _peripheral_gpio_interrupted_cb_info_s {
+	GThread *thread;
+	peripheral_gpio_interrupted_cb cb;
+	peripheral_error_e error;
+	void *user_data;
+	int status;
+} interrupted_cb_info_s;
+
 /**
  * @brief Internal struct for gpio context
  */
@@ -27,6 +37,7 @@ struct _peripheral_gpio_s {
 	int fd_value;
 	peripheral_gpio_direction_e direction;
 	peripheral_gpio_edge_e edge;
+	interrupted_cb_info_s cb_info;
 };
 
 /**

@@ -151,7 +151,7 @@ int peripheral_gpio_set_interrupted_cb(peripheral_gpio_h gpio, peripheral_gpio_i
 	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
 	RETVM_IF(callback == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio interrupted callback is NULL");
 
-	// TODO : replace interface function
+	peripheral_interface_gpio_set_interrupted_cb(gpio, callback, user_data);
 
 	return ret;
 }
@@ -166,7 +166,7 @@ int peripheral_gpio_unset_interrupted_cb(peripheral_gpio_h gpio)
 	RETVM_IF(__is_feature_supported() == false, PERIPHERAL_ERROR_NOT_SUPPORTED, "GPIO feature is not supported");
 	RETVM_IF(gpio == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "gpio handle is NULL");
 
-	// TODO : replace interface function
+	peripheral_interface_gpio_unset_interrupted_cb(gpio);
 
 	return ret;
 }
