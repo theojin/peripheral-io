@@ -32,6 +32,8 @@
 		if (expr) { \
 			if (errno == EAGAIN) \
 				return PERIPHERAL_ERROR_TRY_AGAIN; \
+			if (errno == EINVAL) \
+				return PERIPHERAL_ERROR_INVALID_PARAMETER; \
 			char errmsg[MAX_ERR_LEN]; \
 			strerror_r(errno, errmsg, sizeof(errmsg)); \
 			_E("Failed the %s(%d) function. errmsg: %s", __FUNCTION__, __LINE__, errmsg); \
