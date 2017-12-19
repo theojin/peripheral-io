@@ -66,7 +66,7 @@ int peripheral_interface_spi_read(peripheral_spi_h spi, uint8_t *rxbuf, uint32_t
 	xfer.len = length;
 
 	ret = ioctl(spi->fd, SPI_IOC_MESSAGE(1), &xfer);
-	CHECK_ERROR(ret != 0);
+	CHECK_ERROR(ret < 0);
 
 	return PERIPHERAL_ERROR_NONE;
 }
@@ -81,7 +81,7 @@ int peripheral_interface_spi_write(peripheral_spi_h spi, uint8_t *txbuf, uint32_
 	xfer.len = length;
 
 	ret = ioctl(spi->fd, SPI_IOC_MESSAGE(1), &xfer);
-	CHECK_ERROR(ret != 0);
+	CHECK_ERROR(ret < 0);
 
 	return PERIPHERAL_ERROR_NONE;
 }
@@ -99,7 +99,7 @@ int peripheral_interface_spi_transfer(peripheral_spi_h spi, uint8_t *txbuf, uint
 	xfer.len = length;
 
 	ret = ioctl(spi->fd, SPI_IOC_MESSAGE(1), &xfer);
-	CHECK_ERROR(ret != 0);
+	CHECK_ERROR(ret < 0);
 
 	return PERIPHERAL_ERROR_NONE;
 }
