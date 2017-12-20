@@ -14,15 +14,30 @@
  * limitations under the License.
  */
 
-#ifndef __PERIPHERAL_INTERNAL_H__
-#define __PERIPHERAL_INTERNAL_H__
+#ifndef __PERIPHERAL_HANDLE_H__
+#define __PERIPHERAL_HANDLE_H__
+
+#include <gio/gio.h>
+
+typedef struct _peripheral_gpio_interrupted_cb_info_s {
+	GThread *thread;
+	peripheral_gpio_interrupted_cb cb;
+	peripheral_error_e error;
+	void *user_data;
+	int status;
+} interrupted_cb_info_s;
 
 /**
  * @brief Internal struct for gpio context
  */
 struct _peripheral_gpio_s {
-	int pin;
 	uint handle;
+	int fd_direction;
+	int fd_edge;
+	int fd_value;
+	peripheral_gpio_direction_e direction;
+	peripheral_gpio_edge_e edge;
+	interrupted_cb_info_s cb_info;
 };
 
 /**
@@ -30,6 +45,7 @@ struct _peripheral_gpio_s {
  */
 struct _peripheral_i2c_s {
 	uint handle;
+	int fd;
 };
 
 /**
@@ -37,6 +53,10 @@ struct _peripheral_i2c_s {
  */
 struct _peripheral_pwm_s {
 	uint handle;
+	int fd_period;
+	int fd_duty_cycle;
+	int fd_polarity;
+	int fd_enable;
 };
 
 /**
@@ -44,6 +64,7 @@ struct _peripheral_pwm_s {
  */
 struct _peripheral_uart_s {
 	uint handle;
+	int fd;
 };
 
 /**
@@ -51,6 +72,7 @@ struct _peripheral_uart_s {
  */
 struct _peripheral_spi_s {
 	uint handle;
+	int fd;
 };
 
-#endif /* __PERIPHERAL_INTERNAL_H__ */
+#endif /* __PERIPHERAL_HANDLE_H__ */

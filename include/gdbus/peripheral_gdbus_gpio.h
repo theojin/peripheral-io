@@ -17,16 +17,9 @@
 #ifndef __PERIPHERAL_GDBUS_GPIO_H__
 #define __PERIPHERAL_GDBUS_GPIO_H__
 
-void gpio_proxy_init(void);
-void gpio_proxy_deinit(void);
+#include "peripheral_gdbus_common.h"
 
-int peripheral_gdbus_gpio_open(peripheral_gpio_h gpio);
+int peripheral_gdbus_gpio_open(peripheral_gpio_h gpio, int pin);
 int peripheral_gdbus_gpio_close(peripheral_gpio_h gpio);
-int peripheral_gdbus_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_direction_e direction);
-int peripheral_gdbus_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e edge);
-int peripheral_gdbus_gpio_set_interrupted_cb(peripheral_gpio_h gpio, peripheral_gpio_interrupted_cb callback, void *user_data);
-int peripheral_gdbus_gpio_unset_interrupted_cb(peripheral_gpio_h gpio);
-int peripheral_gdbus_gpio_read(peripheral_gpio_h gpio, int *value);
-int peripheral_gdbus_gpio_write(peripheral_gpio_h gpio, int value);
 
 #endif /* __PERIPHERAL_GDBUS_GPIO_H__ */

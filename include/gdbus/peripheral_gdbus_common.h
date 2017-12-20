@@ -13,10 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef __PERIPHERAL_GDBUS_H__
-#define __PERIPHERAL_GDBUS_H__
 
-#include <gio/gio.h>
+#ifndef __PERIPHERAL_GDBUS_COMMON_H__
+#define __PERIPHERAL_GDBUS_COMMON_H__
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <gio/gunixfdlist.h>
+
+#include "peripheral_io.h"
+#include "peripheral_handle.h"
+#include "peripheral_io_gdbus.h"
+#include "peripheral_log.h"
 
 #define PERIPHERAL_GDBUS_INTERFACE	"org.tizen.peripheral_io"
 #define PERIPHERAL_GDBUS_GPIO_PATH	"/Org/Tizen/Peripheral_io/Gpio"
@@ -26,4 +34,4 @@
 #define PERIPHERAL_GDBUS_SPI_PATH	"/Org/Tizen/Peripheral_io/Spi"
 #define PERIPHERAL_GDBUS_NAME		"org.tizen.peripheral_io"
 
-#endif /* __PERIPHERAL_GDBUS_H__ */
+#endif /* __PERIPHERAL_GDBUS_COMMON_H__ */

@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-#ifndef __PERIPHERAL_GDBUS_PWM_H__
-#define __PERIPHERAL_GDBUS_PWM_H__
+#ifndef __PERIPHERAL_GDBUS_I2C_H__
+#define __PERIPHERAL_GDBUS_I2C_H__
 
-void pwm_proxy_init(void);
-void pwm_proxy_deinit(void);
+#include "peripheral_gdbus_common.h"
 
-int peripheral_gdbus_pwm_open(peripheral_pwm_h pwm, int chip, int pin);
-int peripheral_gdbus_pwm_close(peripheral_pwm_h pwm);
-int peripheral_gdbus_pwm_set_period(peripheral_pwm_h pwm, int period);
-int peripheral_gdbus_pwm_set_duty_cycle(peripheral_pwm_h pwm, int duty_cycle_ns);
-int peripheral_gdbus_pwm_set_polarity(peripheral_pwm_h pwm, peripheral_pwm_polarity_e polarity);
-int peripheral_gdbus_pwm_set_enable(peripheral_pwm_h pwm, bool enable);
+int peripheral_gdbus_i2c_open(peripheral_i2c_h i2c, int bus, int address);
+int peripheral_gdbus_i2c_close(peripheral_i2c_h i2c);
 
-#endif /* __PERIPHERAL_GDBUS_PWM_H__ */
+#endif /* __PERIPHERAL_GDBUS_I2C_H__ */
