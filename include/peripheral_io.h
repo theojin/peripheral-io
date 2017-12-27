@@ -141,6 +141,7 @@ int peripheral_gpio_close(peripheral_gpio_h gpio);
  * @since_tizen 4.0
  * @privlevel platform
  * @privilege http://tizen.org/privilege/peripheralio
+ * @remarks To set the direction to PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_HIGH or PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_LOW, the edge mode must be set to PERIPHERAL_GPIO_EDGE_NONE.
  *
  * @param[in] gpio The GPIO handle
  * @param[in] direction The direction of the GPIO pin
@@ -155,6 +156,7 @@ int peripheral_gpio_close(peripheral_gpio_h gpio);
  * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
  *
  * @see peripheral_gpio_direction_e
+ * @see peripheral_gpio_set_edge_mode()
  */
 int peripheral_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_direction_e direction);
 
@@ -164,6 +166,7 @@ int peripheral_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_direct
  * @since_tizen 4.0
  * @privlevel platform
  * @privilege http://tizen.org/privilege/peripheralio
+ * @remarks To set the edge mode to PERIPHERAL_GPIO_EDGE_RISING, PERIPHERAL_GPIO_EDGE_FALLING, PERIPHERAL_GPIO_EDGE_BOTH, the data direction must be set to the PERIPHERAL_GPIO_DIRECTION_IN.
  *
  * @param[in] gpio The GPIO handle
  * @param[in] edge The edge mode of the GPIO pin
@@ -178,6 +181,7 @@ int peripheral_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_direct
  * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
  *
  * @see peripheral_gpio_edge_e
+ * @see peripheral_gpio_set_direction()
  */
 int peripheral_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e edge);
 
@@ -200,6 +204,7 @@ typedef void(*peripheral_gpio_interrupted_cb)(peripheral_gpio_h gpio, peripheral
  * @since_tizen 4.0
  * @privlevel platform
  * @privilege http://tizen.org/privilege/peripheralio
+ * @remarks The interrupted callback is unset when called peripheral_gpio_unset_interrupted_cb() or callback receives an error value other than PERIPHERAL_ERROR_NONE.
  *
  * @param[in] gpio The GPIO handle
  * @param[in] callback The GPIO interrupted callback function to set
@@ -264,6 +269,7 @@ int peripheral_gpio_read(peripheral_gpio_h gpio, uint32_t *value);
  * @since_tizen 4.0
  * @privlevel platform
  * @privilege http://tizen.org/privilege/peripheralio
+ * @remarks To write binary data, the direction must be set to PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_HIGH or PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_LOW.
  *
  * @param[in] gpio The GPIO handle
  * @param[in] value The value to set (must be 0 or 1)
@@ -278,6 +284,7 @@ int peripheral_gpio_read(peripheral_gpio_h gpio, uint32_t *value);
  * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
  *
  * @see peripheral_gpio_read()
+ * @see peripheral_gpio_set_direction()
  */
 int peripheral_gpio_write(peripheral_gpio_h gpio, uint32_t value);
 
@@ -1055,6 +1062,7 @@ int peripheral_spi_set_mode(peripheral_spi_h spi, peripheral_spi_mode_e mode);
  * @since_tizen 4.0
  * @privlevel platform
  * @privilege http://tizen.org/privilege/peripheralio
+ * @remarks ARTIK530 and Raspberry Pi 3 do not support LSB first bit order.
  *
  * @param[in] spi The SPI slave device handle
  * @param[in] bit_order The transfer bit order
