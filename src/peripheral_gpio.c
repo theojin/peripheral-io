@@ -69,6 +69,7 @@ int peripheral_gpio_open(int gpio_pin, peripheral_gpio_h *gpio)
 		_E("Failed to open the gpio pin, ret : %d", ret);
 		free(handle);
 		handle = NULL;
+		return ret;
 	}
 
 	ret = peripheral_interface_gpio_set_initial_direction_into_handle(handle);
@@ -85,6 +86,7 @@ int peripheral_gpio_open(int gpio_pin, peripheral_gpio_h *gpio)
 		return ret;
 	}
 
+	handle->cb_info.thread = NULL;
 	*gpio = handle;
 
 	return PERIPHERAL_ERROR_NONE;
@@ -103,10 +105,8 @@ int peripheral_gpio_close(peripheral_gpio_h gpio)
 
 	/* call gpio_close */
 	ret = peripheral_gdbus_gpio_close(gpio);
-	if (ret != PERIPHERAL_ERROR_NONE) {
+	if (ret != PERIPHERAL_ERROR_NONE)
 		_E("Failed to close the gpio pin, ret : %d", ret);
-		return ret;
-	}
 
 	peripheral_interface_gpio_close(gpio);
 

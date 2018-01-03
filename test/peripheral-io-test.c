@@ -16,6 +16,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <system_info.h>
 
 #include "peripheral_io.h"
@@ -81,39 +82,41 @@ static int __test_peripheral_init()
 
 	ret = __get_feature(KEY_FEATURE_PERIPHERAL_IO_GPIO, &feature);
 	if (ret != PERIPHERAL_ERROR_NONE)
-		return ret;
+		goto ERR;
 	ret = test_peripheral_io_gpio_initialize(model_name, feature);
 	if (ret != PERIPHERAL_ERROR_NONE)
-		return ret;
+		goto ERR;
 
 	ret = __get_feature(KEY_FEATURE_PERIPHERAL_IO_I2C, &feature);
 	if (ret != PERIPHERAL_ERROR_NONE)
-		return ret;
+		goto ERR;
 	ret = test_peripheral_io_i2c_initialize(model_name, feature);
 	if (ret != PERIPHERAL_ERROR_NONE)
-		return ret;
+		goto ERR;
 
 	ret = __get_feature(KEY_FEATURE_PERIPHERAL_IO_PWM, &feature);
 	if (ret != PERIPHERAL_ERROR_NONE)
-		return ret;
+		goto ERR;
 	ret = test_peripheral_io_pwm_initialize(model_name, feature);
 	if (ret != PERIPHERAL_ERROR_NONE)
-		return ret;
+		goto ERR;
 
 	ret = __get_feature(KEY_FEATURE_PERIPHERAL_IO_UART, &feature);
 	if (ret != PERIPHERAL_ERROR_NONE)
-		return ret;
+		goto ERR;
 	ret = test_peripheral_io_uart_initialize(model_name, feature);
 	if (ret != PERIPHERAL_ERROR_NONE)
-		return ret;
+		goto ERR;
 
 	ret = __get_feature(KEY_FEATURE_PERIPHERAL_IO_SPI, &feature);
 	if (ret != PERIPHERAL_ERROR_NONE)
-		return ret;
+		goto ERR;
 	ret = test_peripheral_io_spi_initialize(model_name, feature);
 	if (ret != PERIPHERAL_ERROR_NONE)
-		return ret;
+		goto ERR;
 
+ERR:
+	free(model_name);
 	return ret;
 }
 

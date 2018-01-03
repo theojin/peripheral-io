@@ -24,7 +24,7 @@ typedef struct _peripheral_gpio_interrupted_cb_info_s {
 	peripheral_gpio_interrupted_cb cb;
 	peripheral_error_e error;
 	void *user_data;
-	int status;
+	gint status;
 } interrupted_cb_info_s;
 
 /**
