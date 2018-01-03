@@ -86,6 +86,7 @@ int peripheral_gpio_open(int gpio_pin, peripheral_gpio_h *gpio)
 		return ret;
 	}
 
+	handle->cb_info.thread = NULL;
 	*gpio = handle;
 
 	return PERIPHERAL_ERROR_NONE;

@@ -259,7 +259,11 @@ int peripheral_interface_gpio_set_interrupted_cb(peripheral_gpio_h gpio, periphe
 int peripheral_interface_gpio_unset_interrupted_cb(peripheral_gpio_h gpio)
 {
 	gpio->cb_info.status = GPIO_INTERRUPTED_CALLBACK_UNSET;
-	g_thread_join(gpio->cb_info.thread);
+
+	if (gpio->cb_info.thread != NULL) {
+		g_thread_join(gpio->cb_info.thread);
+		gpio->cb_info.thread = NULL;
+	}
 
 	return PERIPHERAL_ERROR_NONE;
 }
