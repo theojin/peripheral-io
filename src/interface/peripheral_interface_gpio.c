@@ -204,7 +204,7 @@ static gpointer __peripheral_interface_gpio_poll(void *data)
 
 	uint32_t value;
 
-	while (gpio->cb_info.status == GPIO_INTERRUPTED_CALLBACK_SET) {
+	while (g_atomic_int_get(&gpio->cb_info.status) == GPIO_INTERRUPTED_CALLBACK_SET) {
 
 		poll_state = poll(&poll_fd, 1, 3000);
 
@@ -250,7 +250,7 @@ int peripheral_interface_gpio_set_interrupted_cb(peripheral_gpio_h gpio, periphe
 
 	gpio->cb_info.cb = callback;
 	gpio->cb_info.user_data = user_data;
-	gpio->cb_info.status = GPIO_INTERRUPTED_CALLBACK_SET;
+	g_atomic_int_set(&gpio->cb_info.status, GPIO_INTERRUPTED_CALLBACK_SET);
 	gpio->cb_info.thread = g_thread_new(NULL, __peripheral_interface_gpio_poll, gpio);
 
 	return PERIPHERAL_ERROR_NONE;
@@ -258,7 +258,7 @@ int peripheral_interface_gpio_set_interrupted_cb(peripheral_gpio_h gpio, periphe
 
 int peripheral_interface_gpio_unset_interrupted_cb(peripheral_gpio_h gpio)
 {
-	gpio->cb_info.status = GPIO_INTERRUPTED_CALLBACK_UNSET;
+	g_atomic_int_set(&gpio->cb_info.status, GPIO_INTERRUPTED_CALLBACK_UNSET);
 
 	if (gpio->cb_info.thread != NULL) {
 		g_thread_join(gpio->cb_info.thread);
