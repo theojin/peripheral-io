@@ -105,10 +105,8 @@ int peripheral_gpio_close(peripheral_gpio_h gpio)
 
 	/* call gpio_close */
 	ret = peripheral_gdbus_gpio_close(gpio);
-	if (ret != PERIPHERAL_ERROR_NONE) {
+	if (ret != PERIPHERAL_ERROR_NONE)
 		_E("Failed to close the gpio pin, ret : %d", ret);
-		return ret;
-	}
 
 	peripheral_interface_gpio_close(gpio);
 
