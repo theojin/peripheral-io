@@ -24,7 +24,7 @@
  *
  * @section   CAPI_SYSTEM_PERIPHERAL_IO_MODULE_OVERVIEW Overview
  * This @ref CAPI_SYSTEM_PERIPHERAL_IO_MODULE API provides access to the low level device providers,
- * including GPIO, I2C, PWM, UART and SPI.
+ * including GPIO, I2C, PWM, UART, SPI and ADC.
  */
 
 
@@ -160,6 +160,35 @@
  *
  * This API is related with the following feature:\n
  * - http://tizen.org/feature/peripheral_io.pwm\n
+ *
+ * It is recommended to use features in your application for reliability.\n
+ *
+ * You can check if a IoT device supports the related features for this API \n
+ * by using @ref CAPI_SYSTEM_SYSTEM_INFO_MODULE, and control your application's actions accordingly.\n
+ *
+ * To ensure your application is only running on the IoT device with specific features, \n
+ * please define the features in your manifest file using the manifest editor in the SDK.\n
+ *
+ * More details on featuring your application can be found from <a href="https://developer.tizen.org/development/tizen-studio/native-tools/configuring-your-app/manifest-text-editor#feature"><b>Feature Element</b>.</a>
+ */
+
+
+/**
+ * @ingroup   CAPI_SYSTEM_PERIPHERAL_IO_MODULE
+ * @defgroup  CAPI_SYSTEM_PERIPHERAL_IO_ADC_MODULE ADC
+ * @brief     The @ref CAPI_SYSTEM_PERIPHERAL_IO_ADC_MODULE API provides functions to convert analog data from peripherals connected to the IoT device to digital.
+ *
+ * @section   CAPI_SYSTEM_PERIPHERAL_IO_ADC_MODULE_HEADER Required Header
+ *            \#include <peripheral_io.h>
+ *
+ * @section   CAPI_SYSTEM_PERIPHERAL_IO_ADC_MODULE_OVERVIEW Overview
+ *
+ * This @ref CAPI_SYSTEM_PERIPHERAL_IO_ADC_MODULE API provides functions to convert analog data from peripherals connected to the IoT device convert to digital.
+ *
+ * @section   CAPI_SYSTEM_PERIPHERAL_IO_ADC_MODULE_FEATURE Realted Features
+ *
+ * This API is related with the following feature:\n
+ * - http://tizen.org/feature/peripheral_io.adc\n
  *
  * It is recommended to use features in your application for reliability.\n
  *

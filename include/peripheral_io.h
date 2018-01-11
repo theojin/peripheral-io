@@ -1193,6 +1193,95 @@ int peripheral_spi_transfer(peripheral_spi_h spi, uint8_t *txdata, uint8_t *rxda
 * @}
 */
 
+
+/**
+ * @addtogroup CAPI_SYSTEM_PERIPHERAL_IO_ADC_MODULE
+ * @{
+ */
+
+/**
+ * @brief The handle of an ADC.
+ * @since_tizen 4.0
+ */
+typedef struct _peripheral_adc_s *peripheral_adc_h;
+
+/**
+ * @platform
+ * @brief Opens an ADC handle.
+ * @since_tizen 4.0
+ * @privlevel platform
+ * @privilege http://tizen.org/privilege/peripheralio
+ * @remarks @a adc should be released with peripheral_adc_close()
+ *
+ * @param[in] device The ADC device number
+ * @param[in] channel The ADC channel number
+ * @param[out] adc The ADC handle
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device does not exist or is removed
+ * @retval #PERIPHERAL_ERROR_OUT_OF_MEMORY Memory allocation failed
+ * @retval #PERIPHERAL_ERROR_PERMISSION_DENIED Permission denied
+ * @retval #PERIPHERAL_ERROR_RESOURCE_BUSY Device is in use
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_NOT_SUPPORTED Not supported
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ *
+ * @post peripheral_adc_close()
+ */
+int peripheral_adc_open(int device, int channel, peripheral_adc_h *adc);
+
+/**
+ * @platform
+ * @brief Closes an ADC handle.
+ * @since_tizen 4.0
+ * @privlevel platform
+ * @privilege http://tizen.org/privilege/peripheralio
+ *
+ * @param[in] adc The ADC handle
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device does not exist or is removed
+ * @retval #PERIPHERAL_ERROR_PERMISSION_DENIED Permission denied
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_NOT_SUPPORTED Not supported
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ *
+ * @pre peripheral_adc_open()
+ */
+int peripheral_adc_close(peripheral_adc_h adc);
+
+/**
+ * @platform
+ * @brief Reads data from an ADC.
+ * @since_tizen 4.0
+ * @privlevel platform
+ * @privilege http://tizen.org/privilege/peripheralio
+ *
+ * @param[in] uart The ADC handle
+ * @param[out] data The data to read
+ *
+ * @return the number of bytes read on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_TRY_AGAIN Try again
+ * @retval #PERIPHERAL_ERROR_PERMISSION_DENIED Permission denied
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_NOT_SUPPORTED Not supported
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ *
+ * @pre peripheral_adc_open()
+ */
+int peripheral_adc_read(peripheral_adc_h adc, uint32_t *data);
+
+/**
+* @}
+*/
+
+
 #ifdef __cplusplus
 }
 #endif
