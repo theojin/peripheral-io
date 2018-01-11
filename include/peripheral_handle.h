@@ -75,4 +75,12 @@ struct _peripheral_spi_s {
 	int fd;
 };
 
+/**
+ * @brief Internal struct for adc context
+ */
+struct _peripheral_adc_s {
+	uint handle;
+	int fd;
+};
+
 #endif /* __PERIPHERAL_HANDLE_H__ */
