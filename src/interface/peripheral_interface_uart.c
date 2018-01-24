@@ -19,6 +19,7 @@
 #include "peripheral_interface_uart.h"
 
 #define UART_BAUDRATE_SIZE	19
+#define UART_BYTEINFO_SIZE	4
 
 static const int peripheral_uart_br[UART_BAUDRATE_SIZE] = {
 	B0,			B50,		B75,		B110,		B134,
@@ -27,7 +28,7 @@ static const int peripheral_uart_br[UART_BAUDRATE_SIZE] = {
 	B38400,		B57600,		B115200,	B230400
 };
 
-static const int byteinfo[4] = {CS5, CS6, CS7, CS8};
+static const int byteinfo[UART_BYTEINFO_SIZE] = {CS5, CS6, CS7, CS8};
 
 int peripheral_interface_uart_init(peripheral_uart_h uart)
 {
@@ -156,6 +157,27 @@ int peripheral_interface_uart_set_baud_rate(peripheral_uart_h uart, peripheral_u
 	return PERIPHERAL_ERROR_NONE;
 }
 
+int peripheral_interface_uart_get_baud_rate(peripheral_uart_h uart, peripheral_uart_baud_rate_e *out_baud)
+{
+	int ret;
+	struct termios tio;
+	int baud;
+
+	ret = tcgetattr(uart->fd, &tio);
+	CHECK_ERROR(ret != 0);
+
+	baud = tio.c_cflag & __MAX_BAUD;
+
+	for (int index = 0; index < UART_BAUDRATE_SIZE; index++) {
+		if (baud == peripheral_uart_br[index]) {
+			*out_baud = (peripheral_uart_baud_rate_e)index;
+			return PERIPHERAL_ERROR_NONE;
+		}
+	}
+
+	return PERIPHERAL_ERROR_UNKNOWN;
+}
+
 int peripheral_interface_uart_set_byte_size(peripheral_uart_h uart, peripheral_uart_byte_size_e byte_size)
 {
 	int ret;
@@ -174,6 +196,27 @@ int peripheral_interface_uart_set_byte_size(peripheral_uart_h uart, peripheral_u
 	CHECK_ERROR(ret != 0);
 
 	return PERIPHERAL_ERROR_NONE;
+}
+
+int peripheral_interface_uart_get_byte_size(peripheral_uart_h uart, peripheral_uart_byte_size_e *out_byte_size)
+{
+	int ret;
+	struct termios tio;
+	int byte_size;
+
+	ret = tcgetattr(uart->fd, &tio);
+	CHECK_ERROR(ret != 0);
+
+	byte_size = tio.c_cflag & CSIZE;
+
+	for (int index = 0; index < UART_BYTEINFO_SIZE; index++) {
+		if (byte_size == byteinfo[index]) {
+			*out_byte_size = (peripheral_uart_byte_size_e)index;
+			return PERIPHERAL_ERROR_NONE;
+		}
+	}
+
+	return PERIPHERAL_ERROR_UNKNOWN;
 }
 
 int peripheral_interface_uart_set_parity(peripheral_uart_h uart, peripheral_uart_parity_e parity)
@@ -209,6 +252,27 @@ int peripheral_interface_uart_set_parity(peripheral_uart_h uart, peripheral_uart
 	return PERIPHERAL_ERROR_NONE;
 }
 
+int peripheral_interface_uart_get_parity(peripheral_uart_h uart, peripheral_uart_parity_e *out_parity)
+{
+	int ret;
+	struct termios tio;
+
+	ret = tcgetattr(uart->fd, &tio);
+	CHECK_ERROR(ret != 0);
+
+	if (tio.c_cflag & PARENB) {
+		if (tio.c_cflag & PARODD) {
+			*out_parity = PERIPHERAL_UART_PARITY_ODD;
+		} else  {
+			*out_parity = PERIPHERAL_UART_PARITY_EVEN;
+		}
+	} else {
+		*out_parity = PERIPHERAL_UART_PARITY_NONE;
+	}
+
+	return PERIPHERAL_ERROR_NONE;
+}
+
 int peripheral_interface_uart_set_stop_bits(peripheral_uart_h uart, peripheral_uart_stop_bits_e stop_bits)
 {
 	int ret;
@@ -234,6 +298,23 @@ int peripheral_interface_uart_set_stop_bits(peripheral_uart_h uart, peripheral_u
 
 	ret = tcsetattr(uart->fd, TCSANOW, &tio);
 	CHECK_ERROR(ret != 0);
+
+	return PERIPHERAL_ERROR_NONE;
+}
+
+int peripheral_interface_uart_get_stop_bits(peripheral_uart_h uart, peripheral_uart_stop_bits_e *out_stop_bits)
+{
+	int ret;
+	struct termios tio;
+
+	ret = tcgetattr(uart->fd, &tio);
+	CHECK_ERROR(ret != 0);
+
+	if (tio.c_cflag & CSTOPB) {
+		*out_stop_bits = PERIPHERAL_UART_STOP_BITS_2BIT;
+	} else {
+		*out_stop_bits = PERIPHERAL_UART_STOP_BITS_1BIT;
+	}
 
 	return PERIPHERAL_ERROR_NONE;
 }
@@ -264,6 +345,29 @@ int peripheral_interface_uart_set_flow_control(peripheral_uart_h uart, periphera
 
 	ret = tcsetattr(uart->fd, TCSANOW, &tio);
 	CHECK_ERROR(ret != 0);
+
+	return PERIPHERAL_ERROR_NONE;
+}
+
+int peripheral_interface_uart_get_flow_control(peripheral_uart_h uart, peripheral_uart_software_flow_control_e *out_xonxoff, peripheral_uart_hardware_flow_control_e *out_rtscts)
+{
+	int ret;
+	struct termios tio;
+
+	ret = tcgetattr(uart->fd, &tio);
+	CHECK_ERROR(ret != 0);
+
+	if (tio.c_cflag & CRTSCTS) {
+		*out_rtscts = PERIPHERAL_UART_HARDWARE_FLOW_CONTROL_AUTO_RTSCTS;
+	} else {
+		*out_rtscts = PERIPHERAL_UART_HARDWARE_FLOW_CONTROL_NONE;
+	}
+
+	if (tio.c_iflag & (IXON | IXOFF | IXANY)) {
+		*out_xonxoff = PERIPHERAL_UART_SOFTWARE_FLOW_CONTROL_XONXOFF;
+	} else {
+		*out_xonxoff = PERIPHERAL_UART_SOFTWARE_FLOW_CONTROL_NONE;
+	}
 
 	return PERIPHERAL_ERROR_NONE;
 }

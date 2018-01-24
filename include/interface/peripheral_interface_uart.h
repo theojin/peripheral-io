@@ -45,6 +45,8 @@ void peripheral_interface_uart_flush(peripheral_uart_h uart);
 */
 int peripheral_interface_uart_set_baud_rate(peripheral_uart_h uart, peripheral_uart_baud_rate_e baud);
 
+int peripheral_interface_uart_get_baud_rate(peripheral_uart_h uart, peripheral_uart_baud_rate_e *out_baud);
+
 /**
 * @brief peripheral_bus_uart_set_byte_size() set byte size.
 *
@@ -53,6 +55,8 @@ int peripheral_interface_uart_set_baud_rate(peripheral_uart_h uart, peripheral_u
 * @return On success, 0 is returned. On failure, a negative value is returned.
 */
 int peripheral_interface_uart_set_byte_size(peripheral_uart_h uart, peripheral_uart_byte_size_e byte_size);
+
+int peripheral_interface_uart_get_byte_size(peripheral_uart_h uart, peripheral_uart_byte_size_e *out_byte_size);
 
 /**
 * @brief peripheral_bus_uart_set_parity() set parity bit.
@@ -63,6 +67,8 @@ int peripheral_interface_uart_set_byte_size(peripheral_uart_h uart, peripheral_u
 */
 int peripheral_interface_uart_set_parity(peripheral_uart_h uart, peripheral_uart_parity_e parity);
 
+int peripheral_interface_uart_get_parity(peripheral_uart_h uart, peripheral_uart_parity_e *out_parity);
+
 /**
 * @brief peripheral_bus_uart_set_stop_bits() set stop bits.
 *
@@ -71,6 +77,8 @@ int peripheral_interface_uart_set_parity(peripheral_uart_h uart, peripheral_uart
 * @return On success, 0 is returned. On failure, a negative value is returned.
 */
 int peripheral_interface_uart_set_stop_bits(peripheral_uart_h uart, peripheral_uart_stop_bits_e stop_bits);
+
+int peripheral_interface_uart_get_stop_bits(peripheral_uart_h uart, peripheral_uart_stop_bits_e *out_stop_bits);
 
 /**
 * @brief uart_set_flow_control() set flow control settings.
@@ -81,6 +89,8 @@ int peripheral_interface_uart_set_stop_bits(peripheral_uart_h uart, peripheral_u
 * @return On success, 0 is returned. On failure, a negative value is returned.
 */
 int peripheral_interface_uart_set_flow_control(peripheral_uart_h uart, peripheral_uart_software_flow_control_e xonxoff, peripheral_uart_hardware_flow_control_e rtscts);
+
+int peripheral_interface_uart_get_flow_control(peripheral_uart_h uart, peripheral_uart_software_flow_control_e *out_xonxoff, peripheral_uart_hardware_flow_control_e *out_rtscts);
 
 /**
 * @brief uart_read() reads data over uart bus.
