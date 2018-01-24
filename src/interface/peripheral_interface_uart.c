@@ -145,7 +145,8 @@ int peripheral_interface_uart_set_baud_rate(peripheral_uart_h uart, peripheral_u
 	ret = tcgetattr(uart->fd, &tio);
 	CHECK_ERROR(ret != 0);
 
-	tio.c_cflag = peripheral_uart_br[baud];
+	tio.c_cflag &= ~__MAX_BAUD;
+	tio.c_cflag |= peripheral_uart_br[baud];
 
 	peripheral_interface_uart_flush(uart);
 
