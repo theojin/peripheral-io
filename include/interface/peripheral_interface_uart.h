@@ -19,6 +19,8 @@
 
 #include "peripheral_interface_common.h"
 
+int peripheral_interface_uart_init(peripheral_uart_h uart);
+
 /**
 * @brief uart_close() closes uart port.
 *

@@ -29,6 +29,103 @@ static const int peripheral_uart_br[UART_BAUDRATE_SIZE] = {
 
 static const int byteinfo[4] = {CS5, CS6, CS7, CS8};
 
+int peripheral_interface_uart_init(peripheral_uart_h uart)
+{
+	int ret;
+	struct termios tio;
+
+	/*
+	 * TCIOFLUSH
+	 * : Flushes both input and output data queue.
+	 */
+	ret = tcflush(uart->fd, TCIOFLUSH);
+	CHECK_ERROR(ret != 0);
+
+	ret = tcgetattr(uart->fd, &tio);
+	CHECK_ERROR(ret != 0);
+
+	/*
+	 * c_iflag
+	 * : Input mode. Each bit in c_iflag indicates an input attribute.
+	 *
+	 * IGNPAR
+	 * : Ignores input characters (other than BREAK) that have parity errors.
+	 */
+	tio.c_iflag = IGNPAR;
+
+	/*
+	 * c_oflag
+	 * : Output mode. Each bit in c_oflag indicates an output attribute.
+	 */
+	tio.c_oflag = 0;
+
+	/*
+	 * c_cflag
+	 * : Control mode. Each bit in c_cflag indicates a control attribute.
+	 *
+	 * CLOCAL
+	 * : Ignores modem status lines. A call to open() returns immediately
+	 *   without waiting for a modem connection to complete. If this bit is
+	 *   set to 0, modem status lines are monitored and open() waits for the
+	 *   modem connection.
+	 *
+	 * CREAD
+	 * : Enables reception. If this bit is set to 0, no input characters are
+	 *   received from the terminal.
+	 */
+	tio.c_cflag = CLOCAL | CREAD;
+
+	/*
+	 * c_lflag - Local mode
+	 */
+	tio.c_lflag = 0;
+
+	/*
+	 * c_cc[]
+	 * : Control characters. This is an array of characters that may have
+	 *   special meaning for terminal handling.
+	 *
+	 * VMIN
+	 * : Minimun number of characters for noncanonical read.
+	 *   It is used to determine the minimun number of useful bytes
+	 *   that must be accepted in the input queue before read is returned.
+	 *
+	 * VTIME
+	 * : Timeout in deciseconds for noncanonical read.
+	 *   It is used to determines how long to wait for input.
+	 *
+	 * case 1: c_cc[VMIN] = 0 and c_cc[VTIME] = 0
+	 * : If data is available, read() returns immediately, with the lesser of
+	 *   the number of bytes available, or the number of bytes requested. If no
+	 *   data is available, read() returns 0.
+	 *
+	 * case 2: c_cc[VMIN] > 0 and c_cc[VTIME] = 0
+	 * : read() blocks until the lesser of MIN bytes or the number of bytes
+	 *   requested are available, and returns the lesser of these two values.
+	 *
+	 * case 3: c_cc[VMIN] = 0 and c_cc[VTIME] > 0
+	 * : TIME specifies the limit for a timer in tenths of a seconds. The timer
+	 *   is started when read() is called. read() returns either when at least
+	 *   one byte of data is avalilable, or when the timer expires. If the
+	 *   timer expires without any input becomming available, read() returns 0.
+	 *
+	 * case 4: c_cc[VMIN] > 0 and c_cc[VTIME] > 0
+	 * : TIME specifies the limit for a timer in tenths of a second. Once an
+	 *   initial byte of input becomes available, the timer is restarted after
+	 *   each further byte is received. read() returns either when the lesser
+	 *   of the number of bytes requested or MIN byte have been read, or when
+	 *   the inter-byte timeout expires. Because the timer is only started
+	 *   after the initial byte becomes available, at least one byte will be read.
+	 */
+	tio.c_cc[VMIN] = 1;
+	tio.c_cc[VTIME] = 0;
+
+	ret = tcsetattr(uart->fd, TCSANOW, &tio);
+	CHECK_ERROR(ret != 0);
+
+	return PERIPHERAL_ERROR_NONE;
+}
+
 void peripheral_interface_uart_close(peripheral_uart_h uart)
 {
 	peripheral_interface_uart_flush(uart);
@@ -49,11 +146,6 @@ int peripheral_interface_uart_set_baud_rate(peripheral_uart_h uart, peripheral_u
 	CHECK_ERROR(ret != 0);
 
 	tio.c_cflag = peripheral_uart_br[baud];
-	tio.c_iflag = IGNPAR;
-	tio.c_oflag = 0;
-	tio.c_lflag = 0;
-	tio.c_cc[VMIN] = 1;
-	tio.c_cc[VTIME] = 0;
 
 	peripheral_interface_uart_flush(uart);
 
@@ -74,7 +166,6 @@ int peripheral_interface_uart_set_byte_size(peripheral_uart_h uart, peripheral_u
 	/* set byte size */
 	tio.c_cflag &= ~CSIZE;
 	tio.c_cflag |= byteinfo[byte_size];
-	tio.c_cflag |= (CLOCAL | CREAD);
 
 	peripheral_interface_uart_flush(uart);
 

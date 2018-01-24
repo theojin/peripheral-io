@@ -69,11 +69,19 @@ int peripheral_uart_open(int port, peripheral_uart_h *uart)
 		_E("Failed to open uart port, ret : %d", ret);
 		free(handle);
 		handle = NULL;
+		return ret;
+	}
+
+	ret = peripheral_interface_uart_init(handle);
+	if (ret != PERIPHERAL_ERROR_NONE) {
+		_E("Failed to initialize the uart");
+		peripheral_uart_close(handle);
+		return ret;
 	}
 
 	*uart = handle;
 
-	return ret;
+	return PERIPHERAL_ERROR_NONE;
 }
 
 /**
