@@ -32,10 +32,38 @@ int peripheral_interface_spi_set_mode(peripheral_spi_h spi, peripheral_spi_mode_
 	return PERIPHERAL_ERROR_NONE;
 }
 
+int peripheral_interface_spi_get_mode(peripheral_spi_h spi, peripheral_spi_mode_e *out_mode)
+{
+	uint8_t mode;
+
+	int ret = ioctl(spi->fd, SPI_IOC_RD_MODE, &mode);
+	CHECK_ERROR(ret != 0);
+
+	RETVM_IF(mode > PERIPHERAL_SPI_MODE_3, PERIPHERAL_ERROR_UNKNOWN, "Unknown SPI mode");
+
+	*out_mode = (peripheral_spi_mode_e)mode;
+
+	return PERIPHERAL_ERROR_NONE;
+}
+
 int peripheral_interface_spi_set_bit_order(peripheral_spi_h spi, peripheral_spi_bit_order_e bit_order)
 {
 	int ret = ioctl(spi->fd, SPI_IOC_WR_LSB_FIRST, &bit_order);
 	CHECK_ERROR(ret != 0);
+
+	return PERIPHERAL_ERROR_NONE;
+}
+
+int peripheral_interface_spi_get_bit_order(peripheral_spi_h spi, peripheral_spi_bit_order_e *out_bit_order)
+{
+	uint8_t bit_order;
+
+	int ret = ioctl(spi->fd, SPI_IOC_RD_LSB_FIRST, &bit_order);
+	CHECK_ERROR(ret != 0);
+
+	RETVM_IF(bit_order > PERIPHERAL_SPI_BIT_ORDER_LSB, PERIPHERAL_ERROR_UNKNOWN, "Unknown SPI bit order");
+
+	*out_bit_order = (peripheral_spi_bit_order_e)bit_order;
 
 	return PERIPHERAL_ERROR_NONE;
 }
@@ -48,10 +76,34 @@ int peripheral_interface_spi_set_bits_per_word(peripheral_spi_h spi, uint8_t bit
 	return PERIPHERAL_ERROR_NONE;
 }
 
+int peripheral_interface_spi_get_bits_per_word(peripheral_spi_h spi, uint8_t *out_bits)
+{
+	uint8_t bits;
+
+	int ret = ioctl(spi->fd, SPI_IOC_RD_BITS_PER_WORD, &bits);
+	CHECK_ERROR(ret != 0);
+
+	*out_bits = bits;
+
+	return PERIPHERAL_ERROR_NONE;
+}
+
 int peripheral_interface_spi_set_frequency(peripheral_spi_h spi, uint32_t freq)
 {
 	int ret = ioctl(spi->fd, SPI_IOC_WR_MAX_SPEED_HZ, &freq);
 	CHECK_ERROR(ret != 0);
+
+	return PERIPHERAL_ERROR_NONE;
+}
+
+int peripheral_interface_spi_get_frequency(peripheral_spi_h spi, uint32_t *out_freq)
+{
+	uint32_t freq;
+
+	int ret = ioctl(spi->fd, SPI_IOC_RD_MAX_SPEED_HZ, &freq);
+	CHECK_ERROR(ret != 0);
+
+	*out_freq = freq;
 
 	return PERIPHERAL_ERROR_NONE;
 }

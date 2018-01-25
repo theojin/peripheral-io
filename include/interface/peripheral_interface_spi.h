@@ -20,10 +20,19 @@
 #include "peripheral_interface_common.h"
 
 void peripheral_interface_spi_close(peripheral_spi_h spi);
+
 int peripheral_interface_spi_set_mode(peripheral_spi_h spi, peripheral_spi_mode_e mode);
+int peripheral_interface_spi_get_mode(peripheral_spi_h spi, peripheral_spi_mode_e *out_mode);
+
 int peripheral_interface_spi_set_bit_order(peripheral_spi_h spi, peripheral_spi_bit_order_e bit_order);
+int peripheral_interface_spi_get_bit_order(peripheral_spi_h spi, peripheral_spi_bit_order_e *out_bit_order);
+
 int peripheral_interface_spi_set_bits_per_word(peripheral_spi_h spi, uint8_t bits);
+int peripheral_interface_spi_get_bits_per_word(peripheral_spi_h spi, uint8_t *out_bits);
+
 int peripheral_interface_spi_set_frequency(peripheral_spi_h spi, uint32_t freq);
+int peripheral_interface_spi_get_frequency(peripheral_spi_h spi, uint32_t *out_freq);
+
 int peripheral_interface_spi_read(peripheral_spi_h spi, uint8_t *rxbuf, uint32_t length);
 int peripheral_interface_spi_write(peripheral_spi_h spi, uint8_t *txbuf, uint32_t length);
 int peripheral_interface_spi_transfer(peripheral_spi_h spi, uint8_t *txbuf, uint8_t *rxbuf, uint32_t length);
