@@ -40,6 +40,8 @@ void peripheral_interface_pwm_close(peripheral_pwm_h pwm);
 */
 int peripheral_interface_pwm_set_period(peripheral_pwm_h pwm, uint32_t period);
 
+int peripheral_interface_pwm_get_period(peripheral_pwm_h pwm, uint32_t *out_period);
+
 /**
 * @brief pwm_set_duty_cycle() sets the pwm duty cycle.
 *
@@ -49,6 +51,8 @@ int peripheral_interface_pwm_set_period(peripheral_pwm_h pwm, uint32_t period);
 * @return On success, 0 is returned. On failure, a negative value is returned.
 */
 int peripheral_interface_pwm_set_duty_cycle(peripheral_pwm_h pwm, uint32_t duty_cycle);
+
+int peripheral_interface_pwm_get_duty_cycle(peripheral_pwm_h pwm, uint32_t *out_duty_cycle);
 
 /**
 * @brief pwm_set_polarity() sets the pwm polarity.
@@ -60,6 +64,8 @@ int peripheral_interface_pwm_set_duty_cycle(peripheral_pwm_h pwm, uint32_t duty_
 */
 int peripheral_interface_pwm_set_polarity(peripheral_pwm_h pwm, peripheral_pwm_polarity_e polarity);
 
+int peripheral_interface_pwm_get_polarity(peripheral_pwm_h pwm, peripheral_pwm_polarity_e *out_polarity);
+
 /**
 * @brief pwm_set_enable() sets the pwm state.
 *
@@ -69,5 +75,7 @@ int peripheral_interface_pwm_set_polarity(peripheral_pwm_h pwm, peripheral_pwm_p
 * @return On success, 0 is returned. On failure, a negative value is returned.
 */
 int peripheral_interface_pwm_set_enable(peripheral_pwm_h pwm, bool enable);
+
+int peripheral_interface_pwm_get_enable(peripheral_pwm_h pwm, bool *out_enable);
 
 #endif /* __PERIPHERAL_INTERFACE_PWM_H__ */
