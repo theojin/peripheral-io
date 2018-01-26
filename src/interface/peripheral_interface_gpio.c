@@ -72,6 +72,34 @@ int peripheral_interface_gpio_set_direction(peripheral_gpio_h gpio, peripheral_g
 	return PERIPHERAL_ERROR_NONE;
 }
 
+int peripheral_interface_gpio_get_direction(peripheral_gpio_h gpio, peripheral_gpio_direction_e *out_direction)
+{
+	static predefined_type_s types[2] = {
+		{"in",  2},
+		{"out", 3}
+	};
+
+	int ret;
+	char gpio_buf[GPIO_BUFFER_MAX] = {0, };
+
+	lseek(gpio->fd_direction, 0, SEEK_SET);
+	ret = read(gpio->fd_direction, &gpio_buf, GPIO_BUFFER_MAX);
+	CHECK_ERROR(ret < 0);
+
+	for (int index = 0; index < 2; index++) {
+		if (!strncmp(gpio_buf, types[index].type, types[index].len)) {
+			if (index == 0) {
+				*out_direction = PERIPHERAL_GPIO_DIRECTION_IN;
+			} else {
+				*out_direction = PERIPHERAL_GPIO_DIRECTION_OUT;
+			}
+			break;
+		}
+	}
+
+	return PERIPHERAL_ERROR_NONE;
+}
+
 int peripheral_interface_gpio_set_initial_edge_into_handle(peripheral_gpio_h gpio)
 {
 	static predefined_type_s types[4] = {
@@ -124,6 +152,32 @@ int peripheral_interface_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_g
 	gpio->edge = edge;
 
 	return PERIPHERAL_ERROR_NONE;
+}
+
+int peripheral_interface_gpio_get_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e *out_edge)
+{
+	static predefined_type_s types[4] = {
+		{"none",    4},
+		{"rising",  6},
+		{"falling", 7},
+		{"both",    4}
+	};
+
+	int ret;
+	char gpio_buf[GPIO_BUFFER_MAX] = {0, };
+
+	lseek(gpio->fd_edge, 0, SEEK_SET);
+	ret = read(gpio->fd_edge, &gpio_buf, GPIO_BUFFER_MAX);
+	CHECK_ERROR(ret < 0);
+
+	for (int index = 0; index < 4; index++) {
+		if (!strncmp(gpio_buf, types[index].type, types[index].len)){
+			*out_edge = (peripheral_gpio_edge_e)index;
+			return PERIPHERAL_ERROR_NONE;
+		}
+	}
+
+	return PERIPHERAL_ERROR_UNKNOWN;
 }
 
 /*

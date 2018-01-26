@@ -65,9 +65,10 @@ typedef enum {
  * @since_tizen 4.0
  */
 typedef enum {
-	PERIPHERAL_GPIO_DIRECTION_IN = 0,              /**< Input Mode */
+	PERIPHERAL_GPIO_DIRECTION_IN = 0,              /**< Input mode */
 	PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_HIGH,  /**< Output mode with high value */
 	PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_LOW,   /**< Output mode with low value */
+	PERIPHERAL_GPIO_DIRECTION_OUT = PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_LOW, /**< Output mode */
 } peripheral_gpio_direction_e;
 
 /**

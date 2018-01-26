@@ -25,9 +25,11 @@ void peripheral_interface_gpio_close(peripheral_gpio_h gpio);
 
 int peripheral_interface_gpio_set_initial_edge_into_handle(peripheral_gpio_h gpio);
 int peripheral_interface_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e edge);
+int peripheral_interface_gpio_get_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e *out_edge);
 
 int peripheral_interface_gpio_set_initial_direction_into_handle(peripheral_gpio_h gpio);
 int peripheral_interface_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_direction_e direction);
+int peripheral_interface_gpio_get_direction(peripheral_gpio_h gpio, peripheral_gpio_direction_e *out_direction);
 
 int peripheral_interface_gpio_write(peripheral_gpio_h gpio, uint32_t value);
 int peripheral_interface_gpio_read(peripheral_gpio_h gpio, uint32_t *value);
