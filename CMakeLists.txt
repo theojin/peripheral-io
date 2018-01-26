@@ -52,16 +52,19 @@ SET(SOURCES src/peripheral_gpio.c
 			src/peripheral_pwm.c
 			src/peripheral_uart.c
 			src/peripheral_spi.c
+			src/peripheral_adc.c
 			src/interface/peripheral_interface_gpio.c
 			src/interface/peripheral_interface_i2c.c
 			src/interface/peripheral_interface_pwm.c
 			src/interface/peripheral_interface_spi.c
 			src/interface/peripheral_interface_uart.c
+			src/interface/peripheral_interface_adc.c
 			src/gdbus/peripheral_gdbus_gpio.c
 			src/gdbus/peripheral_gdbus_i2c.c
 			src/gdbus/peripheral_gdbus_pwm.c
 			src/gdbus/peripheral_gdbus_uart.c
 			src/gdbus/peripheral_gdbus_spi.c
+			src/gdbus/peripheral_gdbus_adc.c
 			src/gdbus/peripheral_io_gdbus.c)
 
 ADD_LIBRARY(${fw_name} SHARED ${SOURCES})
