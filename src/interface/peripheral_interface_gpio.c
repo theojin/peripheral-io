@@ -187,7 +187,7 @@ void peripheral_interface_gpio_close(peripheral_gpio_h gpio)
 static gboolean __peripheral_interface_gpio_interrupted_cb_invoke(gpointer data)
 {
 	peripheral_gpio_h gpio = (peripheral_gpio_h)data;
-	gpio->cb_info.cb(gpio, gpio->cb_info.error, NULL);
+	gpio->cb_info.cb(gpio, gpio->cb_info.error, gpio->cb_info.user_data);
 	return FALSE;
 }
 
