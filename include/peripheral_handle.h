@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Samsung Electronics Co., Ltd.
+ * Copyright (c) 2017-2018 Samsung Electronics Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,6 +57,14 @@ struct _peripheral_pwm_s {
 	int fd_duty_cycle;
 	int fd_polarity;
 	int fd_enable;
+};
+
+/**
+ * @brief Internal struct for adc context
+ */
+struct _peripheral_adc_s {
+	uint handle;
+	int fd;
 };
 
 /**

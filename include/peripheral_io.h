@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017 Samsung Electronics Co., Ltd.
+ * Copyright (c) 2016-2018 Samsung Electronics Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -657,6 +657,92 @@ int peripheral_pwm_set_polarity(peripheral_pwm_h pwm, peripheral_pwm_polarity_e 
  * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
  */
 int peripheral_pwm_set_enabled(peripheral_pwm_h pwm, bool enabled);
+
+/**
+* @}
+*/
+
+/**
+ * @addtogroup CAPI_SYSTEM_PERIPHERAL_IO_ADC_MODULE
+ * @{
+ */
+
+/**
+ * @brief The handle of the ADC peripherals.
+ * @since_tizen 5.0
+ */
+typedef struct _peripheral_adc_s *peripheral_adc_h;
+
+/**
+ * @platform
+ * @brief Opens the ADC pin.
+ * @since_tizen 5.0
+ * @privlevel platform
+ * @privilege http://tizen.org/privilege/peripheralio
+ * @remarks @a adc should be released with peripheral_adc_close()
+ *
+ * @param[in] device The ADC device number
+ * @param[in] channel The ADC channel number to control
+ * @param[out] adc The ADC handle is created on success
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device does not exist or is removed
+ * @retval #PERIPHERAL_ERROR_OUT_OF_MEMORY Memory allocation failed
+ * @retval #PERIPHERAL_ERROR_PERMISSION_DENIED Permission denied
+ * @retval #PERIPHERAL_ERROR_RESOURCE_BUSY Device is in use
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_NOT_SUPPORTED Not supported
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ *
+ * @post peripheral_adc_close()
+ */
+int peripheral_adc_open(int device, int channel, peripheral_adc_h *adc);
+
+/**
+ * @platform
+ * @brief Closes the ADC pin.
+ * @since_tizen 5.0
+ * @privlevel platform
+ * @privilege http://tizen.org/privilege/peripheralio
+ *
+ * @param[in] adc The ADC handle
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device does not exist or is removed
+ * @retval #PERIPHERAL_ERROR_PERMISSION_DENIED Permission denied
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_NOT_SUPPORTED Not supported
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ *
+ * @pre peripheral_adc_open()
+ */
+int peripheral_adc_close(peripheral_adc_h adc);
+
+/**
+ * @platform
+ * @brief Gets the current value of the ADC pin.
+ * @since_tizen 5.0
+ * @privlevel platform
+ * @privilege http://tizen.org/privilege/peripheralio
+ *
+ * @param[in] adc The ADC handle
+ * @param[out] value The value to get
+ *
+ * @return 0 on success, otherwise a negative error value
+ * @retval #PERIPHERAL_ERROR_NONE Successful
+ * @retval #PERIPHERAL_ERROR_IO_ERROR I/O operation failed
+ * @retval #PERIPHERAL_ERROR_NO_DEVICE Device does not exist or is removed
+ * @retval #PERIPHERAL_ERROR_PERMISSION_DENIED Permission denied
+ * @retval #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #PERIPHERAL_ERROR_NOT_SUPPORTED Not supported
+ * @retval #PERIPHERAL_ERROR_UNKNOWN Unknown internal error
+ *
+ */
+int peripheral_adc_read(peripheral_adc_h adc, uint32_t *value);
 
 /**
 * @}

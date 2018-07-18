@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2017 Samsung Electronics Co., Ltd.
+ * Copyright (c) 2017-2018 Samsung Electronics Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@
 #include "test_peripheral_gpio.h"
 #include "test_peripheral_i2c.h"
 #include "test_peripheral_pwm.h"
+#include "test_peripheral_adc.h"
 #include "test_peripheral_uart.h"
 #include "test_peripheral_spi.h"
 
@@ -30,6 +31,7 @@
 #define KEY_FEATURE_PERIPHERAL_IO_GPIO "http://tizen.org/feature/peripheral_io.gpio"
 #define KEY_FEATURE_PERIPHERAL_IO_I2C  "http://tizen.org/feature/peripheral_io.i2c"
 #define KEY_FEATURE_PERIPHERAL_IO_PWM  "http://tizen.org/feature/peripheral_io.pwm"
+#define KEY_FEATURE_PERIPHERAL_IO_ADC  "http://tizen.org/feature/peripheral_io.adc"
 #define KEY_FEATURE_PERIPHERAL_IO_UART "http://tizen.org/feature/peripheral_io.uart"
 #define KEY_FEATURE_PERIPHERAL_IO_SPI  "http://tizen.org/feature/peripheral_io.spi"
 
@@ -98,6 +100,13 @@ static int __test_peripheral_init()
 	if (ret != PERIPHERAL_ERROR_NONE)
 		goto ERR;
 	ret = test_peripheral_io_pwm_initialize(model_name, feature);
+	if (ret != PERIPHERAL_ERROR_NONE)
+		goto ERR;
+
+	ret = __get_feature(KEY_FEATURE_PERIPHERAL_IO_ADC, &feature);
+	if (ret != PERIPHERAL_ERROR_NONE)
+		goto ERR;
+	ret = test_peripheral_io_adc_initialize(model_name, feature);
 	if (ret != PERIPHERAL_ERROR_NONE)
 		goto ERR;
 
@@ -276,6 +285,30 @@ static void __test_peripheral_pwm_run()
 	__error_check(ret, "test_peripheral_io_pwm_peripheral_pwm_set_enabled_p2");
 	ret = test_peripheral_io_pwm_peripheral_pwm_set_enabled_n();
 	__error_check(ret, "test_peripheral_io_pwm_peripheral_pwm_set_enabled_n");
+}
+
+static void __test_peripheral_adc_run()
+{
+	int ret = PERIPHERAL_ERROR_NONE;
+
+	ret = test_peripheral_io_adc_peripheral_adc_open_p();
+	__error_check(ret, "test_peripheral_io_adc_peripheral_adc_open_p");
+	ret = test_peripheral_io_adc_peripheral_adc_open_n1();
+	__error_check(ret, "test_peripheral_io_adc_peripheral_adc_open_n1");
+	ret = test_peripheral_io_adc_peripheral_adc_open_n2();
+	__error_check(ret, "test_peripheral_io_adc_peripheral_adc_open_n2");
+	ret = test_peripheral_io_adc_peripheral_adc_open_n3();
+	__error_check(ret, "test_peripheral_io_adc_peripheral_adc_open_n3");
+	ret = test_peripheral_io_adc_peripheral_adc_close_p();
+	__error_check(ret, "test_peripheral_io_adc_peripheral_adc_close_p");
+	ret = test_peripheral_io_adc_peripheral_adc_close_n();
+	__error_check(ret, "test_peripheral_io_adc_peripheral_adc_close_n");
+	ret = test_peripheral_io_adc_peripheral_adc_read_p();
+	__error_check(ret, "test_peripheral_io_adc_peripheral_adc_read_p");
+	ret = test_peripheral_io_adc_peripheral_adc_read_n1();
+	__error_check(ret, "test_peripheral_io_adc_peripheral_adc_read_n1");
+	ret = test_peripheral_io_adc_peripheral_adc_read_n2();
+	__error_check(ret, "test_peripheral_io_adc_peripheral_adc_read_n2");
 }
 
 static void __test_peripheral_uart_run()
@@ -484,11 +517,11 @@ int main(int argc, char **argv)
 
 	while (1) {
 
-		printf("\n\n******************************************************************\n");
-		printf("*                                                                *\n");
-		printf("*    MENU: 1.All  2.GPIO  3.I2C  4.PWM  5.UART  6.SPI  7.Exit    *\n");
-		printf("*                                                                *\n");
-		printf("******************************************************************\n");
+		printf("\n\n*************************************************************************\n");
+		printf("*                                                                       *\n");
+		printf("*    MENU: 1.All  2.GPIO  3.I2C  4.PWM  5.ADC  6.UART  7.SPI  8.Exit    *\n");
+		printf("*                                                                       *\n");
+		printf("*************************************************************************\n");
 		printf("     Input Menu : ");
 
 		if (scanf("%d", &menu) < 0) return -1;
@@ -509,6 +542,7 @@ int main(int argc, char **argv)
 			__test_peripheral_gpio_run();
 			__test_peripheral_i2c_run();
 			__test_peripheral_pwm_run();
+			__test_peripheral_adc_run();
 			__test_peripheral_uart_run();
 			break;
 		case 2:
@@ -521,12 +555,15 @@ int main(int argc, char **argv)
 			__test_peripheral_pwm_run();
 			break;
 		case 5:
-			__test_peripheral_uart_run();
+			__test_peripheral_adc_run();
 			break;
 		case 6:
-			__test_peripheral_spi_run();
+			__test_peripheral_uart_run();
 			break;
 		case 7:
+			__test_peripheral_spi_run();
+			break;
+		case 8:
 			printf("[Message] Close the Peripheral-IO API local Test...\n\n");
 			return 0;
 		default:
