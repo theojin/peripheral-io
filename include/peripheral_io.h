@@ -141,7 +141,7 @@ int peripheral_gpio_close(peripheral_gpio_h gpio);
  * @since_tizen 4.0
  * @privlevel platform
  * @privilege http://tizen.org/privilege/peripheralio
- * @remarks To set the direction to PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_HIGH or PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_LOW, the edge mode must be set to PERIPHERAL_GPIO_EDGE_NONE.
+ * @remarks To set the direction to #PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_HIGH or #PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_LOW, the edge mode must be set to #PERIPHERAL_GPIO_EDGE_NONE.
  *
  * @param[in] gpio The GPIO handle
  * @param[in] direction The direction of the GPIO pin
@@ -166,7 +166,7 @@ int peripheral_gpio_set_direction(peripheral_gpio_h gpio, peripheral_gpio_direct
  * @since_tizen 4.0
  * @privlevel platform
  * @privilege http://tizen.org/privilege/peripheralio
- * @remarks To set the edge mode to PERIPHERAL_GPIO_EDGE_RISING, PERIPHERAL_GPIO_EDGE_FALLING, PERIPHERAL_GPIO_EDGE_BOTH, the data direction must be set to the PERIPHERAL_GPIO_DIRECTION_IN.
+ * @remarks To set the edge mode to #PERIPHERAL_GPIO_EDGE_RISING, #PERIPHERAL_GPIO_EDGE_FALLING, #PERIPHERAL_GPIO_EDGE_BOTH, the data direction must be set to the #PERIPHERAL_GPIO_DIRECTION_IN.
  *
  * @param[in] gpio The GPIO handle
  * @param[in] edge The edge mode of the GPIO pin
@@ -188,6 +188,17 @@ int peripheral_gpio_set_edge_mode(peripheral_gpio_h gpio, peripheral_gpio_edge_e
 /**
  * @platform
  * @brief The GPIO interrupted callback called when the GPIO interrupt is triggered.
+ * @details The following errors can be received: \n
+ * #PERIPHERAL_ERROR_NONE Successful \n
+ * #PERIPHERAL_ERROR_IO_ERROR I/O operation failed \n
+ * #PERIPHERAL_ERROR_NO_DEVICE Device does not exist or is removed \n
+ * #PERIPHERAL_ERROR_TRY_AGAIN Try again \n
+ * #PERIPHERAL_ERROR_OUT_OF_MEMORY Memory allocation failed \n
+ * #PERIPHERAL_ERROR_PERMISSION_DENIED Permission denied \n
+ * #PERIPHERAL_ERROR_RESOURCE_BUSY Device is in use \n
+ * #PERIPHERAL_ERROR_INVALID_PARAMETER Invalid parameter \n
+ * #PERIPHERAL_ERROR_NOT_SUPPORTED Not supported \n
+ * #PERIPHERAL_ERROR_UNKNOWN Unknown internal error \n
  * @since_tizen 4.0
  *
  * @param[in] gpio The GPIO handle
@@ -204,7 +215,7 @@ typedef void(*peripheral_gpio_interrupted_cb)(peripheral_gpio_h gpio, peripheral
  * @since_tizen 4.0
  * @privlevel platform
  * @privilege http://tizen.org/privilege/peripheralio
- * @remarks The interrupted callback is unset when called peripheral_gpio_unset_interrupted_cb() or callback receives an error value other than PERIPHERAL_ERROR_NONE.
+ * @remarks The interrupted callback is unset when called peripheral_gpio_unset_interrupted_cb() or callback receives an error value other than #PERIPHERAL_ERROR_NONE.
  *
  * @param[in] gpio The GPIO handle
  * @param[in] callback The GPIO interrupted callback function to set
@@ -269,7 +280,7 @@ int peripheral_gpio_read(peripheral_gpio_h gpio, uint32_t *value);
  * @since_tizen 4.0
  * @privlevel platform
  * @privilege http://tizen.org/privilege/peripheralio
- * @remarks To write binary data, the direction must be set to PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_HIGH or PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_LOW.
+ * @remarks To write binary data, the direction must be set to #PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_HIGH or #PERIPHERAL_GPIO_DIRECTION_OUT_INITIALLY_LOW.
  *
  * @param[in] gpio The GPIO handle
  * @param[in] value The value to set (must be 0 or 1)
