@@ -158,9 +158,13 @@ int peripheral_interface_gpio_read(peripheral_gpio_h gpio, uint32_t *value)
 	int ret;
 	int length = 1;
 	char gpio_buf[GPIO_BUFFER_MAX] = {0, };
+	static GMutex mutex;
 
+	g_mutex_lock(&mutex);
 	lseek(gpio->fd_value, 0, SEEK_SET);
 	ret = read(gpio->fd_value, &gpio_buf, length);
+	g_mutex_unlock(&mutex);
+
 	CHECK_ERROR(ret != length);
 
 	if (gpio_buf[0] == '0') {
