@@ -22,8 +22,7 @@ int peripheral_interface_adc_read(peripheral_adc_h adc, uint32_t *value)
 	uint32_t tmp_val;
 	char adc_buf[ADC_BUFFER_MAX] = {0, };
 
-	lseek(adc->fd, 0, SEEK_SET);
-	ret = read(adc->fd, &adc_buf, ADC_BUFFER_MAX);
+	ret = pread(adc->fd, &adc_buf, ADC_BUFFER_MAX, 0);
 	CHECK_ERROR(ret <= 0);
 
 	ret = sscanf(adc_buf, "%d", &tmp_val);
