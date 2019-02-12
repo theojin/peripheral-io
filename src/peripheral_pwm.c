@@ -83,10 +83,8 @@ int peripheral_pwm_close(peripheral_pwm_h pwm)
 	RETVM_IF(pwm == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "pwm handle is NULL");
 
 	ret = peripheral_gdbus_pwm_close(pwm);
-	if (ret != PERIPHERAL_ERROR_NONE) {
+	if (ret != PERIPHERAL_ERROR_NONE)
 		_E("Failed to close PWM chip, continuing anyway, ret : %d", ret);
-		return ret;
-	}
 
 	peripheral_interface_pwm_close(pwm);
 

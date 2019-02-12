@@ -82,10 +82,8 @@ int peripheral_spi_close(peripheral_spi_h spi)
 	RETVM_IF(spi == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "spi handle is NULL");
 
 	ret = peripheral_gdbus_spi_close(spi);
-	if (ret != PERIPHERAL_ERROR_NONE) {
+	if (ret != PERIPHERAL_ERROR_NONE)
 		_E("Failed to close SPI device, continuing anyway, ret : %d", ret);
-		return ret;
-	}
 
 	peripheral_interface_spi_close(spi);
 

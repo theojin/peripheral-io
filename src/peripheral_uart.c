@@ -87,10 +87,8 @@ int peripheral_uart_close(peripheral_uart_h uart)
 	RETVM_IF(uart == NULL, PERIPHERAL_ERROR_INVALID_PARAMETER, "uart handle is NULL");
 
 	ret = peripheral_gdbus_uart_close(uart);
-	if (ret != PERIPHERAL_ERROR_NONE) {
+	if (ret != PERIPHERAL_ERROR_NONE)
 		_E("Failed to close uart communication, continuing anyway, ret : %d", ret);
-		return ret;
-	}
 
 	peripheral_interface_uart_close(uart);
 

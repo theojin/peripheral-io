@@ -159,8 +159,7 @@ int peripheral_interface_gpio_read(peripheral_gpio_h gpio, uint32_t *value)
 	int length = 1;
 	char gpio_buf[GPIO_BUFFER_MAX] = {0, };
 
-	lseek(gpio->fd_value, 0, SEEK_SET);
-	ret = read(gpio->fd_value, &gpio_buf, length);
+	ret = pread(gpio->fd_value, &gpio_buf, length, 0);
 	CHECK_ERROR(ret != length);
 
 	if (gpio_buf[0] == '0') {

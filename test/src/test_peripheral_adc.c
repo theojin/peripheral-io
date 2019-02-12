@@ -224,10 +224,8 @@ int test_peripheral_io_adc_peripheral_adc_read_n2(void)
 
 	peripheral_adc_h adc_h = NULL;
 
-	uint32_t value;
-
 	if (g_feature == false) {
-		ret = peripheral_adc_read(adc_h, &value);
+		ret = peripheral_adc_read(adc_h, NULL);
 		if (ret != PERIPHERAL_ERROR_NOT_SUPPORTED)
 			return ret;
 
@@ -236,7 +234,7 @@ int test_peripheral_io_adc_peripheral_adc_read_n2(void)
 		if (ret != PERIPHERAL_ERROR_NONE)
 			return ret;
 
-		ret = peripheral_adc_read(adc_h, &value);
+		ret = peripheral_adc_read(adc_h, NULL);
 		if (ret != PERIPHERAL_ERROR_INVALID_PARAMETER) {
 			peripheral_adc_close(adc_h);
 			return ret;
