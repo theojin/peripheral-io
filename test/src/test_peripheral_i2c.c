@@ -21,6 +21,9 @@
 
 #define I2C_BUS_RPI3 4
 #define I2C_BUS_ARTIK530 11
+#if defined(SDTA7D)
+#define I2C_BUS_SDTA7D 11
+#endif
 #define I2C_BUS_INVALID -99
 #define I2C_ADDRESS 0x39
 #define I2C_ADDRESS_INVALID -99
@@ -40,6 +43,10 @@ int test_peripheral_io_i2c_initialize(char *model, bool feature)
 		bus = I2C_BUS_RPI3;
 	else if (!strcmp(model, "artik"))
 		bus = I2C_BUS_ARTIK530;
+#if defined(SDTA7D)
+	else if (!strcmp(model, "sdta7d"))
+		bus = I2C_BUS_SDTA7D;
+#endif
 	else
 		return PERIPHERAL_ERROR_NO_DEVICE;
 

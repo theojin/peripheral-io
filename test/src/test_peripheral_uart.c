@@ -21,6 +21,9 @@
 
 #define UART_PORT_RPI3 0
 #define UART_PORT_ARTIK530 4
+#if defined(SDTA7D)
+#define UART_PORT_SDTA7D 5
+#endif
 #define UART_PORT_INVALID -99
 #define UART_BUFFER_LEN 10
 #define	UART_WRITE_DATA 0x00
@@ -36,6 +39,10 @@ int test_peripheral_io_uart_initialize(char *model, bool feature)
 		port = UART_PORT_RPI3;
 	else if (!strcmp(model, "artik"))
 		port = UART_PORT_ARTIK530;
+#if defined(SDTA7D)
+	else if (!strcmp(model, "sdta7d"))
+		port = UART_PORT_SDTA7D;
+#endif
 	else
 		return PERIPHERAL_ERROR_NO_DEVICE;
 

@@ -20,6 +20,9 @@
 #include "test_peripheral_adc.h"
 
 #define ADC_DEVICE_ARTIK530 0
+#if defined(SDTA7D)
+#define ADC_DEVICE_SDTA7D 0
+#endif
 #define ADC_DEVICE_INVALID -99
 #define ADC_CHANNEL 3
 #define ADC_CHANNEL_INVALID -99
@@ -34,6 +37,10 @@ int test_peripheral_io_adc_initialize(char *model, bool feature)
 
 	if (!strcmp(model, "artik"))
 		device = ADC_DEVICE_ARTIK530;
+#if defined(SDTA7D)
+	else if (!strcmp(model, "sdta7d"))
+		device = ADC_DEVICE_SDTA7D;
+#endif
 	else
 		return PERIPHERAL_ERROR_NO_DEVICE;
 

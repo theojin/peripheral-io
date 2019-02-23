@@ -37,6 +37,11 @@ int test_peripheral_io_pwm_initialize(char *model, bool feature)
 	if ((!strcmp(model, "rpi3")) || (!strcmp(model, "artik"))) {
 		chip = PWM_CHIP;
 		pin = PWM_PIN;
+#if defined(SDTA7D)
+	} else if (!strcmp(model, "sdta7d")) {
+		chip = PWM_CHIP;
+		pin = PWM_PIN;
+#endif
 	} else {
 		return PERIPHERAL_ERROR_NO_DEVICE;
 	}

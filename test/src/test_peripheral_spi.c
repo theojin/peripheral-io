@@ -21,6 +21,9 @@
 
 #define SPI_BUS_RPI3 0
 #define SPI_BUS_ARTIK530 2
+#if defined(SDTA7D)
+#define SPI_BUS_SDTA7D 2
+#endif
 #define SPI_BUS_INVALID -99
 #define SPI_CS 0
 #define SPI_CS_INVALID -99
@@ -42,6 +45,10 @@ int test_peripheral_io_spi_initialize(char *model, bool feature)
 		bus = SPI_BUS_RPI3;
 	else if (!strcmp(model, "artik"))
 		bus = SPI_BUS_ARTIK530;
+#if defined(SDTA7D)
+	else if (!strcmp(model, "sdta7d"))
+		bus = SPI_BUS_SDTA7D;
+#endif
 	else
 		return PERIPHERAL_ERROR_NO_DEVICE;
 

@@ -21,6 +21,9 @@
 
 #define GPIO_PIN_RPI3 26
 #define GPIO_PIN_ARTIK530 128
+#if defined(SDTA7D)
+#define GPIO_PIN_SDTA7D 128
+#endif
 #define GPIO_PIN_INVALID -99
 
 static bool g_feature = false;
@@ -34,6 +37,10 @@ int test_peripheral_io_gpio_initialize(char *model, bool feature)
 		pin = GPIO_PIN_RPI3;
 	else if (!strcmp(model, "artik"))
 		pin = GPIO_PIN_ARTIK530;
+#if defined(SDTA7D)
+	else if (!strcmp(model, "sdta7d"))
+		pin = GPIO_PIN_SDTA7D;
+#endif
 	else
 		return PERIPHERAL_ERROR_NO_DEVICE;
 	return PERIPHERAL_ERROR_NONE;
