@@ -22,10 +22,14 @@
 #define I2C_BUS_RPI3 4
 #define I2C_BUS_ARTIK530 11
 #if defined(SDTA7D)
-#define I2C_BUS_SDTA7D 11
+#define I2C_BUS_SDTA7D 0
 #endif
 #define I2C_BUS_INVALID -99
+#if defined(SDTA7D)
+#define	I2C_ADDRESS	0x23
+#else
 #define I2C_ADDRESS 0x39
+#endif
 #define I2C_ADDRESS_INVALID -99
 #define I2C_BUFFER_LEN 10
 #define I2C_BUFFER_VALUE 0x00

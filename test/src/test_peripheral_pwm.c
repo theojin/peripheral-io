@@ -21,7 +21,11 @@
 
 #define PWM_CHIP 0
 #define PWM_CHIP_INVALID -99
+#if defined(SDTA7D)
+#define PWM_PIN 0
+#else
 #define PWM_PIN 2
+#endif
 #define PWM_PIN_INVALID -99
 #define PWM_PERIOD 1000
 #define PWM_DUTY_CYCLE 100

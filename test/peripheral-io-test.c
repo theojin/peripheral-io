@@ -17,6 +17,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <system_info.h>
 
 #include "peripheral_io.h"
@@ -103,12 +104,25 @@ static int __test_peripheral_init()
 	if (ret != PERIPHERAL_ERROR_NONE)
 		goto ERR;
 
+#if defined(SDTA7D)
+	if (!strcmp(model_name, "sdta7d")) {
+		printf("Init: Not supported on this model\n");
+	} else {
+		ret = __get_feature(KEY_FEATURE_PERIPHERAL_IO_ADC, &feature);
+		if (ret != PERIPHERAL_ERROR_NONE)
+			goto ERR;
+		ret = test_peripheral_io_adc_initialize(model_name, feature);
+		if (ret != PERIPHERAL_ERROR_NONE)
+			goto ERR;
+	}
+#else
 	ret = __get_feature(KEY_FEATURE_PERIPHERAL_IO_ADC, &feature);
 	if (ret != PERIPHERAL_ERROR_NONE)
 		goto ERR;
 	ret = test_peripheral_io_adc_initialize(model_name, feature);
 	if (ret != PERIPHERAL_ERROR_NONE)
 		goto ERR;
+#endif
 
 	ret = __get_feature(KEY_FEATURE_PERIPHERAL_IO_UART, &feature);
 	if (ret != PERIPHERAL_ERROR_NONE)
@@ -290,6 +304,11 @@ static void __test_peripheral_pwm_run()
 static void __test_peripheral_adc_run()
 {
 	int ret = PERIPHERAL_ERROR_NONE;
+
+#if defined(SDTA7D)
+	printf("ADC is not supported by this model. Skipped...\n");
+	return;
+#endif
 
 	ret = test_peripheral_io_adc_peripheral_adc_open_p();
 	__error_check(ret, "test_peripheral_io_adc_peripheral_adc_open_p");
@@ -544,6 +563,7 @@ int main(int argc, char **argv)
 			__test_peripheral_pwm_run();
 			__test_peripheral_adc_run();
 			__test_peripheral_uart_run();
+			__test_peripheral_spi_run();
 			break;
 		case 2:
 			__test_peripheral_gpio_run();

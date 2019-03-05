@@ -22,7 +22,7 @@
 #define GPIO_PIN_RPI3 26
 #define GPIO_PIN_ARTIK530 128
 #if defined(SDTA7D)
-#define GPIO_PIN_SDTA7D 128
+#define GPIO_PIN_SDTA7D 37
 #endif
 #define GPIO_PIN_INVALID -99
 
